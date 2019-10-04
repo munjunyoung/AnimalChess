@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.43749017, g: 0.4853112, b: 0.56558603, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -379,6 +379,97 @@ Transform:
   - {fileID: 1704544127}
   m_Father: {fileID: 1140940615}
   m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &16217175
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 16217179}
+  - component: {fileID: 16217178}
+  - component: {fileID: 16217177}
+  - component: {fileID: 16217176}
+  m_Layer: 9
+  m_Name: Cube
+  m_TagString: Unit
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &16217176
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16217175}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &16217177
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16217175}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &16217178
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16217175}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &16217179
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16217175}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 4, z: -2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &16311531
 PrefabInstance:
@@ -2535,7 +2626,7 @@ GameObject:
   m_Component:
   - component: {fileID: 90597872}
   m_Layer: 0
-  m_Name: Line1 (1)
+  m_Name: Line1 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4066,13 +4157,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 170076733}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalRotation: {x: 0.76604444, y: 0, z: 0, w: 0.64278764}
+  m_LocalPosition: {x: 8, y: 20, z: 30}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 100, y: 0, z: 0}
 --- !u!1 &171852428
 GameObject:
   m_ObjectHideFlags: 0
@@ -5452,6 +5543,7 @@ GameObject:
   - component: {fileID: 212818651}
   - component: {fileID: 212818653}
   - component: {fileID: 212818652}
+  - component: {fileID: 212818654}
   m_Layer: 0
   m_Name: ForestBridgeRegular (3)
   m_TagString: Untagged
@@ -5517,6 +5609,20 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 212818650}
+  m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
+--- !u!64 &212818654
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212818650}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
 --- !u!1 &214967328
 GameObject:
@@ -6440,7 +6546,7 @@ GameObject:
   m_Component:
   - component: {fileID: 281685920}
   m_Layer: 0
-  m_Name: Line2
+  m_Name: Line2 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6988,7 +7094,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 310729834}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1750994885}
@@ -8946,7 +9052,7 @@ GameObject:
   m_Component:
   - component: {fileID: 398082750}
   m_Layer: 0
-  m_Name: Line2 (2)
+  m_Name: Line2 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10891,7 +10997,7 @@ GameObject:
   m_Component:
   - component: {fileID: 467589412}
   m_Layer: 0
-  m_Name: Line1 (3)
+  m_Name: Line1 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12313,13 +12419,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
-  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 7, y: 15, z: -7}
+  m_LocalRotation: {x: 0.46174863, y: 0, z: 0, w: 0.8870109}
+  m_LocalPosition: {x: 7, y: 17, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 55, y: 0, z: 0}
 --- !u!1001 &537710386
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23717,7 +23823,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1050710613}
   m_Layer: 0
-  m_Name: Line2 (1)
+  m_Name: Line2 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24886,6 +24992,7 @@ Transform:
   - {fileID: 1111006596}
   - {fileID: 1620613292}
   - {fileID: 106912634}
+  - {fileID: 1960688942}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -25512,6 +25619,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1118451528}
+  - component: {fileID: 1118451529}
   m_Layer: 0
   m_Name: IngameManager
   m_TagString: Untagged
@@ -25533,6 +25641,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1118451529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118451527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef652328d242c174f8de47dee43466ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 534669904}
 --- !u!1001 &1119389235
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28176,6 +28297,7 @@ GameObject:
   - component: {fileID: 1232599705}
   - component: {fileID: 1232599707}
   - component: {fileID: 1232599706}
+  - component: {fileID: 1232599708}
   m_Layer: 0
   m_Name: ForestBridgeRegular (2)
   m_TagString: Untagged
@@ -28241,6 +28363,20 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1232599704}
+  m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
+--- !u!64 &1232599708
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232599704}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
 --- !u!1 &1232926292
 GameObject:
@@ -28344,6 +28480,7 @@ GameObject:
   - component: {fileID: 1249539481}
   - component: {fileID: 1249539483}
   - component: {fileID: 1249539482}
+  - component: {fileID: 1249539484}
   m_Layer: 0
   m_Name: ForestBridgeRegular (1)
   m_TagString: Untagged
@@ -28409,6 +28546,20 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1249539480}
+  m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
+--- !u!64 &1249539484
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249539480}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
 --- !u!1 &1254822475
 GameObject:
@@ -35024,7 +35175,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1563565869}
   m_Layer: 0
-  m_Name: Line1 (2)
+  m_Name: Line1 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37592,6 +37743,7 @@ GameObject:
   - component: {fileID: 1665591973}
   - component: {fileID: 1665591975}
   - component: {fileID: 1665591974}
+  - component: {fileID: 1665591976}
   m_Layer: 0
   m_Name: ForestBridgeRegular (7)
   m_TagString: Untagged
@@ -37657,6 +37809,20 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1665591972}
+  m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
+--- !u!64 &1665591976
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665591972}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
 --- !u!1001 &1668245281
 PrefabInstance:
@@ -39225,6 +39391,7 @@ GameObject:
   - component: {fileID: 1726996365}
   - component: {fileID: 1726996367}
   - component: {fileID: 1726996366}
+  - component: {fileID: 1726996368}
   m_Layer: 0
   m_Name: ForestBridgeRegular (4)
   m_TagString: Untagged
@@ -39290,6 +39457,20 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1726996364}
+  m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
+--- !u!64 &1726996368
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726996364}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
 --- !u!1001 &1728839218
 PrefabInstance:
@@ -39834,7 +40015,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1750994885}
   m_Layer: 0
-  m_Name: Line1
+  m_Name: Line1 0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41120,7 +41301,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1801592148}
   m_Layer: 0
-  m_Name: Line2 (3)
+  m_Name: Line2 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44313,6 +44494,7 @@ GameObject:
   - component: {fileID: 1918491223}
   - component: {fileID: 1918491225}
   - component: {fileID: 1918491224}
+  - component: {fileID: 1918491226}
   m_Layer: 0
   m_Name: ForestBridgeRegular (5)
   m_TagString: Untagged
@@ -44378,6 +44560,20 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1918491222}
+  m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
+--- !u!64 &1918491226
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1918491222}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
 --- !u!1 &1919244859
 GameObject:
@@ -45423,6 +45619,51 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1956116409}
   m_Mesh: {fileID: 4300000, guid: caca2dfcd7da619408439605ff0667a4, type: 3}
+--- !u!1 &1960688941
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1960688942}
+  - component: {fileID: 1960688943}
+  m_Layer: 0
+  m_Name: GroundCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1960688942
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960688941}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7, y: 2, z: 7}
+  m_LocalScale: {x: 2, y: 1, z: 2}
+  m_Children: []
+  m_Father: {fileID: 1086426757}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1960688943
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960688941}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1001 &1965391253
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -49560,6 +49801,7 @@ GameObject:
   - component: {fileID: 2124162332}
   - component: {fileID: 2124162334}
   - component: {fileID: 2124162333}
+  - component: {fileID: 2124162335}
   m_Layer: 0
   m_Name: ForestBridgeRegular (6)
   m_TagString: Untagged
@@ -49625,6 +49867,20 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2124162331}
+  m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
+--- !u!64 &2124162335
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124162331}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
 --- !u!1 &2126323555
 GameObject:
@@ -50058,9 +50314,9 @@ GameObject:
   - component: {fileID: 33740650475393280}
   - component: {fileID: 23171873166393542}
   - component: {fileID: 2389008384878773580}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02 7
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50077,9 +50333,9 @@ GameObject:
   - component: {fileID: 33740650285186409}
   - component: {fileID: 23171873226599599}
   - component: {fileID: 2389008385087351077}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02 (1)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50096,9 +50352,9 @@ GameObject:
   - component: {fileID: 33740650104677028}
   - component: {fileID: 23171873574777698}
   - component: {fileID: 2389008384772306664}
-  m_Layer: 0
-  m_Name: ForestGround02 2
-  m_TagString: Untagged
+  m_Layer: 10
+  m_Name: ForestGround02 1
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50115,9 +50371,9 @@ GameObject:
   - component: {fileID: 33740649980759998}
   - component: {fileID: 23171873526685304}
   - component: {fileID: 2389008384787127282}
-  m_Layer: 0
-  m_Name: ForestGround02 (1)
-  m_TagString: Untagged
+  m_Layer: 10
+  m_Name: ForestGround02 3
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50134,9 +50390,9 @@ GameObject:
   - component: {fileID: 33740650993760053}
   - component: {fileID: 23171872652240627}
   - component: {fileID: 2389008384319529849}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02 5
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50153,9 +50409,9 @@ GameObject:
   - component: {fileID: 33740650898716795}
   - component: {fileID: 23171872774449597}
   - component: {fileID: 2389008384498887735}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02 (3)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50172,9 +50428,9 @@ GameObject:
   - component: {fileID: 33740649422193918}
   - component: {fileID: 23171874251052344}
   - component: {fileID: 2389008383828005042}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02 (3)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50191,9 +50447,9 @@ GameObject:
   - component: {fileID: 33740649262919591}
   - component: {fileID: 23171874410217057}
   - component: {fileID: 2389008383936838635}
-  m_Layer: 0
-  m_Name: ForestGround02 (2)
-  m_TagString: Untagged
+  m_Layer: 10
+  m_Name: ForestGround02 5
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50210,9 +50466,9 @@ GameObject:
   - component: {fileID: 33740649222604191}
   - component: {fileID: 23171874320618585}
   - component: {fileID: 2389008384026546643}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02 (1)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50229,9 +50485,9 @@ GameObject:
   - component: {fileID: 33740649964281883}
   - component: {fileID: 23171873710944733}
   - component: {fileID: 2389008383294190679}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50248,9 +50504,9 @@ GameObject:
   - component: {fileID: 33740649961886382}
   - component: {fileID: 23171873717519208}
   - component: {fileID: 2389008383287658210}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50267,9 +50523,9 @@ GameObject:
   - component: {fileID: 33740649753713908}
   - component: {fileID: 23171873785318706}
   - component: {fileID: 2389008383488100536}
-  m_Layer: 0
-  m_Name: ForestGround02
-  m_TagString: Untagged
+  m_Layer: 10
+  m_Name: ForestGround02 1
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50286,9 +50542,9 @@ GameObject:
   - component: {fileID: 33740649536768215}
   - component: {fileID: 23171874107152657}
   - component: {fileID: 2389008383133080731}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02 (2)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50305,9 +50561,9 @@ GameObject:
   - component: {fileID: 33740649533017669}
   - component: {fileID: 23171874144296835}
   - component: {fileID: 2389008383129328137}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02 (2)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50324,9 +50580,9 @@ GameObject:
   - component: {fileID: 33740649519562805}
   - component: {fileID: 23171874155680243}
   - component: {fileID: 2389008383117644921}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround02 3
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50343,9 +50599,9 @@ GameObject:
   - component: {fileID: 33740649447421496}
   - component: {fileID: 23171874058102782}
   - component: {fileID: 2389008383182070388}
-  m_Layer: 0
-  m_Name: ForestGround02 (3)
-  m_TagString: Untagged
+  m_Layer: 10
+  m_Name: ForestGround02 7
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50362,9 +50618,9 @@ GameObject:
   - component: {fileID: 33838783579885802}
   - component: {fileID: 23296892130304682}
   - component: {fileID: 7135013157729286521}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01 (2)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50381,9 +50637,9 @@ GameObject:
   - component: {fileID: 33838783651780292}
   - component: {fileID: 23296892168774788}
   - component: {fileID: 7135013157691080535}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01 6
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50400,9 +50656,9 @@ GameObject:
   - component: {fileID: 33838783670428388}
   - component: {fileID: 23296892224639140}
   - component: {fileID: 7135013157568154487}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01 2
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50419,9 +50675,9 @@ GameObject:
   - component: {fileID: 33838783934210471}
   - component: {fileID: 23296892488291303}
   - component: {fileID: 7135013157304502324}
-  m_Layer: 0
-  m_Name: ForestGround01 1
-  m_TagString: Untagged
+  m_Layer: 10
+  m_Name: ForestGround01 0
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50438,9 +50694,9 @@ GameObject:
   - component: {fileID: 33838784065759439}
   - component: {fileID: 23296892586416783}
   - component: {fileID: 7135013157273518428}
-  m_Layer: 0
-  m_Name: ForestGround01 (2)
-  m_TagString: Untagged
+  m_Layer: 10
+  m_Name: ForestGround01 4
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50457,9 +50713,9 @@ GameObject:
   - component: {fileID: 33838784160845938}
   - component: {fileID: 23296891608162866}
   - component: {fileID: 7135013157110675937}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01 4
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50476,9 +50732,9 @@ GameObject:
   - component: {fileID: 33838784290516789}
   - component: {fileID: 23296891737431413}
   - component: {fileID: 7135013156981327526}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01 (1)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50495,9 +50751,9 @@ GameObject:
   - component: {fileID: 33838784424160348}
   - component: {fileID: 23296891867274780}
   - component: {fileID: 7135013156851779023}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01 (2)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50514,9 +50770,9 @@ GameObject:
   - component: {fileID: 33838782458243282}
   - component: {fileID: 23296891012455058}
   - component: {fileID: 7135013156632789313}
-  m_Layer: 0
-  m_Name: ForestGround01 (1)
-  m_TagString: Untagged
+  m_Layer: 10
+  m_Name: ForestGround01 2
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50533,9 +50789,9 @@ GameObject:
   - component: {fileID: 33838782485527951}
   - component: {fileID: 23296891001982927}
   - component: {fileID: 7135013156643296284}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01 (3)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50552,9 +50808,9 @@ GameObject:
   - component: {fileID: 33838782552626747}
   - component: {fileID: 23296891069097083}
   - component: {fileID: 7135013156576198568}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01 (1)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50571,9 +50827,9 @@ GameObject:
   - component: {fileID: 33838782791328756}
   - component: {fileID: 23296891308315060}
   - component: {fileID: 7135013156403841639}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01 (3)
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50590,9 +50846,9 @@ GameObject:
   - component: {fileID: 33838783315704965}
   - component: {fileID: 23296890758811333}
   - component: {fileID: 7135013155879638294}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50609,9 +50865,9 @@ GameObject:
   - component: {fileID: 33838783333709183}
   - component: {fileID: 23296890809976639}
   - component: {fileID: 7135013155761331436}
-  m_Layer: 0
-  m_Name: ForestGround01 (3)
-  m_TagString: Untagged
+  m_Layer: 10
+  m_Name: ForestGround01 6
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50628,9 +50884,9 @@ GameObject:
   - component: {fileID: 33838783401312285}
   - component: {fileID: 23296890881798749}
   - component: {fileID: 7135013155689490830}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestGround01
-  m_TagString: Untagged
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50647,9 +50903,9 @@ GameObject:
   - component: {fileID: 33838783465383023}
   - component: {fileID: 23296890945721903}
   - component: {fileID: 7135013155625618940}
-  m_Layer: 0
-  m_Name: ForestGround01
-  m_TagString: Untagged
+  m_Layer: 10
+  m_Name: ForestGround01 0
+  m_TagString: BoardTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -52897,6 +53153,7 @@ GameObject:
   - component: {fileID: 5176456354030925614}
   - component: {fileID: 5164532025808050492}
   - component: {fileID: 5156013062457429456}
+  - component: {fileID: 5178280504144408883}
   m_Layer: 0
   m_Name: ForestBridgeRegular
   m_TagString: Untagged
@@ -52904,6 +53161,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!64 &5178280504144408883
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5178280504144408882}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 27f378e54c3d81f44b2a8420b6896d59, type: 3}
 --- !u!1 &5912664669375736705
 GameObject:
   m_ObjectHideFlags: 0
