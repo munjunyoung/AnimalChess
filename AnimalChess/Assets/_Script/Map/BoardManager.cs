@@ -9,9 +9,8 @@ public class BoardManager : MonoBehaviour
     private const float     yPos                    = 0.5f;
 
     private GameObject      ingameGroundParentOb;
-    private BoardTile[,]     Groundtiles                    = new BoardTile[width, height];
-    public WaitingTile[]    waitingGroundTile              = new WaitingTile[width];  
-
+    private BoardTile[,]    Groundtiles             = new BoardTile[width, height];
+    private BoardTile       currentSelectTile       = null;
     // Start is called before the first frame update
     private void Start()
     {
@@ -19,6 +18,9 @@ public class BoardManager : MonoBehaviour
         DrawChessBoard();
     }
 
+    /// <summary>
+    /// NOTE : DrawTile
+    /// </summary>
     private void DrawChessBoard()
     {
         var grounddic = LoadDataManager.instance.groundDic;
@@ -52,27 +54,25 @@ public class BoardManager : MonoBehaviour
                     }
                 }
 
-                if(z<6)
-                Groundtiles[x, z] = tileob;
+                if (z < 6)
+                {
+                    tileob.gameObject.layer = 10;
+                    Groundtiles[x, z] = tileob;
+                }
             }
         }
     }
 
-    public void SelectBoardTile(Vector3 pos)
-    {
-        int x = (int)(pos.x * 0.5f);
-        int y = (int)(pos.y * 0.5f);
+    //public void SelectBoardTile(Vector3 point)
+    //{
+    //    if (point.x < 0 || point.x > width * 2 || point.y < 0 || point.y > height * 2)
+    //        return;
 
-        if (x < 0)
-            x = 0;
-        else if (x > width)
-            x = width;
+    //    int xindex = (int)(point.x * 0.5f);
+    //    int yindex = (int)(point.y * 0.5f);
 
-        if (y < 0)
-            y = 0;
-        else if (y > height)
-            y = height;
+        
 
 
-    }
+    //}
 }   

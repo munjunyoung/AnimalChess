@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2646803816188036932}
   - component: {fileID: 2648463130433169750}
   - component: {fileID: 2657395621016010170}
-  - component: {fileID: 3178076491601298250}
   m_Layer: 0
   m_Name: ForestBridgeRegular
   m_TagString: Untagged
@@ -78,19 +77,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &3178076491601298250
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2644126462516478296}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.0000002, y: 0.1, z: 2.0000002}
-  m_Center: {x: 0.000016778708, y: 0, z: 0}
 --- !u!1 &4998294512217998795
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,8 +88,8 @@ GameObject:
   - component: {fileID: 4996550033251445573}
   - component: {fileID: 4984529772055710437}
   - component: {fileID: 4975785756939121113}
-  - component: {fileID: 2622785119246133773}
   - component: {fileID: 3792023758590733878}
+  - component: {fileID: 1354991872762939755}
   m_Layer: 0
   m_Name: WaitingGround
   m_TagString: BoardTile
@@ -171,32 +157,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!61 &2622785119246133773
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4998294512217998795}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2.0000005, y: 1.9999998}
-  m_EdgeRadius: 0
 --- !u!114 &3792023758590733878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,3 +172,16 @@ MonoBehaviour:
   tileOb: {fileID: 0}
   pos: {x: 0, y: 0, z: 0}
   SetWaitingTile: 0
+--- !u!65 &1354991872762939755
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4998294512217998795}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.0000005, y: 2.1, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
