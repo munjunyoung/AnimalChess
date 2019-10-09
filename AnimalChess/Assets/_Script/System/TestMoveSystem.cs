@@ -5,9 +5,6 @@ using UnityEngine;
 
 public class TestMoveSystem : MonoBehaviour
 {
-    [SerializeField]
-    private  Camera cam;
-
     private bool pickUpObject_Mouse = false;
     private ChessUnit target = null;
 
@@ -16,6 +13,8 @@ public class TestMoveSystem : MonoBehaviour
 
     private readonly Vector3 NormalSize = Vector3.one;
     private readonly Vector3 PickUpSize = Vector3.one * 1.5f;
+
+    private readonly float yPosPickUP = 3f;
     
     
     private void Update()
@@ -61,11 +60,10 @@ public class TestMoveSystem : MonoBehaviour
     {
         if(pickUpObject_Mouse)
         {
-            var point = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10));
-            
-            float camXRad = Camera.main.transform.localEulerAngles.x * Mathf.Deg2Rad;
-            point = new Vector3(point.x, 5, point.z + (point.y - 5));
+            //추후에 터치로 변경 z값이 스크린의 plane 포인터
+            var point = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - yPosPickUP));
             Debug.Log(point);
+            point = new Vector3(point.x, yPosPickUP, point.z + (point.y - yPosPickUP));
             target.unitOB.transform.localPosition = point;
         }
     }
@@ -77,13 +75,22 @@ public class TestMoveSystem : MonoBehaviour
     {
         pickUpObject_Mouse = true;
         target.unitOB.transform.localScale = PickUpSize;
-       
+
     }
 
+    /// <summary>
+    /// NOTE : 오브젝트를 놓았을때 이벤트 노말사이즈 변경 및 위치 지정이 안되었을 경우 포지션 지정
+    /// </summary>
     private void PickDownObjectEvent()
     {
         target.unitOB.transform.localPosition = NormalSize;
         target.unitOB.transform.localPosition = target.prevPos;
+    }
+
+    private void CheckGroundTile(Vector3 point)
+    {
+        int xPos = (int)point.x;
+        int yPos = (int)point.y;   
     }
 }
 
@@ -96,5 +103,11 @@ public class ChessUnit
     {
         unitOB = _unitob;
         prevPos = _prevPos;
+    }
+
+    public ChessUnit()
+    {
+        unitOB = null;
+        prevPos = Vector3.zero;
     }
 }
