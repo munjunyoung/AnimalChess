@@ -2,24 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class TestMoveSystem : MonoBehaviour
 {
-    private bool pickUpObject_Mouse = false;
     private Unit target = null;
-    private Vector3 prevPos = Vector3.zero;
+    private BlockOnBoard prevBlock = null;
+    private BlockOnBoard nextBlock = null;
+    private bool pickUpObject_Mouse = false;
 
-    private Vector3 m_curPos;
-    private Vector3 m_prevPos;
+    private readonly Vector3 pickDownSize = Vector3.one;
+    private readonly Vector3 pickUpSize = Vector3.one * 1.5f;
 
-    private readonly Vector3 NormalSize = Vector3.one;
-    private readonly Vector3 PickUpSize = Vector3.one * 1.5f;
+    private readonly float yPosPickUP = 5f;
+    [SerializeField]
+    private GameObject hightlightedEffect;
 
-    private readonly float yPosPickUP = 3f;
+    private int blockMask;
 
-    int unitMask = 1 << LayerMask.NameToLayer("Unit");
-    int tileMask = 1 << LayerMask.NameToLayer("BoardTile");
-
+    private void Start()
+    {
+        blockMask = 1 << LayerMask.NameToLayer("DeploybleBlock");
+    }
 
     private void Update()
     {
@@ -32,99 +34,106 @@ public class TestMoveSystem : MonoBehaviour
     private void MouseClick()
     {
         if (Input.GetMouseButtonDown(0))
-            PointerDownObject();
+            TouchDownObject();
 
+        if (!pickUpObject_Mouse)
+            return;
         if (Input.GetMouseButton(0))
-            PointerDragObject();
-
+            TouchDragObject();
         if (Input.GetMouseButtonUp(0))
-            PointerUpObject();
+            TouchUpObject();
     }
 
     /// <summary>
     /// NOTE : Click Get Object;
     /// </summary>
     /// <returns></returns>
-    private void PointerDownObject()
+    private void TouchDownObject()
     {
         RaycastHit targetHit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(ray, out targetHit, 50, unitMask);
+        Physics.Raycast(ray, out targetHit, 50, blockMask);
         if (targetHit.collider != null)
         {
-            PickUpUnitEvent(targetHit);
+            //오브젝트를 집었을때 이벤트
+            prevBlock = targetHit.transform.GetComponent<BlockOnBoard>();
+            if (prevBlock.GetUnit() == null)
+                return;
+
+            target = prevBlock.GetUnit();
+            pickUpObject_Mouse = true;
             return;
         }
     }
 
     /// <summary>
-    /// 
+    /// NOTE : 마우스 포지션을 기준으로 Ray를 통하여 해당 block 체크
     /// </summary>
-    private void PointerDragObject()
+    private void TouchDragObject()
     {
-        if (pickUpObject_Mouse)
+        //추후에 터치로 변경 z값이 스크린의 plane 포인터
+        var point = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - yPosPickUP));
+        point = new Vector3(point.x, yPosPickUP, point.z + (point.y - yPosPickUP));
+        target.transform.localPosition = point;
+
+        RaycastHit targetHit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Physics.Raycast(ray, out targetHit, 50, blockMask);
+
+        if (targetHit.collider != null)
         {
-            //추후에 터치로 변경 z값이 스크린의 plane 포인터
-            var point = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - yPosPickUP));
-            Debug.Log(point);
-            point = new Vector3(point.x, yPosPickUP, point.z + (point.y - yPosPickUP));
-            target.transform.localPosition = point;
+            nextBlock = targetHit.transform.GetComponent<BlockOnBoard>();
+            hightlightedEffect.transform.position = new Vector3(nextBlock.transform.position.x, nextBlock.transform.position.y + 1f, nextBlock.transform.position.z);
+            hightlightedEffect.SetActive(true);
+        }
+        else
+        {
+            hightlightedEffect.transform.position = Vector3.zero;
+            hightlightedEffect.SetActive(false);
+            nextBlock = null;
+        }
 
-            RaycastHit targetHit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Physics.Raycast(ray, out targetHit, 50, tileMask);
+    }
 
-            if (targetHit.collider!=null)
+    /// <summary>
+    /// NOTE : 유닛 드랍 이벤트
+    /// </summary>
+    private void TouchUpObject()
+    {
+        target.transform.localScale = pickDownSize;
+        //NEXTBLOCK이 null일 경우 유닛은 기존자리로 돌아감
+        if (nextBlock == null)
+        {
+            prevBlock.SetUnit(target);
+        }
+        else
+        {
+            //유닛이 없을 경우 
+            if (nextBlock.GetUnit() == null)
             {
-
+                nextBlock.SetUnit(target);
+                prevBlock.SetUnit(null);
+                //보드에 올릴수 있는 유닛수가 최대넘어갈 경우 조건문 추가해야함
+            }
+            else
+            {
+                //Swap
+                //기존과 같은 block일경우 처리 
+                if (prevBlock == nextBlock)
+                {
+                    nextBlock.SetUnit(target);
+                    return;
+                }
+                var tmpUnit = nextBlock.GetUnit();
+                nextBlock.SetUnit(this.prevBlock.GetUnit());
+                this.prevBlock.SetUnit(tmpUnit);
             }
         }
-    }
 
-    private void PointerUpObject()
-    {
-        GetBackUnitEvents();
-    }
-
-    /// <summary>
-    /// NOTE : 오브젝트를 집었을때 이벤트
-    /// </summary>
-    /// <param name="_targethit"></param>
-    private void PickUpUnitEvent(RaycastHit _targethit)
-    {
-        target = _targethit.transform.GetComponent<Unit>();
-        prevPos = _targethit.transform.position;
-        pickUpObject_Mouse = true;
-        target.transform.localScale = PickUpSize;
-    }
-
-    /// <summary>
-    /// NOTE : 오브젝트를 놓았을때 이벤트 노말사이즈 변경 및 위치 지정이 안되었을 경우 포지션 지정
-    /// </summary>
-    private void GetBackUnitEvents()
-    {
-        if (pickUpObject_Mouse)
-        {
-            target.transform.localPosition = NormalSize;
-            target.transform.localPosition = prevPos;
-        }
+        prevBlock = null;
+        nextBlock = null;
         target = null;
         pickUpObject_Mouse = false;
+        hightlightedEffect.SetActive(false);
     }
-
-    private void DropUnitEvent()
-    {
-
-    }
-
-    private void CheckGroundTile(Vector3 point)
-    {
-        int xPos = (int)point.x;
-        int yPos = (int)point.y;
-    }
-}
-
-public class ChessUnit
-{
-    
 }

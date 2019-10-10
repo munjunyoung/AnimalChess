@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Ground_TYPE { ForestGround1, ForestGround2, WaitingGround };
+public enum Ground_TYPE { DesertBlock1, DesertBlock2, WaitingBlock };
 
 public class LoadDataManager : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class LoadDataManager : MonoBehaviour
 
     private readonly string groundPath = "Map/IngameGround";
 
-    public Dictionary<string, BoardTile> groundDic = new Dictionary<string, BoardTile>();
+    public Dictionary<string, BlockOnBoard> groundDic = new Dictionary<string, BlockOnBoard>();
 
 
     private void Awake()
