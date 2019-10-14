@@ -8,13 +8,11 @@ public class BlockOnBoard : MonoBehaviour
     private Vector3      pos;
     [HideInInspector]
     private Unit         unit            = null;
-    [SerializeField]
-    private GameObject   highlightedOb   = null;
 
     private float        yPosOnClick     = 0f;
     private float        yPosOriginal    = 0;
 
-    public  bool         SetWaitingBlock = false;
+    public  bool         IsWaitingBlock = false;
 
     private void Start()
     {
@@ -38,5 +36,14 @@ public class BlockOnBoard : MonoBehaviour
     public Unit GetUnit()
     {
         return unit;
+    }
+
+    /// <summary>
+    /// NOTE : 레이어 설정 변경
+    /// </summary>
+    /// <param name="_isBattle"></param>
+    public void SetLayerValue(bool _isBattle)
+    {
+        gameObject.layer = _isBattle == true ? LayerMask.NameToLayer("Default") : LayerMask.NameToLayer("DeploybleBlock");
     }
 }

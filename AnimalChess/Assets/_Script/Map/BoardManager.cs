@@ -4,30 +4,31 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public Unit testUnit;
-    public Unit testUnit2;
-
     public static BoardManager instance = null;
     //Board
     private const int        width                   = 8;
     private const int        height                  = 9;
+    private const int        battleboardHeightIndex  = 5;
     private const float      yPos                    = 0.5f;
     private const float      yWaitblockPos           = 1f;
 
-    private GameObject       ingameGroundParentOb;
+    private GameObject         ingameGroundParentOb;
     private BlockOnBoard[,]    GroundBlocks      = new BlockOnBoard[width, height];
+    private List<BlockOnBoard> waitingBlockList  = new List<BlockOnBoard>();
+    //Unit
+    public GameObject unitOBParent = null;
 
     // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
         if (instance == null)
             instance = this;
+    }
 
+    private void Start()
+    {
         ingameGroundParentOb = GameObject.Find("1PlayGround");
         DrawChessBoard();
-
-        GroundBlocks[0, 0].SetUnit(testUnit);
-        GroundBlocks[2, 2].SetUnit(testUnit2);
     }
 
     /// <summary>
@@ -35,7 +36,7 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private void DrawChessBoard()
     {
-        var grounddic = LoadDataManager.instance.groundDic;
+        var grounddic = DataBaseManager.instance.groundDic;
 
         for (int z = 0; z <= 8; z++)
         {
@@ -67,35 +68,50 @@ public class BoardManager : MonoBehaviour
 
                 if (z < 5)
                     blockob.gameObject.layer = 10;
-
+                if (z == 0)
+                {
+                    blockob.IsWaitingBlock = true;
+                    waitingBlockList.Add(blockob);
+                }
                 GroundBlocks[x, z] = blockob;
             }
         }
     }
-    
-    public void MoveUnit(BlockOnBoard _block)
+
+    /// <summary>
+    /// NOTE : 구매한 유닛 대기 블록라인에 배치 
+    /// </summary>
+    /// <param name="_unitType"></param>
+    public bool DropPurchasedUnit(Unit_Type _unitType)
     {
-        
+        foreach(var wb in waitingBlockList)
+        {
+            if(wb.GetUnit()==null)
+            {
+                wb.SetUnit(CreateUnit(DataBaseManager.instance.unitObDic[_unitType.ToString()]));
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void SetBattleBlockLayer(bool _isbattle)
+    {
+        for (int j = 1; j < battleboardHeightIndex; j++)
+        {
+            for (int i = 0; i < width; i++)
+                GroundBlocks[i, j].SetLayerValue(_isbattle);
+        }
     }
 
     /// <summary>
-    /// NOTE : 기존의 유닛이 존재하고 있을 경우 
+    /// NOTE : 유닛 구매 
     /// </summary>
-    public void SwapUnit()
+    
+    private Unit CreateUnit(Unit _unit)
     {
-
+        var unit = Instantiate(_unit, Vector3.zero, Quaternion.identity, unitOBParent.transform);
+        unit.transform.eulerAngles = new Vector3(0, 180, 0);
+        return unit;
     }
-
-    //public void SelectBoardblock(Vector3 point)
-    //{
-    //    if (point.x < 0 || point.x > width * 2 || point.y < 0 || point.y > height * 2)
-    //        return;
-
-    //    int xindex = (int)(point.x * 0.5f);
-    //    int yindex = (int)(point.y * 0.5f);
-
-
-
-
-    //}
 }   
