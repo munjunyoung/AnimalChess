@@ -24,6 +24,10 @@ public class BlockOnBoard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// NOTE : 유닛 리스트 처리 및 UNIT 리턴
+    /// </summary>
+    /// <returns></returns>
     public Unit GetUnitByTouch()
     {
         if (unit != null)
@@ -31,6 +35,14 @@ public class BlockOnBoard : MonoBehaviour
         return unit;
     }
 
+    /// <summary>
+    /// NOTE : 일반적인 GET
+    /// </summary>
+    /// <returns></returns>
+    public Unit GetUnitNormal()
+    {
+        return unit;
+    }
     /// <summary>
     /// NOTE : 레이어 설정 변경
     /// </summary>

@@ -7,12 +7,12 @@ public enum Ground_TYPE { DesertBlock1, DesertBlock2, WaitingBlock }
 ////Unit
 public enum Tribe_Type { Cat, Bear, Rabbit }
 //public enum Attribute_Type  { Fire, Water, Wind, Ground }
-//종족, 속성, 가격
+//종족, 속성, 등급, 가격
 public enum Unit_Type
 {
-    Cat_Fire_1, Cat_Water_2, Cat_Ground_3, Cat_Wind_4,
-    Bear_Water_1, Bear_Fire_2, Bear_Wind_3, Bear_Ground_4,
-    Rabbit_Ground_1, Rabbit_Water_2, Rabbit_Wind_3, Rabbit_Fire_4
+    Cat_Fire_1_1, Cat_Water_1_2, Cat_Ground_1_3, Cat_Wind_1_4,
+    Bear_Water_1_1, Bear_Fire_1_2, Bear_Wind_1_3, Bear_Ground_1_4,
+    Rabbit_Ground_1_1, Rabbit_Water_1_2, Rabbit_Wind_1_3, Rabbit_Fire_1_4
 }
 
 public class DataBaseManager : MonoBehaviour
@@ -175,23 +175,28 @@ public class DataBaseManager : MonoBehaviour
 
 public class UnitPropertyData
 {
+    public string id;
     public Unit_Type unitType;
     public int cost;
+    public int ratingValue;
     public Texture rTexture;
     public Sprite tribeSprite;
     public Sprite attributeSprite;
 
-    public UnitPropertyData(Unit_Type _id)
+    public UnitPropertyData(Unit_Type _type)
     {
-        unitType = _id;
-
-        string[] namedata = _id.ToString().Split('_');
+        unitType = _type;
+        string[] namedata = _type.ToString().Split('_');
 
         var tribe = namedata[0];
         var attribute = namedata[1];
-        cost = int.Parse(namedata[2]);
-        rTexture = DataBaseManager.instance.UnitRTDic[tribe + "_" + attribute];
+        ratingValue = int.Parse(namedata[2]);
+        cost = int.Parse(namedata[3]);
+
+        rTexture = DataBaseManager.instance.UnitRTDic[tribe + "_" + attribute +"_"+ ratingValue];
         tribeSprite = DataBaseManager.instance.TribeSpriteDic[tribe];
         attributeSprite = DataBaseManager.instance.AttributeSpriteDic[attribute];
+
+        id = attribute + tribe;
     }
 }

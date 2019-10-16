@@ -6,14 +6,17 @@ public class TouchUnitSystem : MonoBehaviour
 {
     private Unit target = null;
     private BlockOnBoard startBlock = null;
-    
+
     private BlockOnBoard nextBlock = null;
     private bool IsPickUp = false;
-    
+
     [SerializeField]
     private GameObject hightlightedEffect = null;
     private int blockMask;
-    
+
+    public bool IsPointerOnSellPanel = false;
+    [SerializeField]
+    SellPanelHandler sellPanel;
 
     private void Start()
     {
@@ -30,9 +33,6 @@ public class TouchUnitSystem : MonoBehaviour
     /// </summary>
     private void MouseClick()
     {
-        if (UIManager.instance.ShopCanvas.activeSelf)
-            return;
-
         if (Input.GetMouseButtonDown(0))
             TouchDownObject();
         if (Input.GetMouseButton(0))
@@ -47,6 +47,11 @@ public class TouchUnitSystem : MonoBehaviour
     /// <returns></returns>
     private void TouchDownObject()
     {
+        if (IsPointerOnSellPanel)
+        {
+            nextBlock = null;
+            return;
+        }
         RaycastHit targetHit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out targetHit, 50, blockMask);
@@ -60,6 +65,7 @@ public class TouchUnitSystem : MonoBehaviour
                 return;
             IsPickUp = true;
             hightlightedEffect.SetActive(true);
+            UIManager.instance.ShowUnitProfile(target.unitPdata);
             return;
         }
     }
@@ -71,18 +77,15 @@ public class TouchUnitSystem : MonoBehaviour
     {
         if (!IsPickUp)
             return;
-        //추후에 터치로 변경 z값이 스크린의 plane 포인터
-        //var point = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - yPosPickUP));
-        //point = new Vector3(point.x - point.z, yPosPickUP, point.z + (point.y - yPosPickUP));
-        //target.transform.localPosition = point;
+        if (sellPanel.IsPointerOnSellPanel)
+        {
+            nextBlock = null;
+            return;
+        }
 
         RaycastHit targetHit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out targetHit, 50, blockMask);
-
-        RaycastHit texttarget;
-        Ray testray = Camera.main.ViewportPointToRay(Input.mousePosition);
-        
 
         if (targetHit.collider != null)
         {
@@ -105,10 +108,13 @@ public class TouchUnitSystem : MonoBehaviour
         hightlightedEffect.SetActive(false);
         if (!IsPickUp)
             return;
+           
         //NEXTBLOCK이 null일 경우 유닛은 기존자리로 돌아감
         if (nextBlock == null)
         {
             startBlock.SetUnitByTouch(target);
+            if (sellPanel.IsPointerOnSellPanel)
+                BoardManager.instance.SellUnit(startBlock);
         }
         else
         {
@@ -134,11 +140,33 @@ public class TouchUnitSystem : MonoBehaviour
                 }
             }
         }
+        SetDataPickDown();
+    }
 
+    /// <summary>
+    /// NOTE : 전투가 시작될때 드래그중인 배틀보드 위의 유닛을 다시 제자리로 되돌림
+    /// </summary>
+    public void ReturnPickState()
+    {
+        //픽업 상태가 아니고, block 이 waiting block 이면 리턴
+        if (!IsPickUp || startBlock.IsWaitingBlock)
+            return;
+        startBlock.SetUnitByTouch(target);
+        SetDataPickDown();
+    }
+    
+    public void SetDataPickDown()
+    {
+        UIManager.instance.HideUnitProfile();
         startBlock = null;
         nextBlock = null;
         target = null;
         IsPickUp = false;
         hightlightedEffect.SetActive(false);
+    }
+    
+    public Unit getTargetUnit()
+    {
+        return target;
     }
 }

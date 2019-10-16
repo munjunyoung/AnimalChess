@@ -7,9 +7,10 @@ public class IngameManager : MonoBehaviour
 {
     public static IngameManager instance = null;
     public PlayerData pData;
+    
     private TouchUnitSystem unitTouchSystem;
 
-    private readonly int waitingTime = 20;
+    private readonly int waitingTime = 5;
     private readonly int goldwhenRoundFinish = 1;
     private readonly int expWhenRoundFinish = 1;
 
@@ -43,6 +44,8 @@ public class IngameManager : MonoBehaviour
     {
         if (instance == null)
             instance = this;
+
+        unitTouchSystem = GetComponent<TouchUnitSystem>();
         //대기장소에선 이동가능 보드에 올릴수 없음
     }
 
@@ -169,28 +172,30 @@ public class IngameManager : MonoBehaviour
     IEnumerator WaitCounter(int _count)
     {
         int tmpcounter = _count;
-        while (tmpcounter>=0)
+        
+        UIManager.instance.SetWaitingCountText(tmpcounter);
+        while (tmpcounter>0)
         {
-            yield return new WaitForSecondsRealtime(1);
             tmpcounter--;
-            tmpcounter = tmpcounter < 0 ? 0 : tmpcounter;
-            UIManager.instance.SetCountText(tmpcounter);
-
-            if (tmpcounter <= 0)
-                StartBattleState();
+            UIManager.instance.SetWaitingCountText(tmpcounter);
+            yield return new WaitForSecondsRealtime(1);
         }
+        StartBattleState();
     }
 
+    /// <summary>
+    /// NOTE : 전투 상태 시작 ( UI 변경 및 BLOCK LAYER처리는 iSBATTLE PROPERT 내부에서 처리 )
+    /// </summary>
     private void StartBattleState()
     {
         IsBattleState = true;
         //전투시작
-        //returnUnitOnwaitingBoard실행
-        //실행하고 어느정도 카운트 후에 전투 시작
-        //유닛, 적 ai 실행
-        //유닛 구매는 가능하지만 이동 배치는 불가 처리
-        //
+        //배틀보드에 있는 유닛을 드래그중인경우 초기 자리로 되돌리고 픽업 상태를 변경
+        unitTouchSystem.ReturnPickState();
+        //레벨보다 많은 숫자의 유닛이 올라갈경우 유닛처리
         BoardManager.instance.ReturnUnitOnWaitingBoard(pData.Level);
+
+        //유닛, 적 ai 실행 (1초~2초정도의 텀을 주도록 실행하도록)
         StartCoroutine(testBattleFinsih());
     }
    
@@ -206,8 +211,7 @@ public class IngameManager : MonoBehaviour
         }
     }
     
-    //유닛들이 죽을때마다, 적이 죽을때마다 함수
-
+    //유닛들이 죽을때마다, 적이 죽을때마다 실행할 함수 필요
     #endregion
 }
 

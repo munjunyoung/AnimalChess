@@ -20,6 +20,7 @@ public class BoardManager : MonoBehaviour
 
     private List<BlockOnBoard> BattleBlockOnUnitList = new List<BlockOnBoard>();
     private List<BlockOnBoard> waitBlockOnUnitList = new List<BlockOnBoard>();
+    private List<Unit> currentUnitList = new List<Unit>();
 
     //public List<Unit> unitListOnBattleBoard = new List<Unit>();
     //public List<Unit> waitingBoardUnitList = new List<Unit>();
@@ -105,6 +106,7 @@ public class BoardManager : MonoBehaviour
             BattleBlockOnUnitList.Add(_block);
             IngameManager.instance.pData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
         }
+        currentUnitList.Add(_block.GetUnitNormal());
         //unitListOnBattleBoard.Add(_unit);
         //UIManager.instance.SetUnitNumberText(unitListOnBattleBoard.Count, IngameManager.instance.pData.Level);
     }
@@ -124,10 +126,13 @@ public class BoardManager : MonoBehaviour
             BattleBlockOnUnitList.Remove(_block);
             IngameManager.instance.pData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
         }
+        currentUnitList.Remove(_block.GetUnitNormal());
         //unitListOnBattleBoard.Remove(_unit);
         //UIManager.instance.SetUnitNumberText(unitListOnBattleBoard.Count, IngameManager.instance.pData.Level);
     }
     #endregion
+
+    #region  Unit
 
     /// <summary>
     /// NOTE : Round
@@ -137,7 +142,6 @@ public class BoardManager : MonoBehaviour
         //watingblock 리스트를 체크하여 넘어간 숫자만큼 리스트 0번부터 이동
         if (BattleBlockOnUnitList.Count <= _level)
             return;
-
 
         foreach (var wb in waitingBlockList)
         {
@@ -174,8 +178,9 @@ public class BoardManager : MonoBehaviour
         {
             if (wb.GetUnitByTouch() == null)
             {
-                wb.SetUnitByTouch(CreateUnit(DataBaseManager.instance.unitObDic[_unitpdata.unitType.ToString()], _unitpdata));
+                wb.SetUnitByTouch(CreateUnit(_unitpdata));
                 IngameManager.instance.pData.Gold -= _unitpdata.cost;
+
                 return true;
             }
         }
@@ -191,7 +196,8 @@ public class BoardManager : MonoBehaviour
         var target = _block.GetUnitByTouch();
         target.gameObject.SetActive(false);
         IngameManager.instance.pData.Gold += target.unitPdata.cost;
-
+        RemoveUnit(_block);
+        _block.SetUnitByTouch(null);
         //판매 애니매이션 사운드
     }
 
@@ -211,12 +217,45 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// NOTE : 유닛 구매 
     /// </summary>
-    private Unit CreateUnit(Unit _unit, UnitPropertyData _unitPdata)
+    private Unit CreateUnit(UnitPropertyData _unitPdata)
     {
-        var unit = Instantiate(_unit, Vector3.zero, Quaternion.identity, unitOBParent.transform);
+        var unit = Instantiate(DataBaseManager.instance.unitObDic[_unitPdata.unitType.ToString()], Vector3.zero, Quaternion.identity, unitOBParent.transform);
         unit.GetComponent<Unit>().unitPdata = _unitPdata;
         unit.transform.eulerAngles = new Vector3(0, 180, 0);
         return unit;
     }
+
+    /// <summary>
+    /// NOTE : 유닛 합성
+    /// </summary>
+    /// <param name="_unit"></param>
+    private void ComposeUnit(Unit _unit)
+    {
+        List<Unit> checkUnit = new List<Unit>();
+        foreach(var unit in currentUnitList)
+        { 
+            if(unit.unitPdata.unitType.Equals(_unit.unitPdata.unitType))
+                checkUnit.Add(unit);
+        }
+
+        if(checkUnit.Count>=3)
+        {
+            //합성 실행
+
+        }
+        
+    }
+    /// <summary>
+    /// NOTE : 해당 오브젝트 유닛 삭제
+    /// </summary>
+    /// <param name="_block"></param>
+    private void RemoveUnit(BlockOnBoard _block)
+    {
+        var target = _block.GetUnitByTouch();
+        target.gameObject.SetActive(false);
+    }
+
+
+    #endregion
 }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.EventSystems;
 public class UnitProductPanel : MonoBehaviour
 {
     private UnitPropertyData unitdata;
@@ -35,7 +35,7 @@ public class UnitProductPanel : MonoBehaviour
         unitdata = GetRandomUnitData(_currentlevel);
 
         unitRI.texture = unitdata.rTexture;
-        nameText.text = unitdata.unitType.ToString();
+        nameText.text = unitdata.id;
         tribeImage.sprite = unitdata.tribeSprite;
         attributeImage.sprite = unitdata.attributeSprite;
         goldText.text = unitdata.cost.ToString();
@@ -43,13 +43,7 @@ public class UnitProductPanel : MonoBehaviour
         if(!gameObject.activeSelf)
             gameObject.SetActive(true);
     }
-
-   
-    public UnitPropertyData getUnit(UnitPropertyData d)
-    {
-        return unitdata;
-    }
-
+    
     /// <summary>
     /// 현재 골드에 따른 상태 설정
     /// </summary>
@@ -60,6 +54,7 @@ public class UnitProductPanel : MonoBehaviour
             return;
         backGroundImage.color = _currentgold >= unitdata.cost ? originalColor : changeColor;
     }
+
     /// <summary>
     /// NOTE : 전시 될 유닛 랜덤 선택 
     /// </summary>

@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance = null;
     
-    public GameObject ShopCanvas;
     //Display Panel
     [SerializeField]
     private List<UnitProductPanel> unitPanelList = new List<UnitProductPanel>();
@@ -19,7 +19,35 @@ public class UIManager : MonoBehaviour
     private Color impossibleColor  = new Color(1,0,0,0.5f);
     private Color waitStateColor   = new Color(0.6f, 0.9f, 0.6f, 1f);
     private Color battleStateColor = new Color(0.8f, 0, 0, 1);
+
+    [Header("Shop")]
+    public RectTransform ShopPanel;
+    private readonly Vector2 ShopHidePos = new Vector2(0, 700);
+    private readonly Vector2 ShopShowPos = new Vector2(0, 30);
+    private Vector2 ShopTargetPos = Vector2.zero;
+    private Vector2 currentShopPos = Vector2.zero;
+    private bool isRunningShopCoroutine = false;
+    private bool isViewShop = false;
+
+    [Header("ProfilePanel")]
+    //UnitProfilePanel
+    [SerializeField]
+    private RectTransform profilePanel;
+    [SerializeField]
+    private RawImage unitRI;
+    [SerializeField]
+    private Text     unitID;
+    [SerializeField]
+    private Image tribeImage, attributeImage, item1, item2, itme3;
+    [SerializeField]
+    private GameObject[] ratingImages;
+    private readonly Vector2 profileHidePos = new Vector2(250, -5);
+    private readonly Vector2 profileShowPos = new Vector2(-10, -5);
+    private Vector2 profileTargetPos = Vector2.zero;
+    private Vector2 currentProfilePos = Vector2.zero;
+    private bool isRunningProfileCoroutine = false;
     
+
     private void Awake()
     {
         if (instance == null)
@@ -48,7 +76,7 @@ public class UIManager : MonoBehaviour
         unitNumberText.text = _unitnumber.ToString();
     }
 
-    public void SetCountText(int _count)
+    public void SetWaitingCountText(int _count)
     {
         if (_count == 0)
         {
@@ -75,18 +103,81 @@ public class UIManager : MonoBehaviour
     {
         goldText.text = _gold.ToString().ToString();
     }
-
     #endregion
+
+    #region  Profile
+    public void ShowUnitProfile(UnitPropertyData _pdata)
+    {
+        unitRI.texture = _pdata.rTexture;
+        unitID.text = _pdata.id;
+        tribeImage.sprite = _pdata.tribeSprite;
+        attributeImage.sprite = _pdata.attributeSprite;
+        profileTargetPos = profileShowPos;
+        currentProfilePos = profilePanel.anchoredPosition;
+        SetRatingImage(_pdata.ratingValue);
+        if (!isRunningProfileCoroutine)
+            StartCoroutine(SetProfilePos());
+    }
+
+    public void HideUnitProfile()
+    {
+        profileTargetPos = profileHidePos;
+        currentProfilePos = profilePanel.anchoredPosition;
+        if (!isRunningProfileCoroutine)
+            StartCoroutine(SetProfilePos());
+    }
+
+    IEnumerator SetProfilePos()
+    {
+        float count = 0;
+        isRunningProfileCoroutine = true;
+        while(!profilePanel.anchoredPosition.Equals(profileTargetPos))
+        {
+            count += Time.fixedDeltaTime * 5;
+            profilePanel.anchoredPosition = Vector2.Lerp(currentProfilePos,profileTargetPos,count);
+            yield return new WaitForFixedUpdate();
+        }
+        isRunningProfileCoroutine = false;
+    }
+
+    private void SetRatingImage(int _ratingvalue)
+    {
+        for(int i = 0; i<3; i++)
+        {
+            if (i < _ratingvalue)
+            {
+                ratingImages[i].SetActive(true);
+                continue;
+            }
+            ratingImages[i].SetActive(false);
+        }
+    }
+    #endregion
+
     #region SHOP
     /// <summary>
     /// NOTE : UI SHOP 버튼 함수 , 패널 ON/OFF
     /// </summary>
     public void ShopButtonClick()
     {
-        if (!ShopCanvas.activeSelf)
-            ShopCanvas.SetActive(true);
-        else
-            ShopCanvas.SetActive(false);
+        isViewShop = isViewShop ? false : true;
+        ShopTargetPos = isViewShop ? ShopShowPos : ShopHidePos;
+        currentShopPos = ShopPanel.anchoredPosition;
+        if(!isRunningShopCoroutine)
+            StartCoroutine(SetShopPanelPos());
+    }
+
+    IEnumerator SetShopPanelPos()
+    {
+        float count = 0;
+        isRunningShopCoroutine = true;
+        while(!ShopPanel.anchoredPosition.Equals(ShopTargetPos))
+        {
+            count += Time.fixedDeltaTime * 5f;
+            ShopPanel.anchoredPosition = Vector2.Lerp(currentShopPos, ShopTargetPos, count);
+            yield return new WaitForFixedUpdate();
+        }
+        isRunningShopCoroutine = false;
     }
    
     /// <summary>
@@ -131,7 +222,7 @@ public class UIManager : MonoBehaviour
         foreach (var upanel in unitPanelList)
             upanel.SetBackGroundByGold(gold);
 
-        BuyExpButtonImage.color = gold >= 4 ? Color.white : impossibleColor;
+        BuyExpButtonImage.color = gold >= 5 ? Color.white : impossibleColor;
         reRollButtonImage.color = gold >= 2 ? Color.white : impossibleColor;
     }
     
