@@ -43,9 +43,9 @@ public class UIManager : MonoBehaviour
         levelText.text = _level.ToString();
     }
 
-    public void SetUnitNumberText(int _unitnumber, int _level)
+    public void SetUnitNumberText(int _unitnumber)
     {
-        unitNumberText.text = _unitnumber + "/" + _level;
+        unitNumberText.text = _unitnumber.ToString();
     }
 
     public void SetCountText(int _count)

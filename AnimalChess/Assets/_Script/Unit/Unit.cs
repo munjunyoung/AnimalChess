@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    public UnitPropertyData unitPdata;
+
     private BlockOnBoard currentBlock;
     //private ownBlock =
-    public void SetcurrentBlock(BlockOnBoard _currentBlock) { currentBlock = _currentBlock; }
+    public void SetCurrentBlock(BlockOnBoard _currentBlock) { currentBlock = _currentBlock; }
+    public BlockOnBoard GetCurrentBlock() { return currentBlock; }
 }

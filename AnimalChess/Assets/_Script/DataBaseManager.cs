@@ -20,7 +20,7 @@ public class DataBaseManager : MonoBehaviour
     public static DataBaseManager instance = null;
     //싱글톤
     //public static LoadDataManager instance = null;
-    
+
     private readonly string groundPrefabPath = "Map/IngameGround";
     private readonly string unitRTPath = "UI/UnitRendererTexture";
     private readonly string tribeSpritePath = "UI/Tribe";
@@ -36,15 +36,15 @@ public class DataBaseManager : MonoBehaviour
     public Dictionary<string, Sprite> AttributeSpriteDic = new Dictionary<string, Sprite>();
 
     //ShopUnit 
-    public Dictionary<Unit_Type, UnitPropertyData> disPlayUnitDataDic = new Dictionary<Unit_Type,UnitPropertyData>();
+    public Dictionary<Unit_Type, UnitPropertyData> disPlayUnitDataDic = new Dictionary<Unit_Type, UnitPropertyData>();
     public Dictionary<int, List<Unit_Type>> unitTypeListbyGold = new Dictionary<int, List<Unit_Type>>();
     public List<int[]> ShopUnitPerList = new List<int[]>();
-   
+
     //Unit Ob
     public Dictionary<string, Unit> unitObDic = new Dictionary<string, Unit>();
 
     //pData
-    public readonly int[] expRequireValueList = { 1, 1, 5, 10, 20, 40 }; 
+    public readonly int[] expRequireValueList = {1, 1, 1, 1, 5, 10, 20, 40 };
 
     private void Awake()
     {
@@ -64,7 +64,7 @@ public class DataBaseManager : MonoBehaviour
         SetLoadDataOnDictionary(unitObDic, unitObPath + Tribe_Type.Rabbit.ToString());
 
     }
-    
+
     /// <summary>
     /// NOTE : 해당 폴더와 타입에 따른 리소스 로드 및 dictionary 초기화 
     /// </summary>
@@ -112,7 +112,7 @@ public class DataBaseManager : MonoBehaviour
 
         for (int i = 0; i < unitcount; i++)
             disPlayUnitDataDic.Add((Unit_Type)i, new UnitPropertyData((Unit_Type)i));
-        
+
         List<Unit_Type> g1 = new List<Unit_Type>();
         List<Unit_Type> g2 = new List<Unit_Type>();
         List<Unit_Type> g3 = new List<Unit_Type>();
@@ -153,14 +153,15 @@ public class DataBaseManager : MonoBehaviour
     /// </summary>
     private void SetRandomPercentage()
     {
-         int[] level1 = { 100, 0, 0, 0 };
-         int[] level2 = { 70, 30, 0, 0 };
-         int[] level3 = { 70, 30, 0, 0 };
-         int[] level4 = { 50, 30, 20, 0 };
-         int[] level5 = { 30, 35, 30, 5 };
-         int[] level6 = { 20, 45, 35, 10 };
-         int[] level7 = { 15, 35, 45, 15 };
+        int[] level1 = { 100, 0, 0, 0 };
+        int[] level2 = { 70, 30, 0, 0 };
+        int[] level3 = { 70, 30, 0, 0 };
+        int[] level4 = { 50, 30, 20, 0 };
+        int[] level5 = { 30, 35, 30, 5 };
+        int[] level6 = { 20, 45, 35, 10 };
+        int[] level7 = { 15, 35, 45, 15 };
 
+        ShopUnitPerList.Add(level1);
         ShopUnitPerList.Add(level1);
         ShopUnitPerList.Add(level2);
         ShopUnitPerList.Add(level3);
@@ -169,12 +170,12 @@ public class DataBaseManager : MonoBehaviour
         ShopUnitPerList.Add(level6);
         ShopUnitPerList.Add(level7);
     }
-    
+
 }
 
 public class UnitPropertyData
 {
-    public Unit_Type ID;
+    public Unit_Type unitType;
     public int cost;
     public Texture rTexture;
     public Sprite tribeSprite;
@@ -182,7 +183,7 @@ public class UnitPropertyData
 
     public UnitPropertyData(Unit_Type _id)
     {
-        ID = _id;
+        unitType = _id;
 
         string[] namedata = _id.ToString().Split('_');
 

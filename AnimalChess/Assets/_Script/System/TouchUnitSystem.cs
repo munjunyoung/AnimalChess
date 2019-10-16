@@ -8,7 +8,7 @@ public class TouchUnitSystem : MonoBehaviour
     private BlockOnBoard startBlock = null;
     
     private BlockOnBoard nextBlock = null;
-    private bool pickUpObject_Mouse = false;
+    private bool IsPickUp = false;
     
     [SerializeField]
     private GameObject hightlightedEffect = null;
@@ -35,7 +35,6 @@ public class TouchUnitSystem : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
             TouchDownObject();
-
         if (Input.GetMouseButton(0))
             TouchDragObject();
         if (Input.GetMouseButtonUp(0))
@@ -55,11 +54,12 @@ public class TouchUnitSystem : MonoBehaviour
         {
             //오브젝트를 집었을때 이벤트
             startBlock = targetHit.transform.GetComponent<BlockOnBoard>();
-            if (startBlock.GetUnit() == null)
+            target = startBlock.GetUnitByTouch();
+            //Target이 존재하지 않으면 return
+            if (target == null)
                 return;
-
-            target = startBlock.GetUnit();
-            pickUpObject_Mouse = true;
+            IsPickUp = true;
+            hightlightedEffect.SetActive(true);
             return;
         }
     }
@@ -69,7 +69,7 @@ public class TouchUnitSystem : MonoBehaviour
     /// </summary>
     private void TouchDragObject()
     {
-        if (!pickUpObject_Mouse)
+        if (!IsPickUp)
             return;
         //추후에 터치로 변경 z값이 스크린의 plane 포인터
         //var point = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - yPosPickUP));
@@ -80,21 +80,21 @@ public class TouchUnitSystem : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out targetHit, 50, blockMask);
 
+        RaycastHit texttarget;
+        Ray testray = Camera.main.ViewportPointToRay(Input.mousePosition);
+        
+
         if (targetHit.collider != null)
         {
             nextBlock = targetHit.transform.GetComponent<BlockOnBoard>();
-            hightlightedEffect.transform.position = nextBlock.transform.position + Vector3.up;
-            hightlightedEffect.SetActive(true);
             target.transform.position = nextBlock.transform.position + (Vector3.up * 3);
         }
         else
         {
-            hightlightedEffect.transform.position = Vector3.zero;
-            hightlightedEffect.SetActive(false);
             nextBlock = null;
             target.transform.position = startBlock.transform.position + (Vector3.up * 3);
         }
-
+        hightlightedEffect.transform.position = target.transform.position + (Vector3.down * 2);
     }
 
     /// <summary>
@@ -103,42 +103,42 @@ public class TouchUnitSystem : MonoBehaviour
     private void TouchUpObject()
     {
         hightlightedEffect.SetActive(false);
-        if (!pickUpObject_Mouse)
+        if (!IsPickUp)
             return;
         //NEXTBLOCK이 null일 경우 유닛은 기존자리로 돌아감
         if (nextBlock == null)
         {
-            startBlock.SetUnit(target);
+            startBlock.SetUnitByTouch(target);
         }
         else
         {
             hightlightedEffect.SetActive(false);
             //유닛이 없을 경우 
-            if (nextBlock.GetUnit() == null)
+            if (nextBlock.GetUnitByTouch() == null)
             {
-                nextBlock.SetUnit(target);
-                startBlock.SetUnit(null);
+                startBlock.SetUnitByTouch(null);
+                nextBlock.SetUnitByTouch(target);
                 //보드에 올릴수 있는 유닛수가 최대넘어갈 경우 조건문 추가해야함
             }
             else
             {
-                //Swap
                 //기존과 같은 block일경우 처리 
                 if (startBlock == nextBlock)
+                    nextBlock.SetUnitByTouch(target);
+                //다를 경우 스왑
+                else
                 {
-                    nextBlock.SetUnit(target);
-                    return;
+                    var tmpUnit = nextBlock.GetUnitByTouch();
+                    nextBlock.SetUnitByTouch(this.startBlock.GetUnitByTouch());
+                    this.startBlock.SetUnitByTouch(tmpUnit);
                 }
-                var tmpUnit = nextBlock.GetUnit();
-                nextBlock.SetUnit(this.startBlock.GetUnit());
-                this.startBlock.SetUnit(tmpUnit);
             }
         }
 
         startBlock = null;
         nextBlock = null;
         target = null;
-        pickUpObject_Mouse = false;
+        IsPickUp = false;
         hightlightedEffect.SetActive(false);
     }
 }

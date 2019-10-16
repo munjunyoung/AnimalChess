@@ -35,13 +35,13 @@ public class UnitProductPanel : MonoBehaviour
         unitdata = GetRandomUnitData(_currentlevel);
 
         unitRI.texture = unitdata.rTexture;
-        nameText.text = unitdata.ID.ToString();
+        nameText.text = unitdata.unitType.ToString();
         tribeImage.sprite = unitdata.tribeSprite;
         attributeImage.sprite = unitdata.attributeSprite;
         goldText.text = unitdata.cost.ToString();
 
         if(!gameObject.activeSelf)
-            gameObject.SetActive(false);
+            gameObject.SetActive(true);
     }
 
    
@@ -83,7 +83,7 @@ public class UnitProductPanel : MonoBehaviour
     {
         List<int[]> perList = DataBaseManager.instance.ShopUnitPerList;
 
-        var _listindex = _currentlevel - 1;
+        var _listindex = _currentlevel;
         int unitcost = 1;
         var randomvalue = Random.Range(0, 100);
         //설정한 값에 따라 코스트 비용 변경
@@ -104,19 +104,9 @@ public class UnitProductPanel : MonoBehaviour
     /// </summary>
     public void DisplayUnitPanelClick()
     {
-        var gold = IngameManager.instance.pData.Gold;
-
-        //골드가 없을 경우 return
-        if (gold < unitdata.cost)
-            return;
-
         //구매가 되었을 경우 
-        if (BoardManager.instance.DropPurchasedUnit(unitdata.ID))
-        {
-            IngameManager.instance.pData.Gold -= unitdata.cost;
+        if (BoardManager.instance.BuyUnit(unitdata))       
             gameObject.SetActive(false);
-        }
-        
         //UnitPanel Active false
     }
 }
