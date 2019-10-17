@@ -34,7 +34,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private RectTransform profilePanel;
     [SerializeField]
-    private RawImage unitRI;
+    private Transform rtCam;
     [SerializeField]
     private Text     unitID;
     [SerializeField]
@@ -108,8 +108,8 @@ public class UIManager : MonoBehaviour
     #region  Profile
     public void ShowUnitProfile(UnitPropertyData _pdata)
     {
-        unitRI.texture = _pdata.rTexture;
-        unitID.text = _pdata.id;
+        rtCam.localPosition = _pdata.camPos;
+        unitID.text = _pdata.name;
         tribeImage.sprite = _pdata.tribeSprite;
         attributeImage.sprite = _pdata.attributeSprite;
         profileTargetPos = profileShowPos;

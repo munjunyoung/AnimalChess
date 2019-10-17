@@ -9,7 +9,7 @@ public class UnitProductPanel : MonoBehaviour
     [SerializeField]
     private GameObject unitInfoParent;
     [SerializeField]
-    private RawImage unitRI;
+    private Transform rtCam;
     [SerializeField]
     private Text     nameText;
     [SerializeField]
@@ -34,8 +34,8 @@ public class UnitProductPanel : MonoBehaviour
     {
         unitdata = GetRandomUnitData(_currentlevel);
 
-        unitRI.texture = unitdata.rTexture;
-        nameText.text = unitdata.id;
+        rtCam.localPosition = unitdata.camPos;
+        nameText.text = unitdata.name;
         tribeImage.sprite = unitdata.tribeSprite;
         attributeImage.sprite = unitdata.attributeSprite;
         goldText.text = unitdata.cost.ToString();
@@ -62,10 +62,9 @@ public class UnitProductPanel : MonoBehaviour
     /// <returns></returns>
     private UnitPropertyData GetRandomUnitData(int _currentlevel)
     {
-        List<Unit_Type> unitlist = DataBaseManager.instance.unitTypeListbyGold[GetRandomCostValue(_currentlevel)];
-
-        Unit_Type tmptype = unitlist[Random.Range(0, unitlist.Count)];
-        UnitPropertyData selectedUnit = DataBaseManager.instance.disPlayUnitDataDic[tmptype];
+        List<UnitPropertyData> unitlist = DataBaseManager.instance.unitTypeListbyGold[GetRandomCostValue(_currentlevel)];
+        
+        UnitPropertyData selectedUnit = unitlist[Random.Range(0, unitlist.Count)];
         return selectedUnit;
     }
 

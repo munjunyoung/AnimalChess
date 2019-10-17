@@ -59,7 +59,7 @@ public class TouchUnitSystem : MonoBehaviour
         {
             //오브젝트를 집었을때 이벤트
             startBlock = targetHit.transform.GetComponent<BlockOnBoard>();
-            target = startBlock.GetUnitByTouch();
+            target = startBlock.GetUnitRemoveList();
             //Target이 존재하지 않으면 return
             if (target == null)
                 return;
@@ -112,7 +112,7 @@ public class TouchUnitSystem : MonoBehaviour
         //NEXTBLOCK이 null일 경우 유닛은 기존자리로 돌아감
         if (nextBlock == null)
         {
-            startBlock.SetUnitByTouch(target);
+            startBlock.SetUnitaddList(target);
             if (sellPanel.IsPointerOnSellPanel)
                 BoardManager.instance.SellUnit(startBlock);
         }
@@ -120,23 +120,23 @@ public class TouchUnitSystem : MonoBehaviour
         {
             hightlightedEffect.SetActive(false);
             //유닛이 없을 경우 
-            if (nextBlock.GetUnitByTouch() == null)
+            if (nextBlock.GetUnitRemoveList() == null)
             {
-                startBlock.SetUnitByTouch(null);
-                nextBlock.SetUnitByTouch(target);
+                startBlock.SetUnitaddList(null);
+                nextBlock.SetUnitaddList(target);
                 //보드에 올릴수 있는 유닛수가 최대넘어갈 경우 조건문 추가해야함
             }
             else
             {
                 //기존과 같은 block일경우 처리 
                 if (startBlock == nextBlock)
-                    nextBlock.SetUnitByTouch(target);
+                    nextBlock.SetUnitaddList(target);
                 //다를 경우 스왑
                 else
                 {
-                    var tmpUnit = nextBlock.GetUnitByTouch();
-                    nextBlock.SetUnitByTouch(this.startBlock.GetUnitByTouch());
-                    this.startBlock.SetUnitByTouch(tmpUnit);
+                    var tmpUnit = nextBlock.GetUnitRemoveList();
+                    nextBlock.SetUnitaddList(this.startBlock.GetUnitRemoveList());
+                    this.startBlock.SetUnitaddList(tmpUnit);
                 }
             }
         }
@@ -151,7 +151,7 @@ public class TouchUnitSystem : MonoBehaviour
         //픽업 상태가 아니고, block 이 waiting block 이면 리턴
         if (!IsPickUp || startBlock.IsWaitingBlock)
             return;
-        startBlock.SetUnitByTouch(target);
+        startBlock.SetUnitaddList(target);
         SetDataPickDown();
     }
     

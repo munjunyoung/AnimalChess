@@ -12,7 +12,7 @@ public class BlockOnBoard : MonoBehaviour
     /// NOTE : 유닛이 존재하지 않을 경우 선택된 유닛 설정
     /// </summary>
     /// <param name="_unit"></param>
-    public void SetUnitByTouch(Unit _unit)
+    public void SetUnitaddList(Unit _unit)
     {
         unit = _unit;
 
@@ -28,13 +28,14 @@ public class BlockOnBoard : MonoBehaviour
     /// NOTE : 유닛 리스트 처리 및 UNIT 리턴
     /// </summary>
     /// <returns></returns>
-    public Unit GetUnitByTouch()
+    public Unit GetUnitRemoveList()
     {
         if (unit != null)
             BoardManager.instance.RemoveBlockOnList(this);
+
         return unit;
     }
-
+    
     /// <summary>
     /// NOTE : 일반적인 GET
     /// </summary>
@@ -51,4 +52,8 @@ public class BlockOnBoard : MonoBehaviour
     {
         gameObject.layer = _isBattle == true ? LayerMask.NameToLayer("Default") : LayerMask.NameToLayer("DeploybleBlock");
     }
+
+    //추가 이펙트 합성시 합성 이펙트
+    //판매시 판매 이펙트
+    //생성시 생성 이펙트?
 }

@@ -10,7 +10,7 @@ public class IngameManager : MonoBehaviour
     
     private TouchUnitSystem unitTouchSystem;
 
-    private readonly int waitingTime = 5;
+    private readonly int waitingTime = 100;
     private readonly int goldwhenRoundFinish = 1;
     private readonly int expWhenRoundFinish = 1;
 
@@ -288,9 +288,8 @@ public class PlayerData
     {
         Level = 0;
         ExpValue = 0;
-        Gold = 20;
+        Gold = 100;
         HpValue = 100;
         CurrentFieldUnitNumber = 0;
-    
     }
 }
