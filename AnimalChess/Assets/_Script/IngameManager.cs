@@ -96,7 +96,7 @@ public class IngameManager : MonoBehaviour
         //레벨 적용후 샵 데이터 초기화(리롤)
         UIManager.instance.SetShopPanelCharacter(pData.Level, pData.Gold);
         //대기시간 카운팅
-        StartCoroutine(WaitCounter(_count));
+        StartCoroutine(WaitCounterProcess(_count));
         //유닛 이동 상태 가능
     }
 
@@ -169,7 +169,7 @@ public class IngameManager : MonoBehaviour
     /// </summary>
     /// <param name="_count"></param>
     /// <returns></returns>
-    IEnumerator WaitCounter(int _count)
+    IEnumerator WaitCounterProcess(int _count)
     {
         int tmpcounter = _count;
         
@@ -255,6 +255,8 @@ public class PlayerData
                 _expValue = _expValue - DataBaseManager.instance.expRequireValueList[Level];
                 Level++;
             }
+            if (Level >= 7)
+                _expValue = 0;
             UIManager.instance.SetExpText(_expValue, DataBaseManager.instance.expRequireValueList[Level]);
         }
     }

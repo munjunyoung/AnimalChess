@@ -3618,7 +3618,7 @@ GameObject:
   - component: {fileID: 7495652174525761312}
   - component: {fileID: 244301360924483209}
   m_Layer: 0
-  m_Name: Bear_Ground_1_4
+  m_Name: Bear_Ground_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3653,7 +3653,7 @@ Animator:
   m_GameObject: {fileID: 5754732845399311946}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c3d861774f7c51047a8eee3ef22edfeb, type: 3}
-  m_Controller: {fileID: 9100000, guid: 02d5ec93278ea5c4cae238841be11363, type: 2}
+  m_Controller: {fileID: 9100000, guid: 4546b96580b56fa4bbe9bac9bef07e93, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1

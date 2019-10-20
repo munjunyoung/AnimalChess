@@ -1514,7 +1514,7 @@ GameObject:
   - component: {fileID: 6331427206787372259}
   - component: {fileID: 6517187912639778480}
   m_Layer: 0
-  m_Name: Rabbit_Wind_1_3
+  m_Name: Rabbit_Wind_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1547,7 +1547,7 @@ Animator:
   m_GameObject: {fileID: 5160067359931206968}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 49f10d89ddfdd594f9ed88fa79351b6c, type: 3}
-  m_Controller: {fileID: 9100000, guid: 02d5ec93278ea5c4cae238841be11363, type: 2}
+  m_Controller: {fileID: 9100000, guid: 161bfbbcbe959fa4c87ad6a5fafaf441, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1

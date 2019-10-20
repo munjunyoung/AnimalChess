@@ -11,13 +11,13 @@ public class UnitProductPanel : MonoBehaviour
     [SerializeField]
     private Transform rtCam;
     [SerializeField]
-    private Text     nameText;
+    private Text nameText;
     [SerializeField]
-    private Image    tribeImage;
+    private Image tribeImage;
     [SerializeField]
-    private Image    attributeImage;
+    private Image attributeImage;
     [SerializeField]
-    private Text     goldText;
+    private Text goldText;
     //현재 골드가 구매할 수 있는 골드보다 적을경우 색상변경
     [SerializeField]
     private Image backGroundImage;
@@ -40,10 +40,32 @@ public class UnitProductPanel : MonoBehaviour
         attributeImage.sprite = unitdata.attributeSprite;
         goldText.text = unitdata.cost.ToString();
 
-        if(!gameObject.activeSelf)
+        switch (unitdata.originalCost)
+        {
+            case 1:
+                nameText.color = Color.white;
+                break;
+            case 2:
+                nameText.color = new Color(0.6f, 1, 0.4f);
+                break;
+            case 3:
+                nameText.color = new Color(0.4f, 0.8f, 1f);
+                break;
+            case 4:
+                nameText.color = new Color(1, 0.2f, 0.4f); 
+                break;
+                //현재 레벨5는 존재하지 않음
+            case 5:
+                nameText.color = new Color(1, 0.8f, 0.4f);
+                break;
+            default:
+                break;
+        }
+        
+        if (!gameObject.activeSelf)
             gameObject.SetActive(true);
     }
-    
+
     /// <summary>
     /// 현재 골드에 따른 상태 설정
     /// </summary>
@@ -63,7 +85,7 @@ public class UnitProductPanel : MonoBehaviour
     private UnitPropertyData GetRandomUnitData(int _currentlevel)
     {
         List<UnitPropertyData> unitlist = DataBaseManager.instance.unitTypeListbyGold[GetRandomCostValue(_currentlevel)];
-        
+
         UnitPropertyData selectedUnit = unitlist[Random.Range(0, unitlist.Count)];
         return selectedUnit;
     }
@@ -99,7 +121,7 @@ public class UnitProductPanel : MonoBehaviour
     public void DisplayUnitPanelClick()
     {
         //구매가 되었을 경우 
-        if (BoardManager.instance.BuyUnit(unitdata))       
+        if (BoardManager.instance.BuyUnit(unitdata))
             gameObject.SetActive(false);
         //UnitPanel Active false
     }

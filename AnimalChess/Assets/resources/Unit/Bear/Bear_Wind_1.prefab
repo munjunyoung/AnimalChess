@@ -1717,7 +1717,7 @@ GameObject:
   - component: {fileID: 4014208159823713221}
   - component: {fileID: 8044810072082285316}
   m_Layer: 0
-  m_Name: Bear_Wind_3
+  m_Name: Bear_Wind_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1750,7 +1750,7 @@ Animator:
   m_GameObject: {fileID: 6012499588798217093}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c3d861774f7c51047a8eee3ef22edfeb, type: 3}
-  m_Controller: {fileID: 9100000, guid: 02d5ec93278ea5c4cae238841be11363, type: 2}
+  m_Controller: {fileID: 9100000, guid: 4546b96580b56fa4bbe9bac9bef07e93, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1

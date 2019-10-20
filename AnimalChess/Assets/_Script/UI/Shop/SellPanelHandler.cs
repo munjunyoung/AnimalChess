@@ -16,6 +16,4 @@ public class SellPanelHandler : MonoBehaviour, IPointerEnterHandler, IPointerExi
     {
         IsPointerOnSellPanel = false;
     }
-
-    
 }

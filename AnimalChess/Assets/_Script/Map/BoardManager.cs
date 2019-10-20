@@ -5,8 +5,8 @@ public class BoardManager : MonoBehaviour
 {
     public static BoardManager instance = null;
     //Board
-    private const int width = 8;
-    private const int height = 9;
+    private const int width = 9;
+    private const int height = 10;
     private const int battleboardHeightIndex = 5;
     private const float yPos = 0.5f;
     private const float yWaitblockPos = 1f;
@@ -23,7 +23,7 @@ public class BoardManager : MonoBehaviour
     private List<BlockOnBoard> allBlockOnUnitList = new List<BlockOnBoard>();
     //public List<Unit> unitListOnBattleBoard = new List<Unit>();
     //public List<Unit> waitingBoardUnitList = new List<Unit>();
-    public List<Monster> monsterListOnBattleBoard = new List<Monster>();
+    public List<EnemyUnit> monsterListOnBattleBoard = new List<EnemyUnit>();
 
     // Start is called before the first frame update
     private void Awake()
@@ -47,9 +47,9 @@ public class BoardManager : MonoBehaviour
     {
         var grounddic = DataBaseManager.instance.groundDic;
 
-        for (int z = 0; z <= 8; z++)
+        for (int z = 0; z < height; z++)
         {
-            for (int x = 0; x < 8; x++)
+            for (int x = 0; x < width; x++)
             {
                 var pos = new Vector3(x * 2f, 0.5f, z * 2f);
                 BlockOnBoard blockob = null;

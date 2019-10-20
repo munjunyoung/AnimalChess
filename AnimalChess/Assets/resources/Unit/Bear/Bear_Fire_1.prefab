@@ -1072,7 +1072,7 @@ GameObject:
   - component: {fileID: 2583189940826685800}
   - component: {fileID: 5123080829724839790}
   m_Layer: 0
-  m_Name: Bear_Fire_2
+  m_Name: Bear_Fire_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1105,7 +1105,7 @@ Animator:
   m_GameObject: {fileID: 1101622160247991641}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c3d861774f7c51047a8eee3ef22edfeb, type: 3}
-  m_Controller: {fileID: 9100000, guid: 02d5ec93278ea5c4cae238841be11363, type: 2}
+  m_Controller: {fileID: 9100000, guid: 4546b96580b56fa4bbe9bac9bef07e93, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1

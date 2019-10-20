@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Transform rtCam;
     [SerializeField]
-    private Text     unitID;
+    private Text      unitID;
     [SerializeField]
     private Image tribeImage, attributeImage, item1, item2, itme3;
     [SerializeField]
@@ -110,6 +110,29 @@ public class UIManager : MonoBehaviour
     {
         rtCam.localPosition = _pdata.camPos;
         unitID.text = _pdata.name;
+
+        switch (_pdata.originalCost)
+        {
+            case 1:
+                unitID.color = Color.white;
+                break;
+            case 2:
+                unitID.color = new Color(0.6f, 1, 0.4f);
+                break;
+            case 3:
+                unitID.color = new Color(0.4f, 0.8f, 1f);
+                break;
+            case 4:
+                unitID.color = new Color(1, 0.2f, 0.4f);
+                break;
+            //현재 레벨5는 존재하지 않음
+            case 5:
+                unitID.color = new Color(1, 0.8f, 0.4f);
+                break;
+            default:
+                break;
+        }
+
         tribeImage.sprite = _pdata.tribeSprite;
         attributeImage.sprite = _pdata.attributeSprite;
         profileTargetPos = profileShowPos;

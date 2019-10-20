@@ -168,7 +168,7 @@ public class DataBaseManager : MonoBehaviour
         int[] level4 = { 50, 30, 20, 0 };
         int[] level5 = { 30, 35, 30, 5 };
         int[] level6 = { 20, 45, 35, 10 };
-        int[] level7 = { 15, 35, 45, 15 };
+        int[] level7 = { 15, 35, 35, 25 };
 
         ShopUnitPerList.Add(level1);
         ShopUnitPerList.Add(level1);
@@ -189,6 +189,8 @@ public class UnitPropertyData
     public Sprite tribeSprite;
     public Sprite attributeSprite;
     public int cost;
+    public int originalCost;
+
     public int ratingValue;
     public string ObId;
     //RenderTexture 카메라 포지션을 변경하여 보여주기 위함
@@ -205,7 +207,8 @@ public class UnitPropertyData
         ratingValue = _ratingvalue;
         //속성 타입만큼 현재 타입 숫자값 + 1 * rating 값 -> Unit_Type 이 1,2,3,4 1,2,3,4 순으로 나열되어있으므로
         cost = (((int)_type% System.Enum.GetValues(typeof(Attribute_Type)).Length)+1) * ratingValue;
-
+        originalCost = (((int)_type % System.Enum.GetValues(typeof(Attribute_Type)).Length) + 1);
+        cost = originalCost * ratingValue;
         //가로 5(종류단위), 세로 10(등급단위)
         float xpos = ((int)_type% System.Enum.GetValues(typeof(Unit_Type)).Length) * 5;
         camPos = new Vector3(xpos, (ratingValue-1) * 10, 0);
