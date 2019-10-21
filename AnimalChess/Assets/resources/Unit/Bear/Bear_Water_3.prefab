@@ -3030,6 +3030,8 @@ GameObject:
   - component: {fileID: 553389802064019616}
   - component: {fileID: 1871857301085136887}
   - component: {fileID: 6821393314752135216}
+  - component: {fileID: 2917993345683559714}
+  - component: {fileID: 2464456802151145195}
   m_Layer: 0
   m_Name: Bear_Water_3
   m_TagString: Untagged
@@ -3085,6 +3087,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bed04237fd453f4780821753188ded3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitController: {fileID: 0}
+  unitBTAI: {fileID: 0}
 --- !u!54 &1871857301085136887
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3115,6 +3119,32 @@ CapsuleCollider:
   m_Height: 0.5
   m_Direction: 1
   m_Center: {x: 0, y: 0.25, z: 0}
+--- !u!114 &2917993345683559714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6806040206566365456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d23f97ce3a619c49a213aef344a407c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2464456802151145195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6806040206566365456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 076e6706b3a90e24d9c895b87e213c8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitblockSc: {fileID: 0}
+  IsAlive: 1
 --- !u!1 &6806487208851079350
 GameObject:
   m_ObjectHideFlags: 0
@@ -4010,14 +4040,6 @@ PrefabInstance:
     - target: {fileID: 4720377114256696, guid: 0dbca4c32508ff344996dd96fdd6ede2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4720377114256696, guid: 0dbca4c32508ff344996dd96fdd6ede2, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4720377114256696, guid: 0dbca4c32508ff344996dd96fdd6ede2, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0dbca4c32508ff344996dd96fdd6ede2, type: 3}

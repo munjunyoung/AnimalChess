@@ -1716,6 +1716,8 @@ GameObject:
   - component: {fileID: 8147998800472788856}
   - component: {fileID: 4014208159823713221}
   - component: {fileID: 8044810072082285316}
+  - component: {fileID: 7285998556738833491}
+  - component: {fileID: 1284896874642228634}
   m_Layer: 0
   m_Name: Bear_Wind_1
   m_TagString: Untagged
@@ -1771,6 +1773,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bed04237fd453f4780821753188ded3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitController: {fileID: 0}
+  unitBTAI: {fileID: 0}
 --- !u!54 &4014208159823713221
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1801,6 +1805,32 @@ CapsuleCollider:
   m_Height: 0.5
   m_Direction: 1
   m_Center: {x: 0, y: 0.25, z: 0}
+--- !u!114 &7285998556738833491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6012499588798217093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d23f97ce3a619c49a213aef344a407c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1284896874642228634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6012499588798217093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 076e6706b3a90e24d9c895b87e213c8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitblockSc: {fileID: 0}
+  IsAlive: 1
 --- !u!1 &6012499588809810693
 GameObject:
   m_ObjectHideFlags: 0

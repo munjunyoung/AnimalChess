@@ -10,9 +10,9 @@ public class IngameManager : MonoBehaviour
     
     private TouchUnitSystem unitTouchSystem;
 
-    private readonly int waitingTime = 100;
-    private readonly int goldwhenRoundFinish = 1;
-    private readonly int expWhenRoundFinish = 1;
+    private readonly int waitingTime = 10;
+    private readonly int roundFinishGold = 1;
+    private readonly int roundFinishEXP = 1;
 
     private bool _IsBattleState = false;
     public bool IsBattleState
@@ -150,7 +150,7 @@ public class IngameManager : MonoBehaviour
     /// </summary>
     private void TakeDamage()
     {
-        var mList = BoardManager.instance.monsterListOnBattleBoard;
+        var mList = BoardManager.instance.currentMonsterList;
 
         if (mList.Count == 0)
             return;
@@ -195,8 +195,18 @@ public class IngameManager : MonoBehaviour
         //레벨보다 많은 숫자의 유닛이 올라갈경우 유닛처리
         BoardManager.instance.ReturnUnitOnWaitingBoard(pData.Level);
 
+        StartUnitAI();
         //유닛, 적 ai 실행 (1초~2초정도의 텀을 주도록 실행하도록)
         StartCoroutine(testBattleFinsih());
+    }
+
+    private void StartUnitAI()
+    {
+        var battleblockOnUnitlist = BoardManager.instance.GetBattleBlockOnUnit();
+        foreach (var block in battleblockOnUnitlist)
+        {
+            block.GetUnitNormal().unitBTAI.StartBT();
+        }
     }
    
     IEnumerator testBattleFinsih()

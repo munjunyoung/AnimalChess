@@ -1,29 +1,32 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+public enum MAP_INFO { Width = 9, Height = 10,  }
 public class BoardManager : MonoBehaviour
 {
     public static BoardManager instance = null;
     //Board
-    private const int width = 9;
-    private const int height = 10;
     private const int battleboardHeightIndex = 5;
     private const float yPos = 0.5f;
     private const float yWaitblockPos = 1f;
-
+    //Block
     private GameObject groundParentOb;
-    private BlockOnBoard[,] allGroundBlocks = new BlockOnBoard[width, height];
-    public List<BlockOnBoard> waitingBlockList = new List<BlockOnBoard>();
+    public BlockOnBoard[,]      allGroundBlocks = new BlockOnBoard[(int)MAP_INFO.Width, (int)MAP_INFO.Height];
+    public List<BlockOnBoard>   waitingBlockList = new List<BlockOnBoard>();
     //Unit
     public GameObject unitOBParent = null;
 
+    private List<BlockOnBoard> allBlockOnUnitList = new List<BlockOnBoard>();
     private List<BlockOnBoard> BattleBlockOnUnitList = new List<BlockOnBoard>();
     private List<BlockOnBoard> waitBlockOnUnitList = new List<BlockOnBoard>();
-    //합성 체크하기 위함
-    private List<BlockOnBoard> allBlockOnUnitList = new List<BlockOnBoard>();
-    //public List<Unit> unitListOnBattleBoard = new List<Unit>();
-    //public List<Unit> waitingBoardUnitList = new List<Unit>();
-    public List<EnemyUnit> monsterListOnBattleBoard = new List<EnemyUnit>();
+
+    //Monster
+    [HideInInspector]
+    public List<List<EnemyUnit>> allMonsterList = new List<List<EnemyUnit>>();
+    [HideInInspector]
+    public List<EnemyUnit>       currentMonsterList = new List<EnemyUnit>();
+
+    public EnemyUnit testMonster;
 
     // Start is called before the first frame update
     private void Awake()
@@ -36,6 +39,8 @@ public class BoardManager : MonoBehaviour
     {
         groundParentOb = GameObject.Find("1PlayGround");
         DrawChessBoard();
+        currentMonsterList.Add(testMonster);
+        allGroundBlocks[4, 7].SetUnitEnemy(testMonster.unitblockSc);
     }
 
 
@@ -47,9 +52,9 @@ public class BoardManager : MonoBehaviour
     {
         var grounddic = DataBaseManager.instance.groundDic;
 
-        for (int z = 0; z < height; z++)
+        for (int z = 0; z < (int)MAP_INFO.Height; z++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < (int)MAP_INFO.Width; x++)
             {
                 var pos = new Vector3(x * 2f, 0.5f, z * 2f);
                 BlockOnBoard blockob = null;
@@ -75,13 +80,14 @@ public class BoardManager : MonoBehaviour
                     }
                 }
 
-                if (z < 5)
+                if (z < battleboardHeightIndex)
                     blockob.gameObject.layer = 10;
                 if (z == 0)
                 {
                     blockob.IsWaitingBlock = true;
                     waitingBlockList.Add(blockob);
                 }
+                blockob.groundArrayIndex = new Vector2Int(x, z);
                 allGroundBlocks[x, z] = blockob;
             }
         }
@@ -138,9 +144,14 @@ public class BoardManager : MonoBehaviour
     {
         for (int j = 1; j < battleboardHeightIndex; j++)
         {
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < (int)MAP_INFO.Width; i++)
                 allGroundBlocks[i, j].SetLayerValue(_isbattle);
         }
+    }
+
+    public List<BlockOnBoard> GetBattleBlockOnUnit()
+    {
+        return BattleBlockOnUnitList;
     }
     #endregion
 
@@ -160,6 +171,7 @@ public class BoardManager : MonoBehaviour
             //레벨이 넘어가면 break;
             if (wb.GetUnitNormal() == null)
             {
+                //
                 var target = BattleBlockOnUnitList[0].GetUnitRemoveList();
                 wb.SetUnitaddList(target);
                 if (BattleBlockOnUnitList.Count > _level)
@@ -312,7 +324,7 @@ public class BoardManager : MonoBehaviour
     {
         var pdata = DataBaseManager.instance.UnitPropertyDataDic[_ratingvalue - 1][_unitType];
         var unit = Instantiate(DataBaseManager.instance.unitObDic[pdata.ObId], Vector3.zero, Quaternion.identity, unitOBParent.transform);
-        unit.GetComponent<Unit>().unitPdata = pdata;
+        unit.GetComponent<UnitBlockData>().unitPdata = pdata;
         unit.transform.eulerAngles = new Vector3(0, 180, 0);
         _blockOnUnit.SetUnitaddList(unit);
         CheckComposeUnitNormal(unit.unitPdata);

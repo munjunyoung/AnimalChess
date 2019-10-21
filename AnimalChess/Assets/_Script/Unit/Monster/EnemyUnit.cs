@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyUnit : MonoBehaviour
+public class EnemyUnit : UnitController
 {
     public int damage;
-    public bool isAlive = false;
     // Start is called before the first frame update
     void Start()
     {

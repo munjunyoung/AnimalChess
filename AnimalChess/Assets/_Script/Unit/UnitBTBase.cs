@@ -67,8 +67,8 @@ public class Sequence : CompositeActionNode
     }
 }
 
-#region Normal
-public class Idle : ActionNode
+#region chaseAttack
+public class SetTargetBlock : ActionNode
 {
     public UnitController Controller
     {
@@ -78,12 +78,32 @@ public class Idle : ActionNode
 
     public override bool Invoke()
     {
-        _controller.IdleAction();
+        _controller.SetTargetBlock();
+        return true;
+    }
+}
+/// <summary>
+/// NOTE : 현재 타겟 상태 죽었을 경우 다시 리턴
+/// </summary>
+public class ResetPath : ActionNode
+{
+    public UnitController Controller
+    {
+        set { _controller = value; }
+    }
+    private UnitController _controller;
+
+    public override bool Invoke()
+    {
+        _controller.ResetPath();
         return true;
     }
 }
 
-public class DetectTarget : ActionNode
+/// <summary>
+/// NOTE : 현재 타겟 상태 죽었을 경우 다시 리턴
+/// </summary>
+public class CheckMoveState : ActionNode
 {
     public UnitController Controller
     {
@@ -93,24 +113,14 @@ public class DetectTarget : ActionNode
 
     public override bool Invoke()
     {
-        return _controller.DetectTarget();
+        return _controller.CheckMoveState();
     }
-}
-
-#endregion
-
-#region chaseAttack
-/// <summary>
-/// NOTE : 현재 타겟 상태 죽었을 경우 다시 리턴
-/// </summary>
-public class CheckTargetCondition
-{
 }
 
 /// <summary>
 /// NOTE : 타겟에게 이동
 /// </summary>
-public class ChaseTarget : ActionNode
+public class StartMoveToNextBlock : ActionNode
 {
     public UnitController Controller
     {
@@ -120,8 +130,8 @@ public class ChaseTarget : ActionNode
 
     public override bool Invoke()
     {
-        _controller.ChaseAction();
-        return true;
+        _controller.StartMoveToNextBlock();
+        return false;
     }
 }
 

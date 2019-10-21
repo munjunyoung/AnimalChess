@@ -3,27 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CatController : UnitController
-{
-    //대기
-    public override void IdleAction()
+{   //대기
+
+    public override void SetTargetBlock()
     {
-        base.IdleAction();
+        base.SetTargetBlock();
+    }
+    
+    public override void ResetPath()
+    {
+        base.ResetPath();
     }
 
-    public override bool DetectTarget()
+    public override void StartMoveToNextBlock()
     {
-        return base.DetectTarget();
-    }
 
-    //추적
-    public override void CheckTargetCondition()
-    {
-        base.CheckTargetCondition();
-    }
-
-    public override void ChaseAction()
-    {
-        base.ChaseAction();
+        base.StartMoveToNextBlock();
     }
     //공격
     public override bool CheckAttackRangeCondition()

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TouchUnitSystem : MonoBehaviour
 {
-    private Unit target = null;
+    private UnitBlockData target = null;
     private BlockOnBoard startBlock = null;
 
     private BlockOnBoard nextBlock = null;
@@ -120,9 +120,8 @@ public class TouchUnitSystem : MonoBehaviour
         {
             hightlightedEffect.SetActive(false);
             //유닛이 없을 경우 
-            if (nextBlock.GetUnitRemoveList() == null)
+            if (nextBlock.GetUnitNormal() == null)
             {
-                startBlock.SetUnitaddList(null);
                 nextBlock.SetUnitaddList(target);
                 //보드에 올릴수 있는 유닛수가 최대넘어갈 경우 조건문 추가해야함
             }
@@ -135,8 +134,8 @@ public class TouchUnitSystem : MonoBehaviour
                 else
                 {
                     var tmpUnit = nextBlock.GetUnitRemoveList();
-                    nextBlock.SetUnitaddList(this.startBlock.GetUnitRemoveList());
-                    this.startBlock.SetUnitaddList(tmpUnit);
+                    nextBlock.SetUnitaddList(target);
+                    startBlock.SetUnitaddList(tmpUnit);
                 }
             }
         }
@@ -165,7 +164,7 @@ public class TouchUnitSystem : MonoBehaviour
         hightlightedEffect.SetActive(false);
     }
     
-    public Unit getTargetUnit()
+    public UnitBlockData getTargetUnit()
     {
         return target;
     }

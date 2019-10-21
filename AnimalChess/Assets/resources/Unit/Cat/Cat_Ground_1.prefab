@@ -822,6 +822,8 @@ GameObject:
   - component: {fileID: 2670746385638034735}
   - component: {fileID: 7346299164986543792}
   - component: {fileID: 4088629560660280845}
+  - component: {fileID: 299651354708519542}
+  - component: {fileID: 6647409264629931752}
   m_Layer: 0
   m_Name: Cat_Ground_1
   m_TagString: Untagged
@@ -877,6 +879,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bed04237fd453f4780821753188ded3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitController: {fileID: 0}
+  unitBTAI: {fileID: 0}
 --- !u!54 &7346299164986543792
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -907,6 +911,32 @@ CapsuleCollider:
   m_Height: 0.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.3, z: 0}
+--- !u!114 &299651354708519542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6427200358955793546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d23f97ce3a619c49a213aef344a407c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6647409264629931752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6427200358955793546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 076e6706b3a90e24d9c895b87e213c8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitblockSc: {fileID: 0}
+  IsAlive: 1
 --- !u!1 &6427204091391965616
 GameObject:
   m_ObjectHideFlags: 0

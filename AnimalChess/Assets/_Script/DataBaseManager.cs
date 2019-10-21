@@ -41,7 +41,7 @@ public class DataBaseManager : MonoBehaviour
     public List<int[]> ShopUnitPerList = new List<int[]>();
     
     //Unit Ob
-    public Dictionary<string, Unit> unitObDic = new Dictionary<string, Unit>();
+    public Dictionary<string, UnitBlockData> unitObDic = new Dictionary<string, UnitBlockData>();
     
     
     //pData
