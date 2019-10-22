@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public enum MAP_INFO { Width = 9, Height = 10,  }
+public enum MAP_INFO { Width = 9, Height = 10, CubeSize = 1 }
 public class BoardManager : MonoBehaviour
 {
     public static BoardManager instance = null;
@@ -56,7 +56,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int x = 0; x < (int)MAP_INFO.Width; x++)
             {
-                var pos = new Vector3(x * 2f, 0.5f, z * 2f);
+                var pos = new Vector3(x * 2f, -1f, z * 2f);
                 BlockOnBoard blockob = null;
                 if (z == 0)
                 {
@@ -337,7 +337,6 @@ public class BoardManager : MonoBehaviour
     private void RemoveUnit(BlockOnBoard _block)
     {
         var target = _block.GetUnitRemoveList();
-        _block.SetUnitaddList(null);
         target.gameObject.SetActive(false);
     }
 

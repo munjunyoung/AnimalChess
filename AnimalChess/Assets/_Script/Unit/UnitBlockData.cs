@@ -14,8 +14,8 @@ public class UnitBlockData : MonoBehaviour
 
     private void Awake()
     {
-        unitController = GetComponent<UnitController>();
-        unitBTAI = GetComponent<UnitBTAI>();
+        unitController = GetComponentInChildren<UnitController>();
+        unitBTAI = GetComponentInChildren<UnitBTAI>();
         unitBTAI.Init();
     }
     //private ownBlock 

@@ -63,6 +63,8 @@ public class TouchUnitSystem : MonoBehaviour
             //Target이 존재하지 않으면 return
             if (target == null)
                 return;
+            //모델이 하위오브젝트에 존재하여 드래그중에 떨어지지 않게 하기 위함
+            target.unitController.rb.useGravity = false;
             IsPickUp = true;
             hightlightedEffect.SetActive(true);
             UIManager.instance.ShowUnitProfile(target.unitPdata);
@@ -90,14 +92,14 @@ public class TouchUnitSystem : MonoBehaviour
         if (targetHit.collider != null)
         {
             nextBlock = targetHit.transform.GetComponent<BlockOnBoard>();
-            target.transform.position = nextBlock.transform.position + (Vector3.up * 3);
+            target.transform.position = nextBlock.transform.position + (Vector3.up * 4);
         }
         else
         {
             nextBlock = null;
-            target.transform.position = startBlock.transform.position + (Vector3.up * 3);
+            target.transform.position = startBlock.transform.position + (Vector3.up * 4);
         }
-        hightlightedEffect.transform.position = target.transform.position + (Vector3.down * 2);
+        hightlightedEffect.transform.position = target.transform.position + (Vector3.down * 3);
     }
 
     /// <summary>
@@ -148,14 +150,17 @@ public class TouchUnitSystem : MonoBehaviour
     public void ReturnPickState()
     {
         //픽업 상태가 아니고, block 이 waiting block 이면 리턴
-        if (!IsPickUp || startBlock.IsWaitingBlock)
+        if (!IsPickUp)
             return;
+        
         startBlock.SetUnitaddList(target);
         SetDataPickDown();
     }
     
     public void SetDataPickDown()
     {
+        //겹쳐지지 않게 하기 위함
+        target.unitController.rb.useGravity = true;
         UIManager.instance.HideUnitProfile();
         startBlock = null;
         nextBlock = null;

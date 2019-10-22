@@ -202,11 +202,59 @@ public class IngameManager : MonoBehaviour
 
     private void StartUnitAI()
     {
+
         var battleblockOnUnitlist = BoardManager.instance.GetBattleBlockOnUnit();
+        SortBlcokListByPos(ref battleblockOnUnitlist);
         foreach (var block in battleblockOnUnitlist)
         {
             block.GetUnitNormal().unitBTAI.StartBT();
         }
+    }
+
+    /// <summary>
+    /// NOTE : 좀더 적에 가까이 있는 유닛이 먼져 행동하도록 하기 위함
+    /// </summary>
+    /// <param name="blocklist"></param>
+    private void SortBlcokListByPos(ref List<BlockOnBoard> blocklist)
+    {
+        if (blocklist.Count < 2)
+            return;
+        bool sortcontinue = true;
+
+        while (sortcontinue)
+        {
+            sortcontinue = false;
+            for(int i = 0; i< blocklist.Count -1; i++)
+            {
+                if(CompareBlockPos(blocklist[i], blocklist[i+1]))
+                {
+                    BlockOnBoard tmpblock = blocklist[i];
+                    blocklist[i] = blocklist[i + 1];
+                    blocklist[i+1] = tmpblock;
+                    sortcontinue = true;
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// NOTE : Y값은 높은순, X값은 낮은순
+    /// </summary>
+    /// <param name="block1"></param>
+    /// <param name="block2"></param>
+    /// <returns></returns>
+    private bool CompareBlockPos(BlockOnBoard block1, BlockOnBoard block2)
+    {
+        if (block1.groundArrayIndex.y > block2.groundArrayIndex.y)
+            return false;
+        if(block1.groundArrayIndex.y < block2.groundArrayIndex.y)
+            return true;
+
+        if (block1.groundArrayIndex.x < block2.groundArrayIndex.x)
+            return false;
+        if (block1.groundArrayIndex.x > block2.groundArrayIndex.x)
+            return true;
+
+        return false;
     }
    
     IEnumerator testBattleFinsih()

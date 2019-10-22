@@ -5,14 +5,14 @@ using UnityEngine;
 public class CatController : UnitController
 {   //대기
 
-    public override void SetTargetBlock()
+    public override bool SetTargetBlock()
     {
-        base.SetTargetBlock();
+        return base.SetTargetBlock();
     }
     
-    public override void ResetPath()
+    public override bool ResetPath()
     {
-        base.ResetPath();
+        return base.ResetPath();
     }
 
     public override void StartMoveToNextBlock()

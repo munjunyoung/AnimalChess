@@ -21,6 +21,7 @@ public class UnitPathFinding
     /// <returns></returns>
     public bool FindPath(BlockOnBoard startblock, BlockOnBoard endblock, BlockOnBoard[,] map, ref List<BlockOnBoard> path, float attackRange)
     {
+        path.Clear();
         var startnode = new PathNode(new Vector2Int((int)(startblock.groundArrayIndex.x), (int)(startblock.groundArrayIndex.y)));
         var endnode  = new PathNode(new Vector2Int((int)(endblock.groundArrayIndex.x), (int)(endblock.groundArrayIndex.y)));
         //리스트 클리어
@@ -53,6 +54,7 @@ public class UnitPathFinding
                 {
                     path.Add(map[currentNode.arrayIndex.x,currentNode.arrayIndex.y]);
                     currentNode = currentNode.parentNode;
+                    
                 }
                 return true;
             }

@@ -7,7 +7,7 @@ public class UnitController : MonoBehaviour
 {
     [HideInInspector]
     public    UnitBlockData         unitblockSc;
-    protected Rigidbody             rb;
+    public    Rigidbody             rb;
     protected CapsuleCollider       col;
     protected Animator              anim;
     protected CharacterController   cController;
@@ -29,14 +29,15 @@ public class UnitController : MonoBehaviour
 
     public void Init()
     {
-        unitblockSc = GetComponent<UnitBlockData>();
-
-        rb =GetComponent<Rigidbody>();
+        unitblockSc = GetComponentInParent<UnitBlockData>();
+        anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
+        
     }
 
     #region  Move
-
-    public virtual void SetTargetBlock()
+    
+    public virtual bool SetTargetBlock()
     {
         if (targetBlock == null
           || targetBlock.GetUnitInBattle() == null
@@ -60,21 +61,25 @@ public class UnitController : MonoBehaviour
             isFindPath = pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), targetBlock, BoardManager.instance.allGroundBlocks, ref path, pDataAttackRange);
             if (isFindPath)
                 nextBlockCount = path.Count - 2;
+            return false;
         }
+        return true;
     }
     
     //정해진 시간동안 한칸씩 이동 
-    public virtual void ResetPath()
+    public virtual bool ResetPath()
     {
         //가는길에 유닛이 존재할 경우, 목적지와 한칸 거리 일 경우
-        if (nextBlockCount > 0)
+        if (nextBlockCount >= 0)
         {
             if (path[nextBlockCount].GetUnitInBattle() != null)
             {
                 if (pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), targetBlock, BoardManager.instance.allGroundBlocks, ref path, pDataAttackRange))
                     nextBlockCount = path.Count - 2;
+                return false;
             }
         }
+        return true;
     }
 
     /// <summary>
@@ -97,24 +102,28 @@ public class UnitController : MonoBehaviour
     IEnumerator MoveNextBlock(BlockOnBoard currentBlock, BlockOnBoard nextblock)
     {
         isMoving = true;
+        nextblock.SetUnitInBattle(unitblockSc);
+        currentBlock.SetUnitInBattle(null);
+
+        Debug.Log(nextblock.groundArrayIndex);
         nextBlockCount--;
         float count = 0;
         //lerp포지션
-        Vector3 startpos = rb.position;
-        Vector3 nextpos = new Vector3(nextblock.transform.position.x, transform.position.y, nextblock.transform.position.z);
+        Vector3 startpos = unitblockSc.transform.position;
+        Vector3 nextpos = new Vector3(nextblock.transform.position.x, 0, nextblock.transform.position.z);
         //방향
         var dir = nextpos - startpos;
-        transform.eulerAngles = dir;
-
+        dir = dir.normalized;
+        Quaternion currentRot = unitblockSc.transform.rotation;
         Quaternion dirRot = Quaternion.LookRotation(dir);
-        Quaternion currentRot = this.transform.rotation;
+        
         //초기화
-        nextblock.SetUnitInBattle(unitblockSc);
-        while (Vector3.Distance(transform.position,nextpos)>0.1f)
+        while (!unitblockSc.transform.position.Equals(nextpos))
         {
             count += Time.deltaTime;
-            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, dirRot, 1f * count);
-            rb.position = Vector3.Lerp(startpos, nextpos, count);
+            if(dir!=Vector3.zero)
+                unitblockSc.transform.rotation = Quaternion.Lerp(this.transform.rotation, dirRot, 1f * count);
+            unitblockSc.transform.position = Vector3.Lerp(startpos, nextpos, count);
             yield return new WaitForFixedUpdate();
         }
         isMoving = false;
@@ -137,4 +146,10 @@ public class UnitController : MonoBehaviour
     //죽음
     public virtual bool IsDie() { return false; }
     public virtual void DeadAction() { }
+
+    public virtual void SetAnimation()
+    {
+        if (isMoving)
+            anim.SetInteger("animState",1);
+    }
 }

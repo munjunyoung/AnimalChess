@@ -5,7 +5,7 @@ using UnityEngine;
 public class BlockOnBoard : MonoBehaviour
 {
     //In Battle
-    private UnitBlockData unitInBattle  = null;
+    public UnitBlockData unitInBattle  = null;
     //In Wating
     private UnitBlockData unitInWaiting = null;
     //Check WaitingBlock
@@ -24,9 +24,8 @@ public class BlockOnBoard : MonoBehaviour
         unitInBattle = unitInWaiting;
         if (unitInWaiting != null)
         {
-            unitInWaiting.transform.position = new Vector3(transform.position.x, transform.position.y + 2f, transform.position.z);
+            unitInWaiting.transform.position = new Vector3(transform.position.x, transform.localPosition.y + (int)MAP_INFO.CubeSize, transform.position.z);
             unitInWaiting.SetCurrentBlockInWaiting(this);
-            unitInWaiting.SetCurrentBlockInBattle(this);
             BoardManager.instance.AddBlockOnList(this);
         }
     }
@@ -44,7 +43,6 @@ public class BlockOnBoard : MonoBehaviour
             unitInWaiting = null;
             unitInBattle = null;
             tmpunit.SetCurrentBlockInWaiting(null);
-            tmpunit.SetCurrentBlockInBattle(null);
         }
 
         return tmpunit;
@@ -74,7 +72,8 @@ public class BlockOnBoard : MonoBehaviour
     public void SetUnitInBattle(UnitBlockData _unit)
     {
         unitInBattle = _unit;
-        _unit.SetCurrentBlockInBattle(this);
+        if(unitInBattle!=null)
+            unitInBattle.SetCurrentBlockInBattle(this);
     }
 
     public UnitBlockData GetUnitInBattle()

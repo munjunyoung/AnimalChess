@@ -7,8 +7,12 @@ public class UnitBTAI : UnitBTBase
     private UnitController unitController;
     //최상위 
     private Sequence aiRoot = new Sequence();
+
+    private Selector selector = new Selector();
+
     private Sequence seqMove = new Sequence();
     private Sequence seqDead = new Sequence();
+    private Sequence seqAnim = new Sequence();
     //Move
     private SetTargetBlock          setTargetblock              = new SetTargetBlock();
     private ResetPath               resetPath                   = new ResetPath();
@@ -17,7 +21,10 @@ public class UnitBTAI : UnitBTBase
 
 
     //Dead
-    private IsDie isDie = new IsDie();
+    private IsDie                   isDie                       = new IsDie();
+
+    //Anim
+    private SetAnimation            setAnimation                = new SetAnimation();
 
     private IEnumerator behaviorProcess;
 
@@ -34,9 +41,14 @@ public class UnitBTAI : UnitBTBase
         startMoveToNextBlock.Controller = unitController;
 
         isDie.Controller = unitController;
+
+        setAnimation.Controller = unitController;
+
+        aiRoot.AddChild(selector);
         //Tree 생성
-        aiRoot.AddChild(seqMove);
-        aiRoot.AddChild(seqDead);
+        selector.AddChild(seqMove);
+        selector.AddChild(seqDead);
+        selector.AddChild(seqAnim);
 
         seqMove.AddChild(setTargetblock);
         seqMove.AddChild(resetPath);
@@ -44,6 +56,8 @@ public class UnitBTAI : UnitBTBase
         seqMove.AddChild(startMoveToNextBlock);
 
         seqDead.AddChild(isDie);
+
+        seqAnim.AddChild(setAnimation);
     }
     
     public override void StartBT()

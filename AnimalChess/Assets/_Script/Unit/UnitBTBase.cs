@@ -95,8 +95,7 @@ public class ResetPath : ActionNode
 
     public override bool Invoke()
     {
-        _controller.ResetPath();
-        return true;
+        return _controller.ResetPath();
     }
 }
 
@@ -263,3 +262,18 @@ public class DeadAction : ActionNode
     }
 }
 #endregion
+
+public class SetAnimation : ActionNode
+{
+    public UnitController Controller
+    {
+        set { _controller = value; }
+    }
+    private UnitController _controller;
+
+    public override bool Invoke()
+    {
+        _controller.SetAnimation();
+        return false;
+    }
+}
