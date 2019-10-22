@@ -11,15 +11,17 @@ public class UnitBTAI : UnitBTBase
     private Selector selector = new Selector();
 
     private Sequence seqMove = new Sequence();
+    private Sequence seqAttack = new Sequence();
     private Sequence seqDead = new Sequence();
     private Sequence seqAnim = new Sequence();
     //Move
-    private SetTargetBlock          setTargetblock              = new SetTargetBlock();
-    private ResetPath               resetPath                   = new ResetPath();
-    private CheckMoveState          checkMoveState              = new CheckMoveState();
-    private StartMoveToNextBlock    startMoveToNextBlock        = new StartMoveToNextBlock();
-
-
+    private SetTargetBlock              setTargetblock              = new SetTargetBlock();
+    private ResetPath                   resetPath                   = new ResetPath();
+    private CheckMoveState              checkMoveState              = new CheckMoveState();
+    private StartMoveToNextBlock        startMoveToNextBlock        = new StartMoveToNextBlock();
+    //AtTack
+    private CheckAttackRangeCondition   checkAttackRangeCondition   = new CheckAttackRangeCondition();
+    private LookAtTarget                lookAtTarget                = new LookAtTarget();
     //Dead
     private IsDie                   isDie                       = new IsDie();
 
@@ -34,14 +36,17 @@ public class UnitBTAI : UnitBTBase
         //컨트롤러 초기화
         unitController = GetComponent<UnitController>();
         unitController.Init();
-
+        //Move
         setTargetblock.Controller = unitController;
         resetPath.Controller = unitController;
         checkMoveState.Controller = unitController;
         startMoveToNextBlock.Controller = unitController;
-
+        //Attack
+        checkAttackRangeCondition.Controller = unitController;
+        lookAtTarget.Controller = unitController;
+        //Dead
         isDie.Controller = unitController;
-
+        //Anim
         setAnimation.Controller = unitController;
 
         aiRoot.AddChild(selector);
@@ -49,11 +54,15 @@ public class UnitBTAI : UnitBTBase
         selector.AddChild(seqMove);
         selector.AddChild(seqDead);
         selector.AddChild(seqAnim);
+        selector.AddChild(seqAttack);
 
         seqMove.AddChild(setTargetblock);
         seqMove.AddChild(resetPath);
         seqMove.AddChild(checkMoveState);
         seqMove.AddChild(startMoveToNextBlock);
+
+        seqAttack.AddChild(checkAttackRangeCondition);
+        seqAttack.AddChild(lookAtTarget);
 
         seqDead.AddChild(isDie);
 

@@ -21,11 +21,12 @@ public class UnitController : MonoBehaviour
 
     protected UnitPathFinding pathfind = new UnitPathFinding();
     protected List<BlockOnBoard> path = new List<BlockOnBoard>();
-    protected int nextBlockCount = 0;
     protected BlockOnBoard targetBlock;
+    protected int nextBlockIndexCount = 0;
+
     protected bool isFindPath = false;
     protected bool isMoving = false;
-    
+    protected bool isCloseTarget = false;
 
     public void Init()
     {
@@ -60,7 +61,7 @@ public class UnitController : MonoBehaviour
             }
             isFindPath = pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), targetBlock, BoardManager.instance.allGroundBlocks, ref path, pDataAttackRange);
             if (isFindPath)
-                nextBlockCount = path.Count - 2;
+                nextBlockIndexCount = path.Count - 2;
             return false;
         }
         return true;
@@ -70,12 +71,12 @@ public class UnitController : MonoBehaviour
     public virtual bool ResetPath()
     {
         //가는길에 유닛이 존재할 경우, 목적지와 한칸 거리 일 경우
-        if (nextBlockCount >= 0)
+        if (nextBlockIndexCount >= 0)
         {
-            if (path[nextBlockCount].GetUnitInBattle() != null)
+            if (path[nextBlockIndexCount].GetUnitInBattle() != null)
             {
                 if (pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), targetBlock, BoardManager.instance.allGroundBlocks, ref path, pDataAttackRange))
-                    nextBlockCount = path.Count - 2;
+                    nextBlockIndexCount = path.Count - 2;
                 return false;
             }
         }
@@ -88,7 +89,13 @@ public class UnitController : MonoBehaviour
     /// <returns></returns>
     public virtual bool CheckMoveState()
     {
-        if (isMoving||nextBlockCount<0||!isFindPath)
+        if (isMoving) 
+            return false;
+        if (!isFindPath)
+            return false;
+        //모든 움직임이 끝나고 난후 체크
+        isCloseTarget = nextBlockIndexCount >= 0 ? false : true;
+        if (isCloseTarget)
             return false;
 
         return true;
@@ -96,7 +103,7 @@ public class UnitController : MonoBehaviour
     
     public virtual void StartMoveToNextBlock()
     {
-        StartCoroutine(MoveNextBlock(unitblockSc.GetCurrentBlockInBattle(), path[nextBlockCount]));
+        StartCoroutine(MoveNextBlock(unitblockSc.GetCurrentBlockInBattle(), path[nextBlockIndexCount]));
     }
 
     IEnumerator MoveNextBlock(BlockOnBoard currentBlock, BlockOnBoard nextblock)
@@ -104,9 +111,7 @@ public class UnitController : MonoBehaviour
         isMoving = true;
         nextblock.SetUnitInBattle(unitblockSc);
         currentBlock.SetUnitInBattle(null);
-
-        Debug.Log(nextblock.groundArrayIndex);
-        nextBlockCount--;
+        nextBlockIndexCount--;
         float count = 0;
         //lerp포지션
         Vector3 startpos = unitblockSc.transform.position;
@@ -129,15 +134,20 @@ public class UnitController : MonoBehaviour
         isMoving = false;
     }
 
-    private void CompareXZPos()
-    {
-
-    }
     #endregion
 
     //공격
-    public virtual bool CheckAttackRangeCondition() { return true; }
-    //public virtual bool LookAtTarget() { }
+    public virtual bool CheckAttackRangeCondition()
+    {
+        return isCloseTarget;
+    }
+
+    public virtual void LookAtTarget()
+    {
+        Vector3 dirVector = targetBlock.transform.position - unitblockSc.transform.position;
+        dirVector = dirVector.normalized;
+        unitblockSc.transform.rotation = Quaternion.LookRotation(dirVector);
+    }
     public virtual bool CheckAttackCondition() { return true; }
     public virtual void AttackAction() { }
     //스킬
@@ -150,6 +160,9 @@ public class UnitController : MonoBehaviour
     public virtual void SetAnimation()
     {
         if (isMoving)
-            anim.SetInteger("animState",1);
+            anim.SetFloat ("animState", 1);
+        else
+            anim.SetFloat("animState", 0);
+
     }
 }

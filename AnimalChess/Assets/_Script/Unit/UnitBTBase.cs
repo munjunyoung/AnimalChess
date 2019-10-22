@@ -133,8 +133,8 @@ public class StartMoveToNextBlock : ActionNode
         return false;
     }
 }
-
-
+#endregion
+#region Attack
 /// <summary>
 /// NOTE : 지정한 거리에 타겟 존재 확인
 /// </summary>
@@ -153,6 +153,22 @@ public class CheckAttackRangeCondition : ActionNode
         return false;
     }
 }
+
+public class LookAtTarget : ActionNode
+{
+    public UnitController Controller
+    {
+        set { _controller = value; }
+    }
+    private UnitController _controller;
+
+    public override bool Invoke()
+    {
+       _controller.LookAtTarget();
+        return false;
+    }
+}
+
 
 /// <summary>
 /// NOTE : 공격 가능한 상태인지 체크
