@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance = null;
-    
+
     //Display Panel
     [SerializeField]
     private List<UnitProductPanel> unitPanelList = new List<UnitProductPanel>();
@@ -15,9 +15,9 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private Text levelText, hpText, unitNumberText, goldText, expText, waitCountText, roundNumberText, gameStateText;
-    
-    private Color impossibleColor  = new Color(1,0,0,0.5f);
-    private Color waitStateColor   = new Color(0.6f, 0.9f, 0.6f, 1f);
+
+    private Color impossibleColor = new Color(1, 0, 0, 0.5f);
+    private Color waitStateColor = new Color(0.6f, 0.9f, 0.6f, 1f);
     private Color battleStateColor = new Color(0.8f, 0, 0, 1);
 
     [Header("Shop")]
@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Transform rtCam;
     [SerializeField]
-    private Text      unitID;
+    private Text unitID, profileHpText, profileMpText;
     [SerializeField]
     private Image tribeImage, attributeImage, item1, item2, itme3;
     [SerializeField]
@@ -46,7 +46,7 @@ public class UIManager : MonoBehaviour
     private Vector2 profileTargetPos = Vector2.zero;
     private Vector2 currentProfilePos = Vector2.zero;
     private bool isRunningProfileCoroutine = false;
-    
+
 
     private void Awake()
     {
@@ -55,7 +55,7 @@ public class UIManager : MonoBehaviour
     }
 
     #region SetTextUI
- 
+
     public void SetHpText(int hp)
     {
         hpText.text = hp.ToString();
@@ -106,7 +106,7 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region  Profile
-    public void ShowUnitProfile(UnitPropertyData _pdata)
+    public void ShowUnitProfile(UnitData _pdata)
     {
         rtCam.localPosition = _pdata.camPos;
         unitID.text = _pdata.name;
@@ -138,6 +138,9 @@ public class UIManager : MonoBehaviour
         profileTargetPos = profileShowPos;
         currentProfilePos = profilePanel.anchoredPosition;
         SetRatingImage(_pdata.ratingValue);
+        profileHpText.text = _pdata.abilityData.maxHP.ToString();
+        profileMpText.text = _pdata.abilityData.maxMP.ToString();
+
         if (!isRunningProfileCoroutine)
             StartCoroutine(SetProfilePos());
     }

@@ -12,7 +12,7 @@ public class BlockOnBoard : MonoBehaviour
     public  bool IsWaitingBlock = false;
     //array index 
     public Vector2Int groundArrayIndex = Vector2Int.zero;
-
+    
     #region Waiting Time
     /// <summary>
     /// NOTE : 유닛이 존재하지 않을 경우 선택된 유닛 설정

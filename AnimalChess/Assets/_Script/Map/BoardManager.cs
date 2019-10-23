@@ -208,7 +208,7 @@ public class BoardManager : MonoBehaviour
     /// NOTE : 구매한 유닛 대기 블록라인에 배치 
     /// </summary>
     /// <param name="_unitpdata"></param>
-    public bool BuyUnit(UnitPropertyData _unitpdata)
+    public bool BuyUnit(UnitData _unitpdata)
     {
         if (IngameManager.instance.pData.Gold < _unitpdata.cost)
             return false;
@@ -239,7 +239,7 @@ public class BoardManager : MonoBehaviour
     /// NOTE : 유닛 합성 , 구매할 때 생성되는 block데이터를 통해서 처리 
     /// </summary>
     /// <param name="_unitpdata"></param>
-    private bool CheckComposeUnitByBuy(UnitPropertyData _unitpdata)
+    private bool CheckComposeUnitByBuy(UnitData _unitpdata)
     {
         if (_unitpdata.ratingValue >= 3)
             return false;
@@ -273,7 +273,7 @@ public class BoardManager : MonoBehaviour
     /// NOTE : 유닛 합성 , 구매할 때 생성되는 block데이터를 통해서 처리 
     /// </summary>
     /// <param name="_unitpdata"></param>
-    private bool CheckComposeUnitNormal(UnitPropertyData _unitpdata)
+    private bool CheckComposeUnitNormal(UnitData _unitpdata)
     {
         if (_unitpdata.ratingValue >= 3)
             return false;

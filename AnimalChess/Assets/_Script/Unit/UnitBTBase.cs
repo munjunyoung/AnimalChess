@@ -85,7 +85,7 @@ public class SetTargetBlock : ActionNode
 /// <summary>
 /// NOTE : 현재 타겟 상태 죽었을 경우 다시 리턴
 /// </summary>
-public class ResetPath : ActionNode
+public class SetPath : ActionNode
 {
     public UnitController Controller
     {
@@ -95,7 +95,7 @@ public class ResetPath : ActionNode
 
     public override bool Invoke()
     {
-        return _controller.ResetPath();
+        return _controller.SetPath();
     }
 }
 
@@ -164,8 +164,7 @@ public class LookAtTarget : ActionNode
 
     public override bool Invoke()
     {
-       _controller.LookAtTarget();
-        return false;
+       return _controller.LookAtTarget();
     }
 }
 
@@ -183,9 +182,7 @@ public class CheckAttackCondition : ActionNode
 
     public override bool Invoke()
     {
-        if (_controller.CheckAttackCondition())
-            return true;
-        return false;
+        return _controller.CheckAttackCondition();
     }
 }
 

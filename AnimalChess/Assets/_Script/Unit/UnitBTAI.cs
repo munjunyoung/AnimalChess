@@ -16,12 +16,14 @@ public class UnitBTAI : UnitBTBase
     private Sequence seqAnim = new Sequence();
     //Move
     private SetTargetBlock              setTargetblock              = new SetTargetBlock();
-    private ResetPath                   resetPath                   = new ResetPath();
+    private SetPath                     setPath                     = new SetPath();
     private CheckMoveState              checkMoveState              = new CheckMoveState();
     private StartMoveToNextBlock        startMoveToNextBlock        = new StartMoveToNextBlock();
-    //AtTack
+    //Attack
     private CheckAttackRangeCondition   checkAttackRangeCondition   = new CheckAttackRangeCondition();
     private LookAtTarget                lookAtTarget                = new LookAtTarget();
+    private CheckAttackCondition        checkAttackCondition        = new CheckAttackCondition();
+    private StartAttack                 startAttack                 = new StartAttack();
     //Dead
     private IsDie                   isDie                       = new IsDie();
 
@@ -38,12 +40,14 @@ public class UnitBTAI : UnitBTBase
         unitController.Init();
         //Move
         setTargetblock.Controller = unitController;
-        resetPath.Controller = unitController;
+        setPath.Controller = unitController;
         checkMoveState.Controller = unitController;
         startMoveToNextBlock.Controller = unitController;
         //Attack
         checkAttackRangeCondition.Controller = unitController;
         lookAtTarget.Controller = unitController;
+        checkAttackCondition.Controller = unitController;
+        startAttack.Controller = unitController;
         //Dead
         isDie.Controller = unitController;
         //Anim
@@ -57,12 +61,14 @@ public class UnitBTAI : UnitBTBase
         selector.AddChild(seqAttack);
 
         seqMove.AddChild(setTargetblock);
-        seqMove.AddChild(resetPath);
+        seqMove.AddChild(setPath);
         seqMove.AddChild(checkMoveState);
         seqMove.AddChild(startMoveToNextBlock);
 
         seqAttack.AddChild(checkAttackRangeCondition);
         seqAttack.AddChild(lookAtTarget);
+        seqAttack.AddChild(checkAttackCondition);
+        seqAttack.AddChild(startAttack);
 
         seqDead.AddChild(isDie);
 

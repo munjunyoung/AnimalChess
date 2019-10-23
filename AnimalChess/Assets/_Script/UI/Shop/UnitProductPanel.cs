@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 public class UnitProductPanel : MonoBehaviour
 {
-    private UnitPropertyData unitdata;
+    private UnitData unitdata;
     [SerializeField]
     private GameObject unitInfoParent;
     [SerializeField]
@@ -82,11 +82,11 @@ public class UnitProductPanel : MonoBehaviour
     /// </summary>
     /// <param name="_currentlevel"></param>
     /// <returns></returns>
-    private UnitPropertyData GetRandomUnitData(int _currentlevel)
+    private UnitData GetRandomUnitData(int _currentlevel)
     {
-        List<UnitPropertyData> unitlist = DataBaseManager.instance.unitTypeListbyGold[GetRandomCostValue(_currentlevel)];
+        List<UnitData> unitlist = DataBaseManager.instance.unitTypeListbyGold[GetRandomCostValue(_currentlevel)];
 
-        UnitPropertyData selectedUnit = unitlist[Random.Range(0, unitlist.Count)];
+        UnitData selectedUnit = unitlist[Random.Range(0, unitlist.Count)];
         return selectedUnit;
     }
 

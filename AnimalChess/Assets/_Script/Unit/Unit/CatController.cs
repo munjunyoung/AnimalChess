@@ -10,9 +10,9 @@ public class CatController : UnitController
         return base.SetTargetBlock();
     }
     
-    public override bool ResetPath()
+    public override bool SetPath()
     {
-        return base.ResetPath();
+        return base.SetPath();
     }
 
     public override void StartMoveToNextBlock()

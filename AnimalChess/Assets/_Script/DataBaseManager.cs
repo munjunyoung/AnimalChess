@@ -36,13 +36,13 @@ public class DataBaseManager : MonoBehaviour
 
     //ShopUnit  
     //0 -> 1성 리스트 1 -> 2성 리스트 3 -> 3성리스트
-    public List<Dictionary<Unit_Type, UnitPropertyData>> UnitPropertyDataDic = new List<Dictionary<Unit_Type, UnitPropertyData>>();
-    public Dictionary<int, List<UnitPropertyData>> unitTypeListbyGold = new Dictionary<int, List<UnitPropertyData>>();
+    public List<Dictionary<Unit_Type, UnitData>> UnitPropertyDataDic = new List<Dictionary<Unit_Type, UnitData>>();
+    public Dictionary<int, List<UnitData>> unitTypeListbyGold = new Dictionary<int, List<UnitData>>();
     public List<int[]> ShopUnitPerList = new List<int[]>();
     
     //Unit Ob
     public Dictionary<string, UnitBlockData> unitObDic = new Dictionary<string, UnitBlockData>();
-    
+    public Dictionary<string, UnitAbilityData> unitDataDic = new Dictionary<string, UnitAbilityData>();
     
     //pData
     public readonly int[] expRequireValueList = {1, 1, 1, 1, 5, 10, 20, 40 };
@@ -114,19 +114,19 @@ public class DataBaseManager : MonoBehaviour
 
         for (int ratingvalue = 1; ratingvalue <= 3; ratingvalue++)
         {
-            Dictionary<Unit_Type, UnitPropertyData> tmpList = new Dictionary<Unit_Type, UnitPropertyData>();
+            Dictionary<Unit_Type, UnitData> tmpList = new Dictionary<Unit_Type, UnitData>();
             for (int i = 0; i < typeofUnitcount; i++)
             {
-                tmpList.Add((Unit_Type)i, new UnitPropertyData((Unit_Type)i, ratingvalue));
+                tmpList.Add((Unit_Type)i, new UnitData((Unit_Type)i, ratingvalue));
             }
             UnitPropertyDataDic.Add(tmpList);
         }
 
         //각 골드별 유닛 데이터 설정
-        List<UnitPropertyData> g1 = new List<UnitPropertyData>();
-        List<UnitPropertyData> g2 = new List<UnitPropertyData>();
-        List<UnitPropertyData> g3 = new List<UnitPropertyData>();
-        List<UnitPropertyData> g4 = new List<UnitPropertyData>();
+        List<UnitData> g1 = new List<UnitData>();
+        List<UnitData> g2 = new List<UnitData>();
+        List<UnitData> g3 = new List<UnitData>();
+        List<UnitData> g4 = new List<UnitData>();
      
 
         foreach(var pdata in UnitPropertyDataDic[0])
@@ -155,6 +155,8 @@ public class DataBaseManager : MonoBehaviour
         unitTypeListbyGold.Add(4, g4);
 
         SetRandomPercentage();
+
+
     }
 
     /// <summary>
@@ -182,10 +184,13 @@ public class DataBaseManager : MonoBehaviour
     
 }
 
-public class UnitPropertyData
+public class UnitData
 {
     public string name;
     public Unit_Type unitType;
+    private Tribe_Type tribe;
+    private Attribute_Type attribute;
+
     public Sprite tribeSprite;
     public Sprite attributeSprite;
     public int cost;
@@ -196,31 +201,53 @@ public class UnitPropertyData
     //RenderTexture 카메라 포지션을 변경하여 보여주기 위함
     public Vector2 camPos;
 
+    public UnitAbilityData abilityData;
 
-    public UnitPropertyData(Unit_Type _type, int _ratingvalue)
+
+    public UnitData(Unit_Type _type, int _ratingvalue)
     {
         unitType = _type;
         string[] namedata = _type.ToString().Split('_');
 
-        var tribe = namedata[0];
-        var attribute = namedata[1];
+        //타입을 통해서 값 초기화 
+        tribe = (Tribe_Type) System.Enum.Parse(typeof(Tribe_Type), namedata[0]);
+        attribute = (Attribute_Type)System.Enum.Parse(typeof(Attribute_Type), namedata[1]);
         ratingValue = _ratingvalue;
         //속성 타입만큼 현재 타입 숫자값 + 1 * rating 값 -> Unit_Type 이 1,2,3,4 1,2,3,4 순으로 나열되어있으므로
-        cost = (((int)_type% System.Enum.GetValues(typeof(Attribute_Type)).Length)+1) * ratingValue;
+
         originalCost = (((int)_type % System.Enum.GetValues(typeof(Attribute_Type)).Length) + 1);
         cost = originalCost * ratingValue;
-        //가로 5(종류단위), 세로 10(등급단위)
+        //TextureRenderer 카메라 포지션 설정 가로 5(종류단위), 세로 10(등급단위)
         float xpos = ((int)_type% System.Enum.GetValues(typeof(Unit_Type)).Length) * 5;
         camPos = new Vector3(xpos, (ratingValue-1) * 10, 0);
 
-        tribeSprite = DataBaseManager.instance.TribeSpriteDic[tribe];
-        attributeSprite = DataBaseManager.instance.AttributeSpriteDic[attribute];
-
-        name = attribute + tribe;
-
+        //sprite 설정
+        tribeSprite = DataBaseManager.instance.TribeSpriteDic[tribe.ToString()];
+        attributeSprite = DataBaseManager.instance.AttributeSpriteDic[attribute.ToString()];
+        //이름 설정
+        name = attribute.ToString() + tribe.ToString();
+        //Prefab 불러올 아이디 설정
         ObId = namedata[0] + "_" + namedata[1] +"_" + ratingValue;
+        //능력 데이터 설정
+        abilityData = new UnitAbilityData(tribe, attribute, originalCost, ratingValue);
     }
 }
+
+
+public class DataReader
+{
+    private static DataReader _instance = null;
+    public static DataReader instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = new DataReader();
+            return _instance;
+        }
+    }
+}
+
 
 //public enum Unit_Type
 //{
@@ -273,3 +300,31 @@ public class UnitPropertyData
 //    Bear_Water_3_6, Bear_Fire_3_6, Bear_Wind_3_9, Bear_Ground_3_12,
 //    Rabbit_Ground_3_6, Rabbit_Water_3_6, Rabbit_Wind_3_9, Rabbit_Fire_3_12
 //}
+// 속성 water -
+
+//NORMAL 300 100 50 1 1
+//unitDataDic.Add("CatFire1", new UnitData(300, 100, 60, 1, 1));
+//unitDataDic.Add("CatFire2", new UnitData(300, 100, 60, 1, 1));
+//unitDataDic.Add("CatFire3", new UnitData(300, 100, 60, 1, 1));
+//unitDataDic.Add("CatWater1", new UnitData(400, 100, 60, 1, 1));
+//unitDataDic.Add("CatWater2", new UnitData(450, 100, 70, 1, 1));
+//unitDataDic.Add("CatWater3", new UnitData(650, 100, 80, 1, 1));
+//unitDataDic.Add("CatGround1", new UnitData(700, 100, 60, 1, 2));
+//unitDataDic.Add("CatGround2", new UnitData(1000, 100, 70, 1, 2));
+//unitDataDic.Add("CatGround3", new UnitData(1200, 100, 80, 1, 2));
+//unitDataDic.Add("CatWind1", new UnitData(700, 100, 80, 1, 0.5f));
+//unitDataDic.Add("CatWind2", new UnitData(1000, 100, 100, 1, 0.5f));
+//unitDataDic.Add("CatWind3", new UnitData(1500, 100, 180, 1, 0.5f));
+
+//unitDataDic.Add("BearWater1", new UnitData(300, 100, 60, 1, 1));
+//unitDataDic.Add("CatFire2", new UnitData(400, 100, 70, 1, 1));
+//unitDataDic.Add("CatFire3", new UnitData(600, 100, 90, 1, 1));
+//unitDataDic.Add("CatWater1", new UnitData(400, 100, 60, 1, 1));
+//unitDataDic.Add("CatWater2", new UnitData(450, 100, 70, 1, 1));
+//unitDataDic.Add("CatWater3", new UnitData(650, 100, 80, 1, 1));
+//unitDataDic.Add("CatGround1", new UnitData(700, 100, 60, 1, 2));
+//unitDataDic.Add("CatGround2", new UnitData(1000, 100, 70, 1, 2));
+//unitDataDic.Add("CatGround3", new UnitData(1200, 100, 80, 1, 2));
+//unitDataDic.Add("CatWind1", new UnitData(700, 100, 80, 1, 0.5f));
+//unitDataDic.Add("CatWind2", new UnitData(1000, 100, 100, 1, 0.5f));
+//unitDataDic.Add("CatWind3", new UnitData(1500, 100, 180, 1, 0.5f));

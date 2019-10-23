@@ -19,7 +19,7 @@ public class UnitPathFinding
     /// <param name="endnode"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public bool FindPath(BlockOnBoard startblock, BlockOnBoard endblock, BlockOnBoard[,] map, ref List<BlockOnBoard> path, float attackRange)
+    public bool FindPath(BlockOnBoard startblock, BlockOnBoard endblock, BlockOnBoard[,] map, ref List<BlockOnBoard> path)
     {
         path.Clear();
         var startnode = new PathNode(new Vector2Int((int)(startblock.groundArrayIndex.x), (int)(startblock.groundArrayIndex.y)));
@@ -48,13 +48,13 @@ public class UnitPathFinding
             openNodeList.RemoveAt(0);
 
             //목적지와 현재 노드가 같다면 처리 리스트 역순으로 추가
-            if(DistanceNode(currentNode, endnode, attackRange))
+            //if(DistanceNode(currentNode, endnode, attackRange))
+            if (DistanceNode(currentNode, endnode, 1.5f))
             {
                 while (currentNode != null)
                 {
-                    path.Add(map[currentNode.arrayIndex.x,currentNode.arrayIndex.y]);
+                    path.Add(map[currentNode.arrayIndex.x, currentNode.arrayIndex.y]);
                     currentNode = currentNode.parentNode;
-                    
                 }
                 return true;
             }

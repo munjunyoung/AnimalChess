@@ -3,7 +3,7 @@
 public class UnitBlockData : MonoBehaviour
 {
     [HideInInspector]
-    public  UnitPropertyData unitPdata;
+    public  UnitData unitPdata;
     [HideInInspector]
     public  UnitController   unitController;
     [HideInInspector]
