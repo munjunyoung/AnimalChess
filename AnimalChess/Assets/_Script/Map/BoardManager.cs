@@ -109,7 +109,7 @@ public class BoardManager : MonoBehaviour
         else
         {
             BattleBlockOnUnitList.Add(_block);
-            IngameManager.instance.pData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
+            IngameManager.instance.playerData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
         }
         allBlockOnUnitList.Add(_block);
         //unitListOnBattleBoard.Add(_unit);
@@ -129,7 +129,7 @@ public class BoardManager : MonoBehaviour
         else
         {
             BattleBlockOnUnitList.Remove(_block);
-            IngameManager.instance.pData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
+            IngameManager.instance.playerData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
         }
         allBlockOnUnitList.Remove(_block);
         //unitListOnBattleBoard.Remove(_unit);
@@ -198,7 +198,7 @@ public class BoardManager : MonoBehaviour
     {
         var target = _block.GetUnitRemoveList();
         target.gameObject.SetActive(false);
-        IngameManager.instance.pData.Gold += target.unitPdata.cost;
+        IngameManager.instance.playerData.Gold += target.unitPdata.cost;
         RemoveUnit(_block);
         _block.SetUnitaddList(null);
         //판매 애니매이션 사운드
@@ -210,13 +210,13 @@ public class BoardManager : MonoBehaviour
     /// <param name="_unitpdata"></param>
     public bool BuyUnit(UnitData _unitpdata)
     {
-        if (IngameManager.instance.pData.Gold < _unitpdata.cost)
+        if (IngameManager.instance.playerData.Gold < _unitpdata.cost)
             return false;
         
         //합성 가능한것이 있을 경우 대기보드 자리가 있던 말던 바로 구매
         if (CheckComposeUnitByBuy(_unitpdata))
         {
-            IngameManager.instance.pData.Gold -= _unitpdata.cost;
+            IngameManager.instance.playerData.Gold -= _unitpdata.cost;
             return true;
         }
 
@@ -227,7 +227,7 @@ public class BoardManager : MonoBehaviour
             if (wb.GetUnitNormal() == null)
             {
                 CreateUnit((_unitpdata.unitType), 1, wb);
-                IngameManager.instance.pData.Gold -= _unitpdata.cost;
+                IngameManager.instance.playerData.Gold -= _unitpdata.cost;
                 return true;
             }
         }

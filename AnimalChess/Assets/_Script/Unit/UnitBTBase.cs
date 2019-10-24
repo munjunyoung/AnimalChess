@@ -78,8 +78,8 @@ public class SetTargetBlock : ActionNode
 
     public override bool Invoke()
     {
-        _controller.SetTargetBlock();
-        return true;
+        return _controller.SetTargetBlock();
+        
     }
 }
 /// <summary>

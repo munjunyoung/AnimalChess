@@ -7,6 +7,7 @@ public enum Ground_TYPE { DesertBlock1, DesertBlock2, WaitingBlock }
 ////Unit
 public enum Tribe_Type { Cat, Bear, Rabbit }
 public enum Attribute_Type  { Fire, Water, Wind, Ground }
+public enum Unit_SideType { Player, Enemy}
 
 //종족, 속성, 등급, 가격 , 유닛 종료 숫자는 databasemanager 변수에 수정 해주어야함
 public enum Unit_Type

@@ -211,21 +211,21 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void RerollButtonClick()
     {
-        if (IngameManager.instance.pData.Gold < 2)
+        if (IngameManager.instance.playerData.Gold < 2)
             return;
-        SetShopPanelCharacter(IngameManager.instance.pData.Level, IngameManager.instance.pData.Gold);
-        IngameManager.instance.pData.Gold -= 2;
+        SetShopPanelCharacter(IngameManager.instance.playerData.Level, IngameManager.instance.playerData.Gold);
+        IngameManager.instance.playerData.Gold -= 2;
     }
 
     public void LevelUpButtonClick()
     {
-        if (IngameManager.instance.pData.Gold < 5)
+        if (IngameManager.instance.playerData.Gold < 5)
             return;
-        if (IngameManager.instance.pData.Level >= 7)
+        if (IngameManager.instance.playerData.Level >= 7)
             return;
 
-        IngameManager.instance.pData.ExpValue += 5;
-        IngameManager.instance.pData.Gold -= 5;
+        IngameManager.instance.playerData.ExpValue += 5;
+        IngameManager.instance.playerData.Gold -= 5;
     }
 
     /// <summary>

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Anim_State { Idle=0, Walk, Attack , Skill, Die }
+public enum Anim_State { Idle = 0, Walk, Attack, Skill, Die }
 public class UnitController : MonoBehaviour
 {
     [HideInInspector]
     public UnitBlockData unitblockSc;
+    [HideInInspector]
+    public UnitData unitPdata;
     [HideInInspector] //touch 에서 참조 
     public Rigidbody rb;
     protected CapsuleCollider col;
@@ -14,15 +16,15 @@ public class UnitController : MonoBehaviour
     protected CharacterController cController;
 
     public Anim_State animState = Anim_State.Idle;
-
-    protected float pDataAttackRange = 1.5f;
-
+    //HP
     protected int currentHP;
     protected int currentMP;
     //Move
     protected UnitPathFinding pathfind = new UnitPathFinding();
     protected List<BlockOnBoard> path = new List<BlockOnBoard>();
-    protected BlockOnBoard targetBlock;
+    protected List<EnemyUnit> enemyList = new List<EnemyUnit>();
+    protected BlockOnBoard prevTargetBlock;
+    protected BlockOnBoard currentTargetBlock;
     protected float moveSpeed = 1f;
     protected int nextBlockIndexCount = 0;
     //Rotate
@@ -33,6 +35,7 @@ public class UnitController : MonoBehaviour
     public    bool isAlive = true;
     protected bool isFindPath = false;
     protected bool isMoving = false;
+    protected bool isChangedTaget = true;
     protected bool isCloseTarget = false;
     protected bool isDieAllEnemy = false;
     protected bool isRotating = false;
@@ -40,7 +43,7 @@ public class UnitController : MonoBehaviour
     protected bool isStartAttack = false;
     protected bool isAttackCooltimeWaiting = false;
     protected bool isStartSkill = false;
-    
+
 
     public void Init()
     {
@@ -57,60 +60,72 @@ public class UnitController : MonoBehaviour
     /// <returns></returns>
     public virtual bool SetTargetBlock()
     {
-        //목적지가 없을때
-        if (targetBlock == null
-          || targetBlock.GetUnitInBattle() == null
-          || !targetBlock.GetUnitInBattle().unitController.isAlive)
+        if (enemyList.Count == 0)
+            enemyList = BoardManager.instance.currentMonsterList;
+
+        float mindistance = 100;
+        //적이 모두 죽었는지 체크
+        isDieAllEnemy = true;
+        //가장 가까운 거리에 있는 적 검색
+        for (int i = 0; i < enemyList.Count; i++)
         {
-            //몬스터 리스트 
-            var mlist = BoardManager.instance.currentMonsterList;
-            
-            float mindistance = 100;
-            //적이 모두 죽었는지 체크
-            isDieAllEnemy = true;
-            //가장 가까운 거리에 있는 적 검색
-            for (int i = 0; i < mlist.Count; i++)
+            //살아있는지 확인
+            if (enemyList[i].isAlive)
             {
-                //살아있는지 확인
-                if (mlist[i].isAlive)
+                var currentdis = Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, enemyList[i].unitblockSc.GetCurrentBlockInBattle().groundArrayIndex);
+                if (mindistance > currentdis)
                 {
-                    var currentdis = Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, mlist[i].unitblockSc.GetCurrentBlockInBattle().groundArrayIndex);
-                    if (mindistance > currentdis)
-                    {
-                        mindistance = currentdis;
-                        targetBlock = mlist[i].unitblockSc.GetCurrentBlockInBattle();
-                        isDieAllEnemy = false;
-                    }
+                    mindistance = currentdis;
+                    currentTargetBlock = enemyList[i].unitblockSc.GetCurrentBlockInBattle();
+
+                    isDieAllEnemy = false;
                 }
             }
         }
-        return isDieAllEnemy;
+        //모든 적이 죽었을 경우 return
+        if (isDieAllEnemy)
+            return false;
+        //처음 이전 타겟이 없을 경우 
+        if (prevTargetBlock == null)
+            prevTargetBlock = currentTargetBlock;
+        //타겟이 변경되었을 경우 
+        if (isChangedTaget = !prevTargetBlock.Equals(currentTargetBlock))
+            prevTargetBlock = currentTargetBlock;
+
+        return true;
     }
-    
+
     /// <summary>
     /// NOTE : PATH가 없을경우, 길을 가는중 길이 막혔을 경우 -> 길찾기 실행, 길을 못찾았을 경우 RETURN FALSE
     /// </summary>
     /// <returns></returns>
     public virtual bool SetPath()
     {
+        //타겟이 변경되었을 경우
+        if (isChangedTaget)
+        {
+            if (isFindPath = pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), currentTargetBlock, BoardManager.instance.allGroundBlocks, ref path))
+                nextBlockIndexCount = path.Count - 2;
+            return isFindPath;
+        }
         //길이 없을 경우
         if (path.Count == 0)
         {
-            if (isFindPath = pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), targetBlock, BoardManager.instance.allGroundBlocks, ref path))
+            if (isFindPath = pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), currentTargetBlock, BoardManager.instance.allGroundBlocks, ref path))
                 nextBlockIndexCount = path.Count - 2;
+            return isFindPath;
         }
-        //길이 존재 하지만 원래 길의 목적지에 방해물이 있을 경우 
-        else
+
+        //길을 막았을 경우 
+        if (nextBlockIndexCount >= 0)
         {
-            if (nextBlockIndexCount >= 0)
+            if (path[nextBlockIndexCount].GetUnitInBattle() != null)
             {
-                if (path[nextBlockIndexCount].GetUnitInBattle() != null)
-                {
-                    if (isFindPath = pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), targetBlock, BoardManager.instance.allGroundBlocks, ref path))
-                        nextBlockIndexCount = path.Count - 2;
-                }
+                if (isFindPath = pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), currentTargetBlock, BoardManager.instance.allGroundBlocks, ref path))
+                    nextBlockIndexCount = path.Count - 2;
             }
         }
+
         return isFindPath;
     }
 
@@ -120,13 +135,13 @@ public class UnitController : MonoBehaviour
     /// <returns></returns>
     public virtual bool CheckMoveState()
     {
+        //움직이는 중일 경우 return
         if (isMoving)
             return false;
         //모든 움직임이 끝나고 난후 체크
         //지정한 사거리와 현재 타겟과의 거리 비교
-        isCloseTarget = (unitblockSc.unitPdata.abilityData.attackRange + 0.5f)> Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, targetBlock.groundArrayIndex) ? true : false;
-        //isCloseTarget = nextBlockIndexCount >= 0 ? false : true;
-        if (isCloseTarget)
+        //목표에 접근했을 경우
+        if (isCloseTarget = (unitblockSc.unitPdata.abilityData.attackRange + 0.5f) > Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, currentTargetBlock.groundArrayIndex))
             return false;
 
         return true;
@@ -157,13 +172,13 @@ public class UnitController : MonoBehaviour
         dir = dir.normalized;
         Quaternion currentRot = unitblockSc.transform.rotation;
         Quaternion targetRot = Quaternion.LookRotation(dir);
-        
+
         //초기화
-        while (unitblockSc.transform.position!=nextpos)
+        while (unitblockSc.transform.position != nextpos)
         {
             count += Time.deltaTime;
             if (dir != Vector3.zero)
-                unitblockSc.transform.rotation = Quaternion.Lerp(currentRot, targetRot, count * rotateSpeed );
+                unitblockSc.transform.rotation = Quaternion.Lerp(currentRot, targetRot, count * rotateSpeed);
             unitblockSc.transform.position = Vector3.Lerp(startpos, nextpos, moveSpeed * count);
             yield return new WaitForFixedUpdate();
         }
@@ -188,7 +203,7 @@ public class UnitController : MonoBehaviour
         if (!isRotating)
         {
             //block position y 값은 0으로 초기화 
-            var targetpos = targetBlock.transform.position;
+            var targetpos = currentTargetBlock.transform.position;
             targetpos.y = 0;
             //방향벡터
             Vector3 dirVector = targetpos - unitblockSc.transform.position;
@@ -201,7 +216,7 @@ public class UnitController : MonoBehaviour
             if (!(isLookatTarget = (Quaternion.Angle(unitblockSc.transform.rotation, targetRot) == 0)))
                 StartCoroutine(StartRotate(Quaternion.LookRotation(dirVector)));
         }
-        
+
         return isLookatTarget;
     }
 
@@ -213,10 +228,10 @@ public class UnitController : MonoBehaviour
     {
         isRotating = true;
         Quaternion currentrot = unitblockSc.transform.rotation;
-        
+
         float count = 0;
         //angle값이 0 이면 rotation값 일치
-        while(Quaternion.Angle(unitblockSc.transform.rotation, targetRot) != 0)
+        while (Quaternion.Angle(unitblockSc.transform.rotation, targetRot) != 0)
         {
             count += Time.deltaTime;
             unitblockSc.transform.rotation = Quaternion.Lerp(currentrot, targetRot, count * rotateSpeed);
@@ -235,7 +250,7 @@ public class UnitController : MonoBehaviour
             return false;
         return true;
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -285,3 +300,34 @@ public class UnitController : MonoBehaviour
 
     }
 }
+
+
+////목적지가 없을때
+//if (currentTargetBlock == null
+//  || currentTargetBlock.GetUnitInBattle() == null
+//  || !currentTargetBlock.GetUnitInBattle().unitController.isAlive)
+//{
+//    //몬스터 리스트 
+//    var mlist = BoardManager.instance.currentMonsterList;
+
+//    float mindistance = 100;
+//    //적이 모두 죽었는지 체크
+//    isDieAllEnemy = true;
+//    //가장 가까운 거리에 있는 적 검색
+//    for (int i = 0; i < mlist.Count; i++)
+//    {
+//        //살아있는지 확인
+//        if (mlist[i].isAlive)
+//        {
+//            var currentdis = Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, mlist[i].unitblockSc.GetCurrentBlockInBattle().groundArrayIndex);
+//            if (mindistance > currentdis)
+//            {
+//                mindistance = currentdis;
+//                currentTargetBlock = mlist[i].unitblockSc.GetCurrentBlockInBattle();
+//                isDieAllEnemy = false;
+//            }
+//        }
+//    }
+//}
+//if (currentTargetBlock == null)
+//    return false;

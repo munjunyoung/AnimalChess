@@ -6,7 +6,7 @@ enum Game_State { WaitState , BattleState }
 public class IngameManager : MonoBehaviour
 {
     public static IngameManager instance = null;
-    public PlayerData pData;
+    public PlayerData playerData;
     
     private TouchUnitSystem unitTouchSystem;
 
@@ -51,7 +51,7 @@ public class IngameManager : MonoBehaviour
 
     private void Start()
     {
-        pData = new PlayerData();
+        playerData = new PlayerData();
         GameStart();
     }
     
@@ -86,7 +86,7 @@ public class IngameManager : MonoBehaviour
         //해당 라운드 유닛 생성
         //SetMonster[RoundNumber]; 
         //경험치
-        pData.ExpValue += 1;
+        playerData.ExpValue += 1;
         //골드 정산
         SetRoundGold(_iswin);
         //대기 시간에는 유닛들의 체력을 실행하지 않음
@@ -94,7 +94,7 @@ public class IngameManager : MonoBehaviour
         //적 유닛 -> ai 시작시 상태 설정, ai 종료시 상태설정 죽을경우는 상관없으나(죽지 않았을 경우 체력 상태) 
 
         //레벨 적용후 샵 데이터 초기화(리롤)
-        UIManager.instance.SetShopPanelCharacter(pData.Level, pData.Gold);
+        UIManager.instance.SetShopPanelCharacter(playerData.Level, playerData.Gold);
         //대기시간 카운팅
         StartCoroutine(WaitCounterProcess(_count));
         //유닛 이동 상태 가능
@@ -127,11 +127,11 @@ public class IngameManager : MonoBehaviour
 
         // 현재 골드에 따른 추가 골드
         // 10골드 간격에 따라 +1
-        plusgold += pData.Gold > 10 ? 1 : 0;
-        plusgold += pData.Gold > 20 ? 1 : 0;
-        plusgold += pData.Gold > 30 ? 1 : 0;
-        plusgold += pData.Gold > 40 ? 1 : 0;
-        plusgold += pData.Gold > 50 ? 1 : 0;
+        plusgold += playerData.Gold > 10 ? 1 : 0;
+        plusgold += playerData.Gold > 20 ? 1 : 0;
+        plusgold += playerData.Gold > 30 ? 1 : 0;
+        plusgold += playerData.Gold > 40 ? 1 : 0;
+        plusgold += playerData.Gold > 50 ? 1 : 0;
         
     }
 
@@ -158,7 +158,7 @@ public class IngameManager : MonoBehaviour
         {
             //몬스터가 존재하고 있을경우 데미지 감소 처리
             if(m.gameObject.activeSelf)
-                pData.HpValue -= m.GetDamage();
+                playerData.HpValue -= m.GetDamage();
         }
         //체력 이펙트 발생 및 몬스터 유닛에서 애니매이션 처리
     }
@@ -193,7 +193,7 @@ public class IngameManager : MonoBehaviour
         //배틀보드에 있는 유닛을 드래그중인경우 초기 자리로 되돌리고 픽업 상태를 변경
         unitTouchSystem.ReturnPickState();
         //레벨보다 많은 숫자의 유닛이 올라갈경우 유닛처리
-        BoardManager.instance.ReturnUnitOnWaitingBoard(pData.Level);
+        BoardManager.instance.ReturnUnitOnWaitingBoard(playerData.Level);
 
         StartUnitAI();
         //유닛, 적 ai 실행 (1초~2초정도의 텀을 주도록 실행하도록)
