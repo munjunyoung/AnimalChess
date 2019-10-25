@@ -322,7 +322,7 @@ public class BoardManager : MonoBehaviour
     private void CreateUnit(Unit_Type _unitType, int _ratingvalue, BlockOnBoard _blockOnUnit)
     {
         var pdata = DataBaseManager.instance.UnitPropertyDataDic[_ratingvalue - 1][_unitType];
-        var unit = Instantiate(DataBaseManager.instance.unitObDic[pdata.ObId], Vector3.zero, Quaternion.identity, unitOBParent.transform);
+        var unit = Instantiate(DataBaseManager.instance.unitObDic[pdata.id], Vector3.zero, Quaternion.identity, unitOBParent.transform);
         unit.GetComponentInChildren<UnitController>().unitPdata = pdata;
         unit.transform.eulerAngles = new Vector3(0, 180, 0);
         _blockOnUnit.SetUnitaddList(unit);

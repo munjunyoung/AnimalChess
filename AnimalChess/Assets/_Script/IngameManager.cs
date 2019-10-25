@@ -158,7 +158,7 @@ public class IngameManager : MonoBehaviour
         {
             //몬스터가 존재하고 있을경우 데미지 감소 처리
             if (m.gameObject.activeSelf)
-                playerData.HpValue -= m.unitPdata.originalCost;
+                playerData.HpValue -= m.unitPdata.cost;
         }
         //체력 이펙트 발생 및 몬스터 유닛에서 애니매이션 처리
     }

@@ -1,28 +1,23 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-
 //Map
 public enum Ground_TYPE { DesertBlock1, DesertBlock2, WaitingBlock }
 ////Unit
-public enum Tribe_Type { Cat, Bear, Rabbit }
-public enum Attribute_Type  { Fire, Water, Wind, Ground }
-public enum Unit_SideType { Player, Enemy}
+
+public enum Tribe_Type { Cat, Bear, Rabbit, Chick }
+public enum Attribute_Type { Fire, Water, Wind, Ground }
+public enum Unit_SideType { Player, Enemy }
 
 //종족, 속성, 등급, 가격 , 유닛 종료 숫자는 databasemanager 변수에 수정 해주어야함
 public enum Unit_Type
 {
-    Cat_Fire_1, Cat_Water_1, Cat_Ground_1, Cat_Wind_1,
-    Bear_Water_1, Bear_Fire_1, Bear_Wind_1, Bear_Ground_1,
-    Rabbit_Ground_1, Rabbit_Water_1, Rabbit_Wind_1, Rabbit_Fire_1,
-    //EnemyUnit
-
+    Cat_Fire, Cat_Water, Cat_Ground, Cat_Wind,
+    Bear_Water, Bear_Fire, Bear_Wind, Bear_Ground,
+    Rabbit_Ground, Rabbit_Water, Rabbit_Wind, Rabbit_Fire,
+    Chick_Water,
 }
 
-public enum EnemyUnit_Type
-{
-
-}
 
 public class DataBaseManager : MonoBehaviour
 {
@@ -47,19 +42,19 @@ public class DataBaseManager : MonoBehaviour
     public List<Dictionary<Unit_Type, UnitData>> UnitPropertyDataDic = new List<Dictionary<Unit_Type, UnitData>>();
     public Dictionary<int, List<UnitData>> unitTypeListbyGold = new Dictionary<int, List<UnitData>>();
     public List<int[]> ShopUnitPerList = new List<int[]>();
-    
+
     //Unit Ob
     public Dictionary<string, UnitBlockData> unitObDic = new Dictionary<string, UnitBlockData>();
     public Dictionary<string, UnitAbilityData> unitDataDic = new Dictionary<string, UnitAbilityData>();
-    
+
     //pData
-    public readonly int[] expRequireValueList = {1, 1, 1, 1, 5, 10, 20, 40 };
+    public readonly int[] expRequireValueList = { 1, 1, 1, 1, 5, 10, 20, 40 };
 
     private void Awake()
     {
         if (instance == null)
             instance = this;
-        
+
         //Map Data
         SetLoadDataOnDictionary(groundDic, groundPrefabPath);
         //ShoUI Data
@@ -125,7 +120,10 @@ public class DataBaseManager : MonoBehaviour
             Dictionary<Unit_Type, UnitData> tmpList = new Dictionary<Unit_Type, UnitData>();
             for (int i = 0; i < typeofUnitcount; i++)
             {
-                tmpList.Add((Unit_Type)i, new UnitData((Unit_Type)i, ratingvalue));
+                UnitData tmpunit = new UnitData();
+                DataReader.instance.SetData(ref tmpunit, ((Unit_Type)i).ToString() + "_" + ratingvalue);
+                tmpunit.SetOtherData();
+                tmpList.Add((Unit_Type)i, tmpunit);
             }
             UnitPropertyDataDic.Add(tmpList);
         }
@@ -135,10 +133,10 @@ public class DataBaseManager : MonoBehaviour
         List<UnitData> g2 = new List<UnitData>();
         List<UnitData> g3 = new List<UnitData>();
         List<UnitData> g4 = new List<UnitData>();
-     
 
-        foreach(var pdata in UnitPropertyDataDic[0])
-        { 
+
+        foreach (var pdata in UnitPropertyDataDic[0])
+        {
             int gold = pdata.Value.cost;
             switch (gold)
             {
@@ -189,72 +187,43 @@ public class DataBaseManager : MonoBehaviour
         ShopUnitPerList.Add(level6);
         ShopUnitPerList.Add(level7);
     }
-    
+
 }
 
 public class UnitData
 {
+    public string id;
     public string name;
     public Unit_Type unitType;
-    private Tribe_Type tribe;
-    private Attribute_Type attribute;
-
-    public Sprite tribeSprite;
-    public Sprite attributeSprite;
+    public Tribe_Type tribe;
+    public Attribute_Type attribute;
+    public int ratingValue;
     public int cost;
     public int originalCost;
-
-    public int ratingValue;
-    public string ObId;
+    public float camposx;
+    public float camposy;
+    
+    public Sprite tribeSprite;
+    public Sprite attributeSprite;
+    public Vector3 camPos;
     //RenderTexture 카메라 포지션을 변경하여 보여주기 위함
-    public Vector2 camPos;
 
     public UnitAbilityData abilityData;
-
-
-    public UnitData(Unit_Type _type, int _ratingvalue)
+    
+    public void SetOtherData()
     {
-        unitType = _type;
-        string[] namedata = _type.ToString().Split('_');
-
-        //타입을 통해서 값 초기화 
-        tribe = (Tribe_Type) System.Enum.Parse(typeof(Tribe_Type), namedata[0]);
-        attribute = (Attribute_Type)System.Enum.Parse(typeof(Attribute_Type), namedata[1]);
-        ratingValue = _ratingvalue;
-        //속성 타입만큼 현재 타입 숫자값 + 1 * rating 값 -> Unit_Type 이 1,2,3,4 1,2,3,4 순으로 나열되어있으므로
-        originalCost = (((int)_type % System.Enum.GetValues(typeof(Attribute_Type)).Length) + 1);
-        cost = originalCost * ratingValue;
-        //TextureRenderer 카메라 포지션 설정 가로 5(종류단위), 세로 10(등급단위)
-        
-        float xpos = ((int)_type% System.Enum.GetValues(typeof(Unit_Type)).Length) * 5;
-        camPos = new Vector3(xpos, (ratingValue-1) * 10, 0);
-
+        unitType = (Unit_Type)System.Enum.Parse(typeof(Unit_Type), tribe.ToString() + "_" + attribute.ToString());
         //sprite 설정
         tribeSprite = DataBaseManager.instance.TribeSpriteDic[tribe.ToString()];
         attributeSprite = DataBaseManager.instance.AttributeSpriteDic[attribute.ToString()];
-        //이름 설정
+        camPos = new Vector3(camposx, camposy, 0);
         name = attribute.ToString() + tribe.ToString();
-        //Prefab 불러올 아이디 설정
-        ObId = namedata[0] + "_" + namedata[1] +"_" + ratingValue;
-        //능력 데이터 설정
+
         abilityData = new UnitAbilityData(tribe, attribute, originalCost, ratingValue);
     }
 }
 
 
-public class DataReader
-{
-    private static DataReader _instance = null;
-    public static DataReader instance
-    {
-        get
-        {
-            if (_instance == null)
-                _instance = new DataReader();
-            return _instance;
-        }
-    }
-}
 
 
 //public enum Unit_Type
