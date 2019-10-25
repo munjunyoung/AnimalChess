@@ -20,11 +20,12 @@ public class BoardManager : MonoBehaviour
     private List<BlockOnBoard> BattleBlockOnUnitList = new List<BlockOnBoard>();
     private List<BlockOnBoard> waitBlockOnUnitList = new List<BlockOnBoard>();
 
+    private List<UnitController> currentPlayerUnitList = new List<UnitController>(); 
     //Monster
     [HideInInspector]
     public List<List<EnemyUnit>> allMonsterList = new List<List<EnemyUnit>>();
     [HideInInspector]
-    public List<EnemyUnit>       currentMonsterList = new List<EnemyUnit>();
+    public List<UnitController>  currentMonsterList = new List<UnitController>();
 
     public EnemyUnit testMonster;
 
@@ -196,11 +197,9 @@ public class BoardManager : MonoBehaviour
     /// <param name="_block"></param>
     public void SellUnit(BlockOnBoard _block)
     {
-        var target = _block.GetUnitRemoveList();
-        target.gameObject.SetActive(false);
-        IngameManager.instance.playerData.Gold += target.unitPdata.cost;
+        IngameManager.instance.playerData.Gold += _block.GetUnitNormal().unitController.unitPdata.cost;
         RemoveUnit(_block);
-        _block.SetUnitaddList(null);
+        //_block.SetUnitaddList(null);
         //판매 애니매이션 사운드
     }
 
@@ -252,8 +251,8 @@ public class BoardManager : MonoBehaviour
         List<BlockOnBoard> blockOnUnit = new List<BlockOnBoard>();
         foreach (var block in checkBlockList)
         {
-            if (block.GetUnitNormal().unitPdata.unitType == _unitpdata.unitType
-                && block.GetUnitNormal().unitPdata.ratingValue == _unitpdata.ratingValue)
+            if (block.GetUnitNormal().unitController.unitPdata.unitType == _unitpdata.unitType
+                && block.GetUnitNormal().unitController.unitPdata.ratingValue == _unitpdata.ratingValue)
             {
                 blockOnUnit.Add(block);
             }
@@ -286,8 +285,8 @@ public class BoardManager : MonoBehaviour
         List<BlockOnBoard> blockOnUnit = new List<BlockOnBoard>();
         foreach (var block in checkBlockList)
         {
-            if (block.GetUnitNormal().unitPdata.unitType == _unitpdata.unitType
-                && block.GetUnitNormal().unitPdata.ratingValue == _unitpdata.ratingValue)
+            if (block.GetUnitNormal().unitController.unitPdata.unitType == _unitpdata.unitType
+                && block.GetUnitNormal().unitController.unitPdata.ratingValue == _unitpdata.ratingValue)
             {
                 blockOnUnit.Add(block);
             }
@@ -312,7 +311,7 @@ public class BoardManager : MonoBehaviour
         for(int i = 0; i<checklist.Count;i++)
         {
             //검색하다가 합성되면 다시 0으로 리셋해서 검색
-            if (CheckComposeUnitNormal(checklist[i].GetUnitNormal().unitPdata))
+            if (CheckComposeUnitNormal(checklist[i].GetUnitNormal().unitController.unitPdata))
                 i = 0;
         }
     }
@@ -324,10 +323,10 @@ public class BoardManager : MonoBehaviour
     {
         var pdata = DataBaseManager.instance.UnitPropertyDataDic[_ratingvalue - 1][_unitType];
         var unit = Instantiate(DataBaseManager.instance.unitObDic[pdata.ObId], Vector3.zero, Quaternion.identity, unitOBParent.transform);
-        unit.GetComponent<UnitBlockData>().unitPdata = pdata;
+        unit.GetComponentInChildren<UnitController>().unitPdata = pdata;
         unit.transform.eulerAngles = new Vector3(0, 180, 0);
         _blockOnUnit.SetUnitaddList(unit);
-        CheckComposeUnitNormal(unit.unitPdata);
+        CheckComposeUnitNormal(unit.unitController.unitPdata);
     }
 
     /// <summary>

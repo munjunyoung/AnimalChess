@@ -15,6 +15,13 @@ public enum Unit_Type
     Cat_Fire_1, Cat_Water_1, Cat_Ground_1, Cat_Wind_1,
     Bear_Water_1, Bear_Fire_1, Bear_Wind_1, Bear_Ground_1,
     Rabbit_Ground_1, Rabbit_Water_1, Rabbit_Wind_1, Rabbit_Fire_1,
+    //EnemyUnit
+
+}
+
+public enum EnemyUnit_Type
+{
+
 }
 
 public class DataBaseManager : MonoBehaviour
@@ -215,10 +222,10 @@ public class UnitData
         attribute = (Attribute_Type)System.Enum.Parse(typeof(Attribute_Type), namedata[1]);
         ratingValue = _ratingvalue;
         //속성 타입만큼 현재 타입 숫자값 + 1 * rating 값 -> Unit_Type 이 1,2,3,4 1,2,3,4 순으로 나열되어있으므로
-
         originalCost = (((int)_type % System.Enum.GetValues(typeof(Attribute_Type)).Length) + 1);
         cost = originalCost * ratingValue;
         //TextureRenderer 카메라 포지션 설정 가로 5(종류단위), 세로 10(등급단위)
+        
         float xpos = ((int)_type% System.Enum.GetValues(typeof(Unit_Type)).Length) * 5;
         camPos = new Vector3(xpos, (ratingValue-1) * 10, 0);
 

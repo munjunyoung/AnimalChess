@@ -47,7 +47,7 @@ public class UnitAbilityData
                 maxMP -= 10;
                 break;
             case Attribute_Type.Ground:
-                maxHP += 100;
+                maxHP += 50;
                 break;
             case Attribute_Type.Wind:
                 attackCooltime -= 0.1f;

@@ -3,8 +3,6 @@
 public class UnitBlockData : MonoBehaviour
 {
     [HideInInspector]
-    public  UnitData unitPdata;
-    [HideInInspector]
     public  UnitController   unitController;
     [HideInInspector]
     public UnitBTAI          unitBTAI;

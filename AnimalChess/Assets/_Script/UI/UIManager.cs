@@ -47,13 +47,34 @@ public class UIManager : MonoBehaviour
     private Vector2 currentProfilePos = Vector2.zero;
     private bool isRunningProfileCoroutine = false;
 
+    [Header("SliderBar")]
+    [SerializeField]
+    private Transform playerUnitSliderParent;
+    [SerializeField]
+    private Transform enemyUnitSliderParent;
+    
+    public List<HpMpSlider> playerUnitSliderList;
+    public List<HpMpSlider> enemyUnitSliderList;
+
 
     private void Awake()
     {
         if (instance == null)
             instance = this;
+        SetSliderList();
     }
 
+    /// <summary>
+    /// NOTE : 슬라이더 리스트들 초기화
+    /// </summary>
+    private void SetSliderList()
+    {
+        for(int i = 0; i<playerUnitSliderParent.transform.childCount;i++)
+            playerUnitSliderList.Add(new HpMpSlider(playerUnitSliderParent.transform.GetChild(i).gameObject));
+        for (int i = 0; i < enemyUnitSliderParent.transform.childCount; i++)
+            enemyUnitSliderList.Add(new HpMpSlider(enemyUnitSliderParent.transform.GetChild(i).gameObject));
+    }
+    
     #region SetTextUI
 
     public void SetHpText(int hp)
@@ -253,4 +274,23 @@ public class UIManager : MonoBehaviour
     }
     
 #endregion
+}
+
+[System.Serializable]
+public class HpMpSlider
+{
+    public GameObject panel;
+    public Slider hpSlider;
+    public Slider mpSlider;
+    public Text hpText;
+    public Text mpText;
+
+    public HpMpSlider(GameObject _panel)
+    {
+        panel = _panel;
+        hpSlider = panel.transform.Find("UnitHpSlider").GetComponent<Slider>();
+        mpSlider = panel.transform.Find("UnitMpSlider").GetComponent<Slider>();
+        hpText = panel.transform.Find("UnitHpText").GetComponent<Text>();
+        mpText = panel.transform.Find("UnitMpText").GetComponent<Text>();
+    }
 }

@@ -1,35 +1,73 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum Anim_State { Idle = 0, Walk, Attack, Skill, Die }
 public class UnitController : MonoBehaviour
 {
+    //UnitData
     [HideInInspector]
-    public UnitBlockData unitblockSc;
+    public      UnitBlockData unitblockSc;
     [HideInInspector]
-    public UnitData unitPdata;
-    [HideInInspector] //touch 에서 참조 
-    public Rigidbody rb;
-    protected CapsuleCollider col;
-    protected Animator anim;
-    protected CharacterController cController;
+    public      UnitData unitPdata;
+    //abilityData In Battle
+    protected   UnitAbilityData abilityDataInBattle;
+    //reference TouchSystem
+    [HideInInspector] 
+    public      Rigidbody rb;
+    protected   Animator anim;
+    public      Anim_State animState = Anim_State.Idle;
 
-    public Anim_State animState = Anim_State.Idle;
     //HP
-    protected int currentHP;
-    protected int currentMP;
+    private     float _currentHp = 0;
+    private     float _currentMp = 0;
+    protected   float CurrentHp
+    {
+        get { return _currentHp; }
+        set
+        {
+            prevHp = _currentHp;
+            _currentHp = value;
+            if (_currentHp > abilityDataInBattle.maxHP)
+                _currentHp = abilityDataInBattle.maxHP;
+            if (_currentHp < 0)
+                _currentHp = 0;
+            StartHpSliderProcess();
+        }
+    }
+    protected   float CurrentMp
+    {
+        get { return _currentMp; }
+        set
+        {
+            prevMp = _currentMp;
+            _currentMp = value;
+            if (_currentMp > abilityDataInBattle.maxMP)
+                _currentMp = abilityDataInBattle.maxMP;
+            if (_currentMp < 0)
+                _currentMp = 0;
+            StartMpSliderProcess();
+        }
+    }
+    //slider Lerp
+    public      HpMpSlider hpmpSliderData;
+    protected   float prevHp;
+    protected   float prevMp;
+    protected   float sliderLerpSpeed = 1f;
+
+    //EnemyUnit
+    protected List<UnitController> enemyList = new List<UnitController>();
     //Move
     protected UnitPathFinding pathfind = new UnitPathFinding();
     protected List<BlockOnBoard> path = new List<BlockOnBoard>();
-    protected List<EnemyUnit> enemyList = new List<EnemyUnit>();
     protected BlockOnBoard prevTargetBlock;
     protected BlockOnBoard currentTargetBlock;
-    protected float moveSpeed = 1f;
     protected int nextBlockIndexCount = 0;
+    protected float currentDistance = 0;
+    protected float moveSpeed = 1f;
     //Rotate
     private float rotateSpeed = 5f;
-    //Attack
 
     [HideInInspector]
     public    bool isAlive = true;
@@ -44,13 +82,44 @@ public class UnitController : MonoBehaviour
     protected bool isAttackCooltimeWaiting = false;
     protected bool isStartSkill = false;
 
+    protected bool IsRunningHpSliderLerp = false;
+    protected bool isRunningMpSliderLerp = false;
 
+    #region Set
     public void Init()
     {
         unitblockSc = GetComponentInParent<UnitBlockData>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
     }
+
+    /// <summary>
+    /// NOTE : 슬라이더 데이터 설정
+    /// </summary>
+    public void StartUnitInBattle(HpMpSlider sliderdata)
+    {
+        //ability Data 초기화
+        abilityDataInBattle = unitPdata.abilityData;
+        //시너지 효과 추가 능력치 함수 필요
+        //..
+
+        //슬라이더 초기화
+        hpmpSliderData = sliderdata;
+        //HP
+        hpmpSliderData.hpSlider.maxValue = abilityDataInBattle.maxHP;
+        SetHpSlideValue(abilityDataInBattle.maxHP);
+        CurrentHp = abilityDataInBattle.maxHP;
+        //MP
+        hpmpSliderData.mpSlider.maxValue = abilityDataInBattle.maxMP;
+        SetMpSliderValue(0);
+        CurrentMp = 0;
+        //Pos
+        SetPosSliderBar(unitblockSc.transform.position);
+        hpmpSliderData.panel.SetActive(true);
+        //AI 실행
+        unitblockSc.unitBTAI.StartBT();
+    }
+    #endregion
 
     #region  Move
 
@@ -72,17 +141,19 @@ public class UnitController : MonoBehaviour
             //살아있는지 확인
             if (enemyList[i].isAlive)
             {
-                var currentdis = Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, enemyList[i].unitblockSc.GetCurrentBlockInBattle().groundArrayIndex);
-                if (mindistance > currentdis)
+                var currentTargetdis = Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, enemyList[i].unitblockSc.GetCurrentBlockInBattle().groundArrayIndex);
+                if (mindistance > currentTargetdis)
                 {
-                    mindistance = currentdis;
+                    mindistance = currentTargetdis;                   
                     currentTargetBlock = enemyList[i].unitblockSc.GetCurrentBlockInBattle();
 
                     isDieAllEnemy = false;
                 }
             }
         }
-        //모든 적이 죽었을 경우 return
+        currentDistance = mindistance;
+        
+        //모든 적이 죽었을 경우 
         if (isDieAllEnemy)
             return false;
         //처음 이전 타겟이 없을 경우 
@@ -91,12 +162,12 @@ public class UnitController : MonoBehaviour
         //타겟이 변경되었을 경우 
         if (isChangedTaget = !prevTargetBlock.Equals(currentTargetBlock))
             prevTargetBlock = currentTargetBlock;
-
+        
         return true;
     }
 
     /// <summary>
-    /// NOTE : PATH가 없을경우, 길을 가는중 길이 막혔을 경우 -> 길찾기 실행, 길을 못찾았을 경우 RETURN FALSE
+    /// NOTE : 타겟이 변경되었을 경우, PATH가 없을경우, 길을 가는중 길이 막혔을 경우 -> 길찾기 실행, 길을 못찾았을 경우 RETURN FALSE
     /// </summary>
     /// <returns></returns>
     public virtual bool SetPath()
@@ -106,18 +177,17 @@ public class UnitController : MonoBehaviour
         {
             if (isFindPath = pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), currentTargetBlock, BoardManager.instance.allGroundBlocks, ref path))
                 nextBlockIndexCount = path.Count - 2;
-            return isFindPath;
-        }
+
+        } 
         //길이 없을 경우
-        if (path.Count == 0)
+        else if (path.Count == 0)
         {
             if (isFindPath = pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), currentTargetBlock, BoardManager.instance.allGroundBlocks, ref path))
                 nextBlockIndexCount = path.Count - 2;
-            return isFindPath;
-        }
 
+        }
         //길을 막았을 경우 
-        if (nextBlockIndexCount >= 0)
+        else if (nextBlockIndexCount >= 0)
         {
             if (path[nextBlockIndexCount].GetUnitInBattle() != null)
             {
@@ -125,7 +195,6 @@ public class UnitController : MonoBehaviour
                     nextBlockIndexCount = path.Count - 2;
             }
         }
-
         return isFindPath;
     }
 
@@ -138,12 +207,9 @@ public class UnitController : MonoBehaviour
         //움직이는 중일 경우 return
         if (isMoving)
             return false;
-        //모든 움직임이 끝나고 난후 체크
-        //지정한 사거리와 현재 타겟과의 거리 비교
-        //목표에 접근했을 경우
-        if (isCloseTarget = (unitblockSc.unitPdata.abilityData.attackRange + 0.5f) > Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, currentTargetBlock.groundArrayIndex))
+        //목표에 접근했을 경우 Target에서 설정할 경우 실제 이동중에 이미 공격 처리중
+        if (isCloseTarget = ((abilityDataInBattle.attackRange + 0.5f) > currentDistance))
             return false;
-
         return true;
     }
 
@@ -172,7 +238,7 @@ public class UnitController : MonoBehaviour
         dir = dir.normalized;
         Quaternion currentRot = unitblockSc.transform.rotation;
         Quaternion targetRot = Quaternion.LookRotation(dir);
-
+        
         //초기화
         while (unitblockSc.transform.position != nextpos)
         {
@@ -180,6 +246,8 @@ public class UnitController : MonoBehaviour
             if (dir != Vector3.zero)
                 unitblockSc.transform.rotation = Quaternion.Lerp(currentRot, targetRot, count * rotateSpeed);
             unitblockSc.transform.position = Vector3.Lerp(startpos, nextpos, moveSpeed * count);
+
+            SetPosSliderBar(unitblockSc.transform.position);
             yield return new WaitForFixedUpdate();
         }
         isMoving = false;
@@ -261,7 +329,6 @@ public class UnitController : MonoBehaviour
 
     public void StartAttackInAttackAnim()
     {
-        Debug.Log("AttackAnim Start");
         isStartAttack = false;
         StartCoroutine(SetAttackCoolTime());
     }
@@ -273,17 +340,24 @@ public class UnitController : MonoBehaviour
     IEnumerator SetAttackCoolTime()
     {
         isAttackCooltimeWaiting = true;
-        yield return new WaitForSecondsRealtime(unitblockSc.unitPdata.abilityData.attackCooltime);
+        yield return new WaitForSecondsRealtime(abilityDataInBattle.attackCooltime);
         isAttackCooltimeWaiting = false;
     }
     #endregion
+
+    #region Skill
     //스킬
     public virtual bool CheckSkillCondition() { return true; }
     public virtual void SkillAction() { }
+    #endregion
+
+    #region  Dead
     //죽음
     public virtual bool IsDie() { return false; }
     public virtual void DeadAction() { }
+    #endregion
 
+    #region Animation
     public virtual void SetAnimation()
     {
         animState = Anim_State.Idle;
@@ -299,6 +373,97 @@ public class UnitController : MonoBehaviour
         anim.SetFloat("animState", (int)animState);
 
     }
+
+    #endregion
+
+    #region ETC
+    /// <summary>
+    /// NOTE : 슬라이더 포지션 변경
+    /// </summary>
+    /// <param name="pos"></param>
+    private void SetPosSliderBar(Vector3 pos)
+    {
+        pos.y = +2;
+        if(hpmpSliderData!=null)
+            hpmpSliderData.panel.transform.position = Camera.main.WorldToScreenPoint(pos);
+    }
+    /// <summary>
+    /// NOTE : HP LERP 슬라이더 코루틴 실행
+    /// </summary>
+    private void StartHpSliderProcess()
+    {
+        if (!IsRunningHpSliderLerp)
+            StartCoroutine(HpSliderProcess());
+    }
+    /// <summary>
+    /// NOTE : HP UI 값 설정
+    /// </summary>
+    /// <param name="hp"></param>
+    private void SetHpSlideValue(float hp)
+    {
+        hpmpSliderData.hpSlider.value = hp;
+        hpmpSliderData.hpText.text = hp.ToString();
+    }
+    
+    /// <summary>
+    /// NOTE : HP SLIDER VALUE lerp
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator HpSliderProcess()
+    {
+        IsRunningHpSliderLerp = true;
+        var tmpprevhp = prevHp; 
+        float count = 0;
+        while (hpmpSliderData.hpSlider.value != CurrentHp)
+        {
+            count += Time.fixedDeltaTime;
+            var hpvalue= Mathf.Lerp(tmpprevhp, CurrentHp, count * sliderLerpSpeed);
+            hpmpSliderData.hpSlider.value = hpvalue;
+            hpmpSliderData.mpText.text = hpvalue.ToString();
+            yield return new WaitForFixedUpdate();
+        }
+        IsRunningHpSliderLerp = false;
+    }
+
+    /// <summary>
+    /// NOTE : MP LERP 슬라이더 코루틴 실행
+    /// </summary>
+    private void StartMpSliderProcess()
+    {
+        if (!isRunningMpSliderLerp)
+            StartCoroutine(MpSliderProcess());
+    }
+
+    /// <summary>
+    /// NOTE : MP 슬라이더 UI 값 설정
+    /// </summary>
+    /// <param name="mp"></param>
+    private void SetMpSliderValue(float mp)
+    {
+        hpmpSliderData.mpSlider.value = mp;
+        hpmpSliderData.mpText.text = mp.ToString();
+    }
+
+    /// <summary>
+    /// NOTE : M P SLIDER VALUE lerp
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator MpSliderProcess()
+    {
+        isRunningMpSliderLerp = true;
+        var tmpprevmp = prevMp;
+        float count = 0;
+        while(hpmpSliderData.mpSlider.value != CurrentMp)
+        {
+            count += Time.fixedDeltaTime;
+
+            var mpvalue = Mathf.Lerp(tmpprevmp, CurrentMp, count * sliderLerpSpeed);
+            SetMpSliderValue(mpvalue);
+            yield return new WaitForFixedUpdate();
+        }
+        isRunningMpSliderLerp = false;
+    }
+    #endregion
 }
 
 

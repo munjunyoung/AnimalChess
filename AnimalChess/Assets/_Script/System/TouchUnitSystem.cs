@@ -67,7 +67,7 @@ public class TouchUnitSystem : MonoBehaviour
             target.unitController.rb.useGravity = false;
             IsPickUp = true;
             hightlightedEffect.SetActive(true);
-            UIManager.instance.ShowUnitProfile(target.unitPdata);
+            UIManager.instance.ShowUnitProfile(target.unitController.unitPdata);
             return;
         }
     }

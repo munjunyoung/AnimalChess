@@ -2242,6 +2242,9 @@ MonoBehaviour:
   rb: {fileID: 0}
   animState: 0
   isAlive: 1
+  hpmpCanvas: {fileID: 0}
+  hpSlider: {fileID: 0}
+  mpSlider: {fileID: 0}
 --- !u!114 &1708186944699107495
 MonoBehaviour:
   m_ObjectHideFlags: 0

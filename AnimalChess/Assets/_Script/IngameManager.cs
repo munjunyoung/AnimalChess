@@ -157,8 +157,8 @@ public class IngameManager : MonoBehaviour
         foreach (var m in mList)
         {
             //몬스터가 존재하고 있을경우 데미지 감소 처리
-            if(m.gameObject.activeSelf)
-                playerData.HpValue -= m.GetDamage();
+            if (m.gameObject.activeSelf)
+                playerData.HpValue -= m.unitPdata.originalCost;
         }
         //체력 이펙트 발생 및 몬스터 유닛에서 애니매이션 처리
     }
@@ -195,20 +195,21 @@ public class IngameManager : MonoBehaviour
         //레벨보다 많은 숫자의 유닛이 올라갈경우 유닛처리
         BoardManager.instance.ReturnUnitOnWaitingBoard(playerData.Level);
 
-        StartUnitAI();
+        StartUnitBehavior();
         //유닛, 적 ai 실행 (1초~2초정도의 텀을 주도록 실행하도록)
         StartCoroutine(testBattleFinsih());
     }
 
-    private void StartUnitAI()
+
+    private void StartUnitBehavior()
     {
 
         var battleblockOnUnitlist = BoardManager.instance.GetBattleBlockOnUnit();
+        //Sort
         SortBlcokListByPos(ref battleblockOnUnitlist);
-        foreach (var block in battleblockOnUnitlist)
-        {
-            block.GetUnitNormal().unitBTAI.StartBT();
-        }
+
+        for(int i =0; i<battleblockOnUnitlist.Count; i++)
+            battleblockOnUnitlist[i].GetUnitNormal().unitController.StartUnitInBattle(UIManager.instance.playerUnitSliderList[i]);
     }
 
     /// <summary>
