@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-public enum Anim_State { Idle = 0, Walk, Attack, Skill, Die }
+//Die 는 Trigget로 처리
+public enum Anim_State { Idle = 0, Walk, Attack, Skill }
 public class UnitController : MonoBehaviour
 {
     //UnitData
@@ -32,7 +32,11 @@ public class UnitController : MonoBehaviour
             if (_currentHp > abilityDataInBattle.maxHP)
                 _currentHp = abilityDataInBattle.maxHP;
             if (_currentHp < 0)
+            {
+                
                 _currentHp = 0;
+                isAlive = false;
+            }
             StartHpSliderProcess();
         }
     }
@@ -51,13 +55,13 @@ public class UnitController : MonoBehaviour
         }
     }
     //slider Lerp
-    public      HpMpSlider hpmpSliderData;
+    public HpMpSlider hpmpSliderData = null;
     protected   float prevHp;
     protected   float prevMp;
-    protected   float sliderLerpSpeed = 1f;
+    protected   float sliderLerpSpeed = 5f;
 
     //EnemyUnit
-    protected List<UnitController> enemyList = new List<UnitController>();
+    protected List<UnitController> targetList = new List<UnitController>();
     //Move
     protected UnitPathFinding pathfind = new UnitPathFinding();
     protected List<BlockOnBoard> path = new List<BlockOnBoard>();
@@ -81,6 +85,8 @@ public class UnitController : MonoBehaviour
     protected bool isStartAttack = false;
     protected bool isAttackCooltimeWaiting = false;
     protected bool isStartSkill = false;
+    protected bool isAttacking = false;
+    protected bool isVictory = false;
 
     protected bool IsRunningHpSliderLerp = false;
     protected bool isRunningMpSliderLerp = false;
@@ -96,9 +102,10 @@ public class UnitController : MonoBehaviour
     /// <summary>
     /// NOTE : 슬라이더 데이터 설정
     /// </summary>
-    public void StartUnitInBattle(HpMpSlider sliderdata)
+    public virtual void StartUnitInBattle(HpMpSlider sliderdata, float waitingTime)
     {
         //ability Data 초기화
+        //능력치 리셋 
         abilityDataInBattle = unitPdata.abilityData;
         //시너지 효과 추가 능력치 함수 필요
         //..
@@ -117,6 +124,41 @@ public class UnitController : MonoBehaviour
         SetPosSliderBar(unitblockSc.transform.position);
         hpmpSliderData.panel.SetActive(true);
         //AI 실행
+        StartCoroutine(WaitingStartAI(waitingTime));
+    }
+
+    /// <summary>
+    /// NOTE : 전투가 끝난후 모든 데이터 리셋
+    /// </summary>
+    public void ResetUnitData()
+    {
+        //능력치 리셋 
+        abilityDataInBattle = unitPdata.abilityData;
+        // true로
+        isAlive = true;
+        hpmpSliderData = null;
+        isVictory = false;
+
+        //애니매이션 설정 
+        anim.SetTrigger("ReStart");
+        animState = Anim_State.Idle;
+        anim.SetFloat("animState", (int)animState);
+
+        //Rotation설정
+        transform.eulerAngles = new Vector3(0, 180, 0);
+
+        //위치 설정
+        unitblockSc.GetCurrentBlockInWaiting().SetUnitNotList(unitblockSc);
+    }
+
+    /// <summary>
+    /// NOTE : 파라미터 값 이후로 AI실행
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    IEnumerator WaitingStartAI(float time)
+    {
+        yield return new WaitForSecondsRealtime(time);
         unitblockSc.unitBTAI.StartBT();
     }
     #endregion
@@ -129,23 +171,21 @@ public class UnitController : MonoBehaviour
     /// <returns></returns>
     public virtual bool SetTargetBlock()
     {
-        if (enemyList.Count == 0)
-            enemyList = BoardManager.instance.currentMonsterList;
-
+       
         float mindistance = 100;
         //적이 모두 죽었는지 체크
         isDieAllEnemy = true;
         //가장 가까운 거리에 있는 적 검색
-        for (int i = 0; i < enemyList.Count; i++)
+        for (int i = 0; i < targetList.Count; i++)
         {
             //살아있는지 확인
-            if (enemyList[i].isAlive)
+            if (targetList[i].isAlive)
             {
-                var currentTargetdis = Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, enemyList[i].unitblockSc.GetCurrentBlockInBattle().groundArrayIndex);
+                var currentTargetdis = Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, targetList[i].unitblockSc.GetCurrentBlockInBattle().groundArrayIndex);
                 if (mindistance > currentTargetdis)
                 {
                     mindistance = currentTargetdis;                   
-                    currentTargetBlock = enemyList[i].unitblockSc.GetCurrentBlockInBattle();
+                    currentTargetBlock = targetList[i].unitblockSc.GetCurrentBlockInBattle();
 
                     isDieAllEnemy = false;
                 }
@@ -268,6 +308,10 @@ public class UnitController : MonoBehaviour
     /// <returns></returns>
     public virtual bool LookAtTarget()
     {
+        //공격중일때 회전 되지 않도록
+        if (isAttacking)
+            return false;
+
         if (!isRotating)
         {
             //block position y 값은 0으로 초기화 
@@ -314,25 +358,65 @@ public class UnitController : MonoBehaviour
     /// <returns></returns>
     public virtual bool CheckAttackCondition()
     {
+        //상대방의 상태가 moving중인 경우 return
+        if (currentTargetBlock.unitInBattle.unitController.isMoving)
+            return false;
         if (isAttackCooltimeWaiting)
             return false;
         return true;
     }
 
     /// <summary>
-    /// 
+    /// NOTE : 
     /// </summary>
     public virtual void AttackAction()
     {
         isStartAttack = true;
     }
 
-    public void StartAttackInAttackAnim()
+    /// <summary>
+    /// Animation event
+    /// </summary>
+    public virtual void StartAttackInAttackAnim()
     {
         isStartAttack = false;
+        isAttacking = true;
         StartCoroutine(SetAttackCoolTime());
+        //StartCoroutine(AttackHitProcess());
+        
     }
 
+    IEnumerator AttackHitProcess()
+    {
+        yield return new WaitForSeconds(0.05f);
+        AttackHit();
+        yield return new WaitForSeconds(0.5f);
+        isAttacking = false;
+
+    }
+    /// <summary>
+    /// NOTE : 근접 공격, 원거리 공격 분류 해야함
+    /// </summary>
+    public virtual void AttackHit()
+    {
+        
+        var target = currentTargetBlock.unitInBattle;
+        if (target != null)
+        {
+            target.unitController.TakeDamage(unitPdata.abilityData.attackDamage);
+            //원거리 공격 애매한상태
+            //..이펙트
+        }   
+    }
+    
+    /// <summary>
+    /// NOTE : 공격 애니매이션 이벤트 함수
+    /// </summary>
+    public virtual void EndAttackInAttackAnim()
+    {
+        isAttacking = false;
+    }
+    
     /// <summary>
     /// NOTE : 쿨타임 상태 설정
     /// </summary>
@@ -353,13 +437,22 @@ public class UnitController : MonoBehaviour
 
     #region  Dead
     //죽음
-    public virtual bool IsDie() { return false; }
-    public virtual void DeadAction() { }
+    public virtual bool IsDie() {
+
+        return !isAlive;
+    }
+    public virtual void DeadAction()
+    {
+        hpmpSliderData.panel.SetActive(false);
+        anim.SetTrigger("isDie");
+        //죽음 
+    }
     #endregion
 
     #region Animation
     public virtual void SetAnimation()
     {
+
         animState = Anim_State.Idle;
         if (isMoving)
             animState = Anim_State.Walk;
@@ -367,8 +460,7 @@ public class UnitController : MonoBehaviour
             animState = Anim_State.Attack;
         if (isStartSkill)
             animState = Anim_State.Skill;
-        if (!isAlive)
-            animState = Anim_State.Die;
+        
 
         anim.SetFloat("animState", (int)animState);
 
@@ -392,6 +484,8 @@ public class UnitController : MonoBehaviour
     /// </summary>
     private void StartHpSliderProcess()
     {
+        if (hpmpSliderData == null)
+            return;
         if (!IsRunningHpSliderLerp)
             StartCoroutine(HpSliderProcess());
     }
@@ -402,7 +496,7 @@ public class UnitController : MonoBehaviour
     private void SetHpSlideValue(float hp)
     {
         hpmpSliderData.hpSlider.value = hp;
-        hpmpSliderData.hpText.text = hp.ToString();
+        hpmpSliderData.hpText.text = ((int)hp).ToString();
     }
     
     /// <summary>
@@ -418,8 +512,7 @@ public class UnitController : MonoBehaviour
         {
             count += Time.fixedDeltaTime;
             var hpvalue= Mathf.Lerp(tmpprevhp, CurrentHp, count * sliderLerpSpeed);
-            hpmpSliderData.hpSlider.value = hpvalue;
-            hpmpSliderData.mpText.text = hpvalue.ToString();
+            SetHpSlideValue(hpvalue);
             yield return new WaitForFixedUpdate();
         }
         IsRunningHpSliderLerp = false;
@@ -430,6 +523,8 @@ public class UnitController : MonoBehaviour
     /// </summary>
     private void StartMpSliderProcess()
     {
+        if (hpmpSliderData == null)
+            return;
         if (!isRunningMpSliderLerp)
             StartCoroutine(MpSliderProcess());
     }
@@ -441,7 +536,7 @@ public class UnitController : MonoBehaviour
     private void SetMpSliderValue(float mp)
     {
         hpmpSliderData.mpSlider.value = mp;
-        hpmpSliderData.mpText.text = mp.ToString();
+        hpmpSliderData.mpText.text = ((int)mp).ToString();
     }
 
     /// <summary>
@@ -464,6 +559,33 @@ public class UnitController : MonoBehaviour
         isRunningMpSliderLerp = false;
     }
     #endregion
+
+
+
+    public void TakeDamage(int damage)
+    {
+        CurrentHp -= damage;
+        CurrentMp += damage * 0.2f;
+        //이펙트 생성
+    }
+
+
+    public virtual bool CheckVictroy()
+    {
+        return isVictory;
+    }
+
+    public virtual void StartVictoryAnimation()
+    {
+        anim.SetTrigger("IsVictory");
+    }
+
+    public void SetVictory()
+    {
+        isVictory = true;
+    }
+    
+
 }
 
 

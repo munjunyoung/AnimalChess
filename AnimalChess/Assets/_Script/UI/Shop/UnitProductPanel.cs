@@ -39,7 +39,7 @@ public class UnitProductPanel : MonoBehaviour
         tribeImage.sprite = unitdata.tribeSprite;
         attributeImage.sprite = unitdata.attributeSprite;
         goldText.text = unitdata.cost.ToString();
-
+        
         switch (unitdata.originalCost)
         {
             case 1:

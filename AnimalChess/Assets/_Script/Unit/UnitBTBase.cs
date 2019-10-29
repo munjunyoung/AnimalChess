@@ -276,6 +276,39 @@ public class DeadAction : ActionNode
 }
 #endregion
 
+#region Victory
+public class CheckVictory : ActionNode
+{
+    public UnitController Controller
+    {
+        set { _controller = value; }
+    }
+    private UnitController _controller;
+
+    public override bool Invoke()
+    {
+        return _controller.CheckVictroy();
+    }
+}
+
+public class StartVictoryAnimation : ActionNode
+{
+    public UnitController Controller
+    {
+        set { _controller = value; }
+    }
+    private UnitController _controller;
+
+    public override bool Invoke()
+    {
+        _controller.StartVictoryAnimation();
+        return true;
+    }
+}
+
+#endregion
+
+#region Anim
 public class SetAnimation : ActionNode
 {
     public UnitController Controller
@@ -290,3 +323,4 @@ public class SetAnimation : ActionNode
         return false;
     }
 }
+#endregion

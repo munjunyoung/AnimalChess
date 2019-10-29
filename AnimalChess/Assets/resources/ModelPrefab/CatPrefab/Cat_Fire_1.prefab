@@ -2151,8 +2151,8 @@ GameObject:
   - component: {fileID: 53886373171091342}
   - component: {fileID: 5694859892766391212}
   - component: {fileID: 2502598747082064691}
-  - component: {fileID: 1804723217849862754}
   - component: {fileID: 1708186944699107495}
+  - component: {fileID: 5881583503552202299}
   m_Layer: 9
   m_Name: Cat_Fire_1
   m_TagString: Untagged
@@ -2226,25 +2226,6 @@ CapsuleCollider:
   m_Height: 0.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.3, z: 0}
---- !u!114 &1804723217849862754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5299229354486745765}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 076e6706b3a90e24d9c895b87e213c8c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unitblockSc: {fileID: 0}
-  rb: {fileID: 0}
-  animState: 0
-  isAlive: 1
-  hpmpCanvas: {fileID: 0}
-  hpSlider: {fileID: 0}
-  mpSlider: {fileID: 0}
 --- !u!114 &1708186944699107495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2257,6 +2238,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d23f97ce3a619c49a213aef344a407c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5881583503552202299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5299229354486745765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcf8d192769ae5343a03f36498103824, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitblockSc: {fileID: 0}
+  rb: {fileID: 0}
+  animState: 0
+  hpmpSliderData:
+    panel: {fileID: 0}
+    hpSlider: {fileID: 0}
+    mpSlider: {fileID: 0}
+    hpText: {fileID: 0}
+    mpText: {fileID: 0}
+  isAlive: 1
 --- !u!1 &5368001748378083321
 GameObject:
   m_ObjectHideFlags: 0

@@ -64,16 +64,7 @@ public class UIManager : MonoBehaviour
         SetSliderList();
     }
 
-    /// <summary>
-    /// NOTE : 슬라이더 리스트들 초기화
-    /// </summary>
-    private void SetSliderList()
-    {
-        for(int i = 0; i<playerUnitSliderParent.transform.childCount;i++)
-            playerUnitSliderList.Add(new HpMpSlider(playerUnitSliderParent.transform.GetChild(i).gameObject));
-        for (int i = 0; i < enemyUnitSliderParent.transform.childCount; i++)
-            enemyUnitSliderList.Add(new HpMpSlider(enemyUnitSliderParent.transform.GetChild(i).gameObject));
-    }
+
     
     #region SetTextUI
 
@@ -272,8 +263,29 @@ public class UIManager : MonoBehaviour
         BuyExpButtonImage.color = gold >= 5 ? Color.white : impossibleColor;
         reRollButtonImage.color = gold >= 2 ? Color.white : impossibleColor;
     }
+
+    #endregion
+
+    #region Hp/MpSlider
+    /// <summary>
+    /// NOTE : 슬라이더 리스트들 초기화
+    /// </summary>
+    private void SetSliderList()
+    {
+        for (int i = 0; i < playerUnitSliderParent.transform.childCount; i++)
+            playerUnitSliderList.Add(new HpMpSlider(playerUnitSliderParent.transform.GetChild(i).gameObject));
+        for (int i = 0; i < enemyUnitSliderParent.transform.childCount; i++)
+            enemyUnitSliderList.Add(new HpMpSlider(enemyUnitSliderParent.transform.GetChild(i).gameObject));
+    }
     
-#endregion
+    public void SetOffSliderList()
+    {
+        foreach(var slider in enemyUnitSliderList)
+            slider.panel.SetActive(false);
+        foreach (var slider in playerUnitSliderList)
+            slider.panel.SetActive(false);
+    }
+    #endregion
 }
 
 [System.Serializable]

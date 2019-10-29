@@ -224,11 +224,10 @@ GameObject:
   - component: {fileID: 4187305879578618186}
   - component: {fileID: 4272464712631872244}
   - component: {fileID: 4272464712631872251}
-  - component: {fileID: 4272464712631872245}
   - component: {fileID: 4272464712631872246}
   - component: {fileID: 4272464712631872247}
   m_Layer: 0
-  m_Name: Chick
+  m_Name: Chick_Water_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -241,8 +240,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4272464712631872250}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 4, y: 2, z: 14}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children:
   - {fileID: 4269738753936765804}
@@ -260,7 +259,7 @@ Animator:
   m_GameObject: {fileID: 4272464712631872250}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: b14a36c4895cd0e4fbd4ff360394c0de, type: 3}
-  m_Controller: {fileID: 9100000, guid: 988da9d0e332514489d80be72a0a4e61, type: 2}
+  m_Controller: {fileID: 9100000, guid: 8392289121c4c2641a65f24747e7c728, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -299,20 +298,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: b14a36c4895cd0e4fbd4ff360394c0de, type: 3}
---- !u!114 &4272464712631872245
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4272464712631872250}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bed04237fd453f4780821753188ded3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unitController: {fileID: 0}
-  unitBTAI: {fileID: 0}
 --- !u!114 &4272464712631872246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -335,7 +320,6 @@ MonoBehaviour:
     hpText: {fileID: 0}
     mpText: {fileID: 0}
   isAlive: 1
-  damage: 0
 --- !u!114 &4272464712631872247
 MonoBehaviour:
   m_ObjectHideFlags: 0

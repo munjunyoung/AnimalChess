@@ -13,6 +13,7 @@ public class UnitBTAI : UnitBTBase
     private Sequence seqMove = new Sequence();
     private Sequence seqAttack = new Sequence();
     private Sequence seqDead = new Sequence();
+    private Sequence seqVictory = new Sequence();
     private Sequence seqAnim = new Sequence();
     //Move
     private SetTargetBlock              setTargetblock              = new SetTargetBlock();
@@ -25,10 +26,13 @@ public class UnitBTAI : UnitBTBase
     private CheckAttackCondition        checkAttackCondition        = new CheckAttackCondition();
     private StartAttack                 startAttack                 = new StartAttack();
     //Dead
-    private IsDie                   isDie                       = new IsDie();
+    private IsDie                       isDie                       = new IsDie();
+    private DeadAction                  deadAction                  = new DeadAction();
 
+    private CheckVictory                checkVictory                = new CheckVictory();
+    private StartVictoryAnimation       startVictoryAnimation       = new StartVictoryAnimation();
     //Anim
-    private SetAnimation            setAnimation                = new SetAnimation();
+    private SetAnimation                setAnimation                = new SetAnimation();
 
     private IEnumerator behaviorProcess;
 
@@ -50,8 +54,14 @@ public class UnitBTAI : UnitBTBase
         startAttack.Controller = unitController;
         //Dead
         isDie.Controller = unitController;
+        deadAction.Controller = unitController;
+        //Victory
+        checkVictory.Controller = unitController;
+        startVictoryAnimation.Controller = unitController;
+        
         //Anim
         setAnimation.Controller = unitController;
+
 
         aiRoot.AddChild(selector);
         //Tree 생성
@@ -59,6 +69,7 @@ public class UnitBTAI : UnitBTBase
         selector.AddChild(seqDead);
         selector.AddChild(seqAnim);
         selector.AddChild(seqAttack);
+        selector.AddChild(seqVictory);
 
         seqMove.AddChild(setTargetblock);
         seqMove.AddChild(setPath);
@@ -71,6 +82,10 @@ public class UnitBTAI : UnitBTBase
         seqAttack.AddChild(startAttack);
 
         seqDead.AddChild(isDie);
+        seqDead.AddChild(deadAction);
+
+        seqVictory.AddChild(checkVictory);
+        seqVictory.AddChild(startVictoryAnimation);
 
         seqAnim.AddChild(setAnimation);
     }

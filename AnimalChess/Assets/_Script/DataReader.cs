@@ -23,9 +23,11 @@ public class DataReader
     static string LINE_SPLIT_RE = @"\r\n|\n\r|\n|\r";
 
     private Dictionary<string, Dictionary<string, string>> UnitCSVDataDic = new Dictionary<string, Dictionary<string, string>>();
+    private Dictionary<string, Dictionary<string, string>> EnemyUnitCSVDataDic = new Dictionary<string, Dictionary<string, string>>();
     private DataReader()
     {
         UnitCSVDataDic = Read(DataPath + "UnitData");
+        EnemyUnitCSVDataDic = Read(DataPath + "EnemyUnitData");
         //.. MONSTER 엑셀도 완성되면 추가
     }
 
@@ -72,17 +74,17 @@ public class DataReader
     /// <param name="_data"></param>
     /// <param name="_datadic"></param>
     /// <param name="_typename"></param>
-    public void SetData<T>(ref T _data, string _typename)
+    public void SetData<T>(ref T _data, string _typename, Unit_SideType sidetype)
     {
         //해당 타입의 value값(value값또한 dic이므로) 처리
         Type tp = typeof(T);
-
+        var csvDatadic = sidetype.Equals(Unit_SideType.Player) ? UnitCSVDataDic : EnemyUnitCSVDataDic;
         //해당 타입의 내용이 들어가지 않을경우 리턴 
-        if (!UnitCSVDataDic.ContainsKey(_typename))
+        if (!csvDatadic.ContainsKey(_typename))
             return;
 
         //해당 클래스의 public 형식을 가진 모든 변수명들을 가져옴
-        Dictionary<string, string> tmpdatadic = UnitCSVDataDic[_typename];
+        Dictionary<string, string> tmpdatadic = csvDatadic[_typename];
         FieldInfo[] variableStringdatas = tp.GetFields(BindingFlags.Instance | BindingFlags.Public);
         //가져온 field변수명 순회
         foreach (var vsd in variableStringdatas)
@@ -101,6 +103,8 @@ public class DataReader
                     vsd.SetValue(_data, (Tribe_Type)System.Enum.Parse(typeof(Tribe_Type), tmpdatadic[vsd.Name]));
                 else if (typecheck is Attribute_Type)
                     vsd.SetValue(_data, (Attribute_Type)System.Enum.Parse(typeof(Attribute_Type), tmpdatadic[vsd.Name]));
+                else if(typecheck is Unit_SideType)
+                    vsd.SetValue(_data, (Unit_SideType)System.Enum.Parse(typeof(Unit_SideType), tmpdatadic[vsd.Name]));
                 else
                     vsd.SetValue(_data, tmpdatadic[vsd.Name]);
 

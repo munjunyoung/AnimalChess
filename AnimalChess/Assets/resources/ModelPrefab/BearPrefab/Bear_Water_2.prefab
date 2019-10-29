@@ -3030,7 +3030,7 @@ GameObject:
   - component: {fileID: 1871857301085136887}
   - component: {fileID: 6821393314752135216}
   - component: {fileID: 4435824924097618546}
-  - component: {fileID: 4712311534918017994}
+  - component: {fileID: 1151218457265446855}
   m_Layer: 9
   m_Name: Bear_Water_2
   m_TagString: Untagged
@@ -3116,7 +3116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d23f97ce3a619c49a213aef344a407c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4712311534918017994
+--- !u!114 &1151218457265446855
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3125,11 +3125,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 6806040206566365456}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 076e6706b3a90e24d9c895b87e213c8c, type: 3}
+  m_Script: {fileID: 11500000, guid: dcf8d192769ae5343a03f36498103824, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   unitblockSc: {fileID: 0}
-  IsAlive: 1
+  rb: {fileID: 0}
+  animState: 0
+  hpmpSliderData:
+    panel: {fileID: 0}
+    hpSlider: {fileID: 0}
+    mpSlider: {fileID: 0}
+    hpText: {fileID: 0}
+    mpText: {fileID: 0}
+  isAlive: 1
 --- !u!1 &6806487208851079350
 GameObject:
   m_ObjectHideFlags: 0

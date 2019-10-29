@@ -10,25 +10,24 @@ public class BoardManager : MonoBehaviour
     private const float yPos = 0.5f;
     private const float yWaitblockPos = 1f;
     //Block
-    private GameObject groundParentOb;
-    public BlockOnBoard[,]      allGroundBlocks = new BlockOnBoard[(int)MAP_INFO.Width, (int)MAP_INFO.Height];
-    public List<BlockOnBoard>   waitingBlockList = new List<BlockOnBoard>();
+    private Transform groundParentTransform;
+    public BlockOnBoard[,] allGroundBlocks = new BlockOnBoard[(int)MAP_INFO.Width, (int)MAP_INFO.Height];
+    public List<BlockOnBoard> waitingBlockList = new List<BlockOnBoard>();
     //Unit
-    public GameObject unitOBParent = null;
+    [HideInInspector]
+    public Transform unitOBParentTransform , EnemyUnitOBParentTransform = null;
 
     private List<BlockOnBoard> allBlockOnUnitList = new List<BlockOnBoard>();
     private List<BlockOnBoard> BattleBlockOnUnitList = new List<BlockOnBoard>();
     private List<BlockOnBoard> waitBlockOnUnitList = new List<BlockOnBoard>();
 
-    private List<UnitController> currentPlayerUnitList = new List<UnitController>(); 
+    private List<PlayerUnitController> currentPlayerUnitList = new List<PlayerUnitController>();
     //Monster
     [HideInInspector]
-    public List<List<EnemyUnit>> allMonsterList = new List<List<EnemyUnit>>();
+    public Dictionary<int, List<EnemyUnitController>> allEnemyUnitList = new Dictionary<int, List<EnemyUnitController>>();
     [HideInInspector]
-    public List<UnitController>  currentMonsterList = new List<UnitController>();
-
-    public EnemyUnit testMonster;
-
+    public List<EnemyUnitController> currentEnemyUnitList = new List<EnemyUnitController>();
+    
     // Start is called before the first frame update
     private void Awake()
     {
@@ -38,10 +37,11 @@ public class BoardManager : MonoBehaviour
 
     private void Start()
     {
-        groundParentOb = GameObject.Find("1PlayGround");
+        groundParentTransform = GameObject.Find("1PlayGround").transform;
+        unitOBParentTransform = GameObject.Find("Units").transform;
+        EnemyUnitOBParentTransform = GameObject.Find("EnemyUnits").transform;
         DrawChessBoard();
-        currentMonsterList.Add(testMonster);
-        allGroundBlocks[4, 7].SetUnitEnemy(testMonster.unitblockSc);
+        CreateMonsterUnitList();
     }
 
 
@@ -61,23 +61,23 @@ public class BoardManager : MonoBehaviour
                 BlockOnBoard blockob = null;
                 if (z == 0)
                 {
-                    blockob = Instantiate(grounddic[Ground_TYPE.WaitingBlock.ToString()], pos, Quaternion.identity, groundParentOb.transform);
+                    blockob = Instantiate(grounddic[Ground_TYPE.WaitingBlock.ToString()], pos, Quaternion.identity, groundParentTransform);
                 }
                 else
                 {
                     if (z % 2 != 0)
                     {
                         if (x % 2 != 0)
-                            blockob = Instantiate(grounddic[Ground_TYPE.DesertBlock1.ToString()], pos, Quaternion.identity, groundParentOb.transform);
+                            blockob = Instantiate(grounddic[Ground_TYPE.DesertBlock1.ToString()], pos, Quaternion.identity, groundParentTransform);
                         else
-                            blockob = Instantiate(grounddic[Ground_TYPE.DesertBlock2.ToString()], pos, Quaternion.identity, groundParentOb.transform);
+                            blockob = Instantiate(grounddic[Ground_TYPE.DesertBlock2.ToString()], pos, Quaternion.identity, groundParentTransform);
                     }
                     else
                     {
                         if (x % 2 != 0)
-                            blockob = Instantiate(grounddic[Ground_TYPE.DesertBlock2.ToString()], pos, Quaternion.identity, groundParentOb.transform);
+                            blockob = Instantiate(grounddic[Ground_TYPE.DesertBlock2.ToString()], pos, Quaternion.identity, groundParentTransform);
                         else
-                            blockob = Instantiate(grounddic[Ground_TYPE.DesertBlock1.ToString()], pos, Quaternion.identity, groundParentOb.transform);
+                            blockob = Instantiate(grounddic[Ground_TYPE.DesertBlock1.ToString()], pos, Quaternion.identity, groundParentTransform);
                     }
                 }
 
@@ -103,6 +103,7 @@ public class BoardManager : MonoBehaviour
     /// <param name="_block"></param>
     public void AddBlockOnList(BlockOnBoard _block)
     {
+        
         if (_block.IsWaitingBlock)
         {
             waitBlockOnUnitList.Add(_block);
@@ -111,6 +112,7 @@ public class BoardManager : MonoBehaviour
         {
             BattleBlockOnUnitList.Add(_block);
             IngameManager.instance.playerData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
+            
         }
         allBlockOnUnitList.Add(_block);
         //unitListOnBattleBoard.Add(_unit);
@@ -157,7 +159,6 @@ public class BoardManager : MonoBehaviour
     #endregion
 
     #region  Unit
-
     /// <summary>
     /// NOTE : Round
     /// </summary>
@@ -211,7 +212,7 @@ public class BoardManager : MonoBehaviour
     {
         if (IngameManager.instance.playerData.Gold < _unitpdata.cost)
             return false;
-        
+
         //합성 가능한것이 있을 경우 대기보드 자리가 있던 말던 바로 구매
         if (CheckComposeUnitByBuy(_unitpdata))
         {
@@ -308,21 +309,21 @@ public class BoardManager : MonoBehaviour
     private void CheckComposeUnitByBattleEnd()
     {
         var checklist = allBlockOnUnitList;
-        for(int i = 0; i<checklist.Count;i++)
+        for (int i = 0; i < checklist.Count; i++)
         {
             //검색하다가 합성되면 다시 0으로 리셋해서 검색
             if (CheckComposeUnitNormal(checklist[i].GetUnitNormal().unitController.unitPdata))
                 i = 0;
         }
     }
-    
+
     /// <summary>
     /// NOTE : 유닛 구매 // block을 포함한 이유는 만들어질때마다 유닛합성 체크를 해야하고 그러기 위해선 블럭을 여기 에서 설정해야함
     /// </summary>
-    private void CreateUnit(Unit_Type _unitType, int _ratingvalue, BlockOnBoard _blockOnUnit)
+    private void CreateUnit(string _unitType, int _ratingvalue, BlockOnBoard _blockOnUnit)
     {
         var pdata = DataBaseManager.instance.UnitPropertyDataDic[_ratingvalue - 1][_unitType];
-        var unit = Instantiate(DataBaseManager.instance.unitObDic[pdata.id], Vector3.zero, Quaternion.identity, unitOBParent.transform);
+        var unit = Instantiate(DataBaseManager.instance.unitObDic[pdata.id], Vector3.zero, Quaternion.identity, unitOBParentTransform.transform);
         unit.GetComponentInChildren<UnitController>().unitPdata = pdata;
         unit.transform.eulerAngles = new Vector3(0, 180, 0);
         _blockOnUnit.SetUnitaddList(unit);
@@ -338,8 +339,72 @@ public class BoardManager : MonoBehaviour
         var target = _block.GetUnitRemoveList();
         target.gameObject.SetActive(false);
     }
-
-
+    
     #endregion
+
+    #region EnemyUnit
+    /// <summary>
+    /// NOTE :Round에 따른 유닛 설정
+    /// </summary>
+    /// <param name="round"></param>
+    public List<EnemyUnitController> SetCurrentEnemyUnit(int round)
+    {
+        if (allEnemyUnitList.Count == 0)
+            CreateMonsterUnitList();
+
+        currentEnemyUnitList.Clear();
+        foreach (var enemyunit in allEnemyUnitList[round-1]) 
+        {
+            enemyunit.gameObject.SetActive(true);
+            currentEnemyUnitList.Add(enemyunit);   
+        }
+
+        return currentEnemyUnitList;
+    }
+
+
+    /// <summary>
+    /// NOTE : 모든 적 유닛 리스트 생성 
+    /// </summary>
+    private void CreateMonsterUnitList()
+    {
+
+        List<EnemyUnitController> round1 = new List<EnemyUnitController>();
+        //round1
+        CreateEnemyUnit(EnemyUnit_Type.Chick_Water.ToString(), allGroundBlocks[4, 7], 1);
+        //round2
+        CreateEnemyUnit(EnemyUnit_Type.Chick_Water.ToString(), allGroundBlocks[4, 7], 2);
+        CreateEnemyUnit(EnemyUnit_Type.Chick_Water.ToString(), allGroundBlocks[2, 7], 2);
+        CreateEnemyUnit(EnemyUnit_Type.Chick_Water.ToString(), allGroundBlocks[6, 7], 2);
+    }
+
+    /// <summary>
+    /// NOTE : 적 유닛오브젝트 생성
+    /// </summary>
+    /// <param name="_unitType"></param>
+    /// <param name="startBlock"></param>
+    /// <param name="round"></param>
+    private EnemyUnitController CreateEnemyUnit(string _unitType, BlockOnBoard startBlock, int round)
+    {
+        var pdata = DataBaseManager.instance.EnemyUnitPropertyDataDic[_unitType];
+        Transform tmpParentob = EnemyUnitOBParentTransform.GetChild(round - 1);
+        var unitob = Instantiate(DataBaseManager.instance.unitObDic[pdata.id], Vector3.up*20f, Quaternion.identity, tmpParentob);
+        unitob.transform.eulerAngles = new Vector3(0, 180, 0);
+        
+        var unit = unitob.GetComponentInChildren<EnemyUnitController>();
+        unit.unitPdata = pdata;
+        //시작할 블럭 설정
+        unit.unitblockSc.SetCurrentBlockInWaiting(startBlock);
+        //해당 리스트가 존재하지 않으면 
+
+        if (!allEnemyUnitList.ContainsKey(round-1))
+            allEnemyUnitList.Add(round - 1,new List<EnemyUnitController>());
+        allEnemyUnitList[round - 1].Add(unit);
+        unit.gameObject.SetActive(false);
+
+        return unit;
+    }
+    #endregion
+  
 }
 

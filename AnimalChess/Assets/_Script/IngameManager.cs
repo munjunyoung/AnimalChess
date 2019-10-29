@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-enum Game_State { WaitState , BattleState }
 public class IngameManager : MonoBehaviour
 {
     public static IngameManager instance = null;
@@ -57,10 +56,11 @@ public class IngameManager : MonoBehaviour
     
     private void GameStart()
     {
+        CurrentRoundNum = 1;
         StartWaitState(waitingTime, false);
     }
 
-    #region Round
+    #region Round Waiting
     /// <summary>
     /// NOTE : 대기 카운터 실행
     /// </summary>
@@ -89,17 +89,19 @@ public class IngameManager : MonoBehaviour
         playerData.ExpValue += 1;
         //골드 정산
         SetRoundGold(_iswin);
-        //대기 시간에는 유닛들의 체력을 실행하지 않음
-        //유닛들 체력 마나 위치 리셋 -> 이부분은 캐릭터에서 체크하는게 좋을듯 하다 (모든 유닛들 ai종료할때 체력 초기화)
-        //적 유닛 -> ai 시작시 상태 설정, ai 종료시 상태설정 죽을경우는 상관없으나(죽지 않았을 경우 체력 상태) 
 
         //레벨 적용후 샵 데이터 초기화(리롤)
         UIManager.instance.SetShopPanelCharacter(playerData.Level, playerData.Gold);
+        //유닛 데이터 및 포지션 다시 설정 
+        ReDeployUnitOB();
+        //적유닛 설정
+        DeployEnemyUnitOB(CurrentRoundNum, _iswin);
         //대기시간 카운팅
         StartCoroutine(WaitCounterProcess(_count));
-        //유닛 이동 상태 가능
+        //전투시간떄 layer변경은 변수 property에서 처리
+        
     }
-
+    
     /// <summary>
     /// NOTE : 라운드 종료후 골드 값 설정
     /// </summary>
@@ -136,31 +138,39 @@ public class IngameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// NOTE : 몬스터가 죽을때마다 모든 몬스터가 죽었는지 체크하여 return true체크?
+    /// NOTE : 유닛 전투후 포지션 및 데이터 다시 설정, 처음 시작시 유닛이 없을떈 RETURN
     /// </summary>
-    /// <returns></returns>
-    private bool CheckAllEnemy()
+    private void ReDeployUnitOB()
     {
-        //   foreach(var p in BeforeRenderOrderAttribute)
-        return true;    
+        var blockListOnUnit = BoardManager.instance.GetBattleBlockOnUnit();
+        if (blockListOnUnit == null)
+            return;
+        foreach (var blockOnList in blockListOnUnit)
+        {
+            blockOnList.GetUnitNormal().unitController.ResetUnitData();
+        }
     }
 
-    /// <summary>
-    /// NOTE : 전투가 끝나고 패배했을 경우 남아있는 몬스터마다의 데미지 만큼 체력 감소 
-    /// </summary>
-    private void TakeDamage()
-    {
-        var mList = BoardManager.instance.currentMonsterList;
 
-        if (mList.Count == 0)
-            return;
-        foreach (var m in mList)
+    /// <summary>
+    /// NOTE : 라운드별 대기시간에 해당 라운드의 적 유닛 배치
+    /// </summary>
+    private void DeployEnemyUnitOB(int currentround, bool iswin)
+    {
+        if (iswin)
         {
-            //몬스터가 존재하고 있을경우 데미지 감소 처리
-            if (m.gameObject.activeSelf)
-                playerData.HpValue -= m.unitPdata.cost;
+            var prevRoundEnemyUnitList = BoardManager.instance.currentEnemyUnitList;
+            foreach (var unit in  prevRoundEnemyUnitList)
+            {
+                unit.unitblockSc.GetCurrentBlockInWaiting().SetUnitaddList(null);
+                unit.gameObject.SetActive(false);
+            }
         }
-        //체력 이펙트 발생 및 몬스터 유닛에서 애니매이션 처리
+
+        var enemyunitlist = BoardManager.instance.SetCurrentEnemyUnit(currentround);
+        foreach (var tmpunit in enemyunitlist)
+            tmpunit.ResetUnitData();
+
     }
 
 
@@ -183,6 +193,9 @@ public class IngameManager : MonoBehaviour
         StartBattleState();
     }
 
+    #endregion
+
+    #region StartBattle
     /// <summary>
     /// NOTE : 전투 상태 시작 ( UI 변경 및 BLOCK LAYER처리는 iSBATTLE PROPERT 내부에서 처리 )
     /// </summary>
@@ -194,22 +207,40 @@ public class IngameManager : MonoBehaviour
         unitTouchSystem.ReturnPickState();
         //레벨보다 많은 숫자의 유닛이 올라갈경우 유닛처리
         BoardManager.instance.ReturnUnitOnWaitingBoard(playerData.Level);
-
-        StartUnitBehavior();
         //유닛, 적 ai 실행 (1초~2초정도의 텀을 주도록 실행하도록)
-        StartCoroutine(testBattleFinsih());
+        StartUnitBehavior();
+        StartEnemyUnitBehavior();
+        //유닛이 없거나 적이 없을때를 체크하여 배틀 처리
+        CheckUnitAlive();
+        CheckEnemyUnitAlive();
     }
 
-
+    /// <summary>
+    /// NOTE : 유닛 슬라이더 UI 설정, BTAI 실행
+    /// </summary>
     private void StartUnitBehavior()
     {
-
         var battleblockOnUnitlist = BoardManager.instance.GetBattleBlockOnUnit();
         //Sort
         SortBlcokListByPos(ref battleblockOnUnitlist);
 
-        for(int i =0; i<battleblockOnUnitlist.Count; i++)
-            battleblockOnUnitlist[i].GetUnitNormal().unitController.StartUnitInBattle(UIManager.instance.playerUnitSliderList[i]);
+        for (int i = 0; i < battleblockOnUnitlist.Count; i++)
+        {
+            battleblockOnUnitlist[i].GetUnitNormal().unitController.StartUnitInBattle(UIManager.instance.playerUnitSliderList[i],1.5f);
+        }
+    }
+
+    /// <summary>
+    /// NOTE
+    /// </summary>
+    private void StartEnemyUnitBehavior()
+    {
+        var enemyunitlist = BoardManager.instance.currentEnemyUnitList;
+
+        for(int i = 0;i <enemyunitlist.Count; i++)
+        {
+            enemyunitlist[i].StartUnitInBattle(UIManager.instance.enemyUnitSliderList[i], 1.5f);
+        }
     }
 
     /// <summary>
@@ -257,19 +288,113 @@ public class IngameManager : MonoBehaviour
 
         return false;
     }
-   
-    IEnumerator testBattleFinsih()
+    #endregion
+
+    #region EndBattle
+    /// <summary>
+    /// NOTE : Unit이 죽었을때 체크
+    /// </summary>
+    public void CheckUnitAlive()
     {
-        int count = 10;
-        while(count<=0)
+        bool allDie = true;
+        var blockonUnitList = BoardManager.instance.GetBattleBlockOnUnit();
+
+        //유닛이 없었을 경우 도 체크 하기 위해서 
+        if (blockonUnitList.Count != 0)
         {
-            count--;
-            yield return new WaitForSeconds(1);
-            if (count <= 0)
-                IsBattleState = false;
+            foreach (var blockOnUnit in blockonUnitList)
+            {
+                if (blockOnUnit.GetUnitNormal().unitController.isAlive)
+                    allDie = false;
+            }
         }
+        if (allDie)
+            EndBattle(false);
+        
     }
     
+    /// <summary>
+    /// NOTE : EnemyUnit이 죽었을 떄 체크
+    /// </summary>
+    public void CheckEnemyUnitAlive()
+    {
+        bool allDie = true;
+        //유닛이 없었을 경우 도 체크 하기 위해서 
+        var enemyunitlist = BoardManager.instance.currentEnemyUnitList;
+        if(enemyunitlist.Count!=0)
+        {
+            foreach (var unit in enemyunitlist)
+            {
+                if (unit.unitblockSc.unitController.isAlive)
+                    allDie = false;
+            }
+        }
+
+        if (allDie)
+            EndBattle(true);
+    }
+
+    /// <summary>
+    /// NOTE : EndBattle 프로세스 실행
+    /// </summary>
+    /// <param name="iswin"></param>
+    public void EndBattle(bool iswin)
+    {
+        
+        if (iswin)
+        {
+            foreach (var blockOnUnit in BoardManager.instance.GetBattleBlockOnUnit())
+            {
+                //살아있는 유닛들 Victory 애니매이션 실행
+                if (blockOnUnit.GetUnitNormal().unitController.isAlive)
+                    blockOnUnit.GetUnitNormal().unitController.SetVictory();
+            }
+        }
+        else
+        {
+            foreach (var enemyUnit in BoardManager.instance.currentEnemyUnitList)
+            {
+                //살아있는 유닛들 Victory 애니매이션 실행
+                if (enemyUnit.isAlive)
+                    enemyUnit.SetVictory();
+            }
+        }
+        //슬라이더 PANEL OFF
+        UIManager.instance.SetOffSliderList();
+
+        if (!isRunningBattleEnd)
+            StartCoroutine(EndBattleProcess(iswin, 2f));
+    }
+
+    protected bool isRunningBattleEnd = false;
+
+    IEnumerator EndBattleProcess(bool iswin, float time)
+    {
+        //Round 승리 패배 이미지 띄우기
+        isRunningBattleEnd = true;
+        yield return new WaitForSeconds(time);
+        StartWaitState(waitingTime, iswin);
+        isRunningBattleEnd = false;
+    }
+
+    /// <summary>
+    /// NOTE : 전투가 끝나고 패배했을 경우 남아있는 몬스터마다의 데미지 만큼 체력 감소 
+    /// </summary>
+    private void TakeDamage()
+    {
+        var mList = BoardManager.instance.currentEnemyUnitList;
+
+        if (mList.Count == 0)
+            return;
+        foreach (var m in mList)
+        {
+            //몬스터가 존재하고 있을경우 데미지 감소 처리
+            if (m.gameObject.activeSelf)
+                playerData.HpValue -= m.unitPdata.cost;
+        }
+        //체력 이펙트 발생 및 몬스터 유닛에서 애니매이션 처리
+    }
+
     //유닛들이 죽을때마다, 적이 죽을때마다 실행할 함수 필요
     #endregion
 }

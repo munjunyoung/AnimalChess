@@ -29,7 +29,17 @@ public class BlockOnBoard : MonoBehaviour
             BoardManager.instance.AddBlockOnList(this);
         }
     }
-    
+
+    public void SetUnitNotList(UnitBlockData _unit)
+    {
+        unitInWaiting = _unit;
+        unitInBattle = unitInWaiting;
+        if (unitInWaiting != null)
+        {
+            unitInWaiting.transform.position = new Vector3(transform.position.x, transform.localPosition.y + (int)MAP_INFO.CubeSize, transform.position.z);
+            unitInWaiting.SetCurrentBlockInWaiting(this);
+        }
+    }
     /// <summary>
     /// NOTE : 유닛 리스트 처리 및 UNIT 리턴
     /// </summary>
@@ -59,16 +69,10 @@ public class BlockOnBoard : MonoBehaviour
     #endregion
 
     #region In Battle
-    public void SetUnitEnemy(UnitBlockData _unit)
-    {
-        unitInBattle = _unit;
-        if (unitInBattle != null)
-        {
-            unitInBattle.transform.position = new Vector3(transform.position.x, transform.position.y + 2f, transform.position.z);
-            unitInBattle.SetCurrentBlockInBattle(this);
-        }
-    }
-
+    /// <summary>
+    /// NOTE : 유닛 이동시에 다른 유닛들과 겹치지 않도록 사용하기 위함 (unitInBattle변수만 초기화)
+    /// </summary>
+    /// <param name="_unit"></param>
     public void SetUnitInBattle(UnitBlockData _unit)
     {
         unitInBattle = _unit;

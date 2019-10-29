@@ -3872,7 +3872,7 @@ GameObject:
   - component: {fileID: 8040749268497055998}
   - component: {fileID: 6562766673509496008}
   - component: {fileID: 7567972168795735924}
-  - component: {fileID: 3027037217404701289}
+  - component: {fileID: 3915835160284358203}
   m_Layer: 9
   m_Name: Cat_Water_3
   m_TagString: Untagged
@@ -3958,7 +3958,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d23f97ce3a619c49a213aef344a407c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3027037217404701289
+--- !u!114 &3915835160284358203
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3967,12 +3967,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 5284826240008630416}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 076e6706b3a90e24d9c895b87e213c8c, type: 3}
+  m_Script: {fileID: 11500000, guid: dcf8d192769ae5343a03f36498103824, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   unitblockSc: {fileID: 0}
   rb: {fileID: 0}
   animState: 0
+  hpmpSliderData:
+    panel: {fileID: 0}
+    hpSlider: {fileID: 0}
+    mpSlider: {fileID: 0}
+    hpText: {fileID: 0}
+    mpText: {fileID: 0}
   isAlive: 1
 --- !u!1001 &206547187899311367
 PrefabInstance:

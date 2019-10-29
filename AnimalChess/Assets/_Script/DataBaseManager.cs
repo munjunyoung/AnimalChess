@@ -5,19 +5,27 @@ using UnityEngine;
 public enum Ground_TYPE { DesertBlock1, DesertBlock2, WaitingBlock }
 ////Unit
 
-public enum Tribe_Type { Cat, Bear, Rabbit, Chick }
+public enum Tribe_Type
+{//Player
+    Cat, Bear, Rabbit,
+  //Enemy
+    Chick
+}
 public enum Attribute_Type { Fire, Water, Wind, Ground }
-public enum Unit_SideType { Player, Enemy }
+public enum Unit_SideType { Player, Enemy };
 
 //종족, 속성, 등급, 가격 , 유닛 종료 숫자는 databasemanager 변수에 수정 해주어야함
 public enum Unit_Type
 {
     Cat_Fire, Cat_Water, Cat_Ground, Cat_Wind,
     Bear_Water, Bear_Fire, Bear_Wind, Bear_Ground,
-    Rabbit_Ground, Rabbit_Water, Rabbit_Wind, Rabbit_Fire,
-    Chick_Water,
+    Rabbit_Ground, Rabbit_Water, Rabbit_Wind, Rabbit_Fire
 }
 
+public enum EnemyUnit_Type
+{
+    Chick_Water
+}
 
 public class DataBaseManager : MonoBehaviour
 {
@@ -38,8 +46,9 @@ public class DataBaseManager : MonoBehaviour
     public Dictionary<string, Sprite> AttributeSpriteDic = new Dictionary<string, Sprite>();
 
     //ShopUnit  
-    //0 -> 1성 리스트 1 -> 2성 리스트 3 -> 3성리스트
-    public List<Dictionary<Unit_Type, UnitData>> UnitPropertyDataDic = new List<Dictionary<Unit_Type, UnitData>>();
+    //0 -> 1성 리스트 1 -> 2성 리스트 3 -> 3성리스트 -> 100
+    public List<Dictionary<string, UnitData>> UnitPropertyDataDic = new List<Dictionary<string, UnitData>>();
+    public Dictionary<string, UnitData> EnemyUnitPropertyDataDic = new Dictionary<string, UnitData>();
     public Dictionary<int, List<UnitData>> unitTypeListbyGold = new Dictionary<int, List<UnitData>>();
     public List<int[]> ShopUnitPerList = new List<int[]>();
 
@@ -66,6 +75,7 @@ public class DataBaseManager : MonoBehaviour
         SetLoadDataOnDictionary(unitObDic, unitObPath + Tribe_Type.Cat.ToString());
         SetLoadDataOnDictionary(unitObDic, unitObPath + Tribe_Type.Bear.ToString());
         SetLoadDataOnDictionary(unitObDic, unitObPath + Tribe_Type.Rabbit.ToString());
+        SetLoadDataOnDictionary(unitObDic, unitObPath + "EnemyUnit/" + Tribe_Type.Chick.ToString());
 
     }
 
@@ -111,29 +121,35 @@ public class DataBaseManager : MonoBehaviour
     /// NOTE : UNIT DATA 속성 값 초기화
     /// </summary>
     private void SetUnitShopData()
-    {
-        int typeofUnitcount = System.Enum.GetValues(typeof(Unit_Type)).Length;
-        //모든 property data 
-
+    { 
         for (int ratingvalue = 1; ratingvalue <= 3; ratingvalue++)
         {
-            Dictionary<Unit_Type, UnitData> tmpList = new Dictionary<Unit_Type, UnitData>();
-            for (int i = 0; i < typeofUnitcount; i++)
+            Dictionary<string, UnitData> tmpList = new Dictionary<string, UnitData>();
+           
+            foreach(Unit_Type i in System.Enum.GetValues(typeof(Unit_Type)))
             {
                 UnitData tmpunit = new UnitData();
-                DataReader.instance.SetData(ref tmpunit, ((Unit_Type)i).ToString() + "_" + ratingvalue);
+                DataReader.instance.SetData(ref tmpunit, (i.ToString() + "_" + ratingvalue), Unit_SideType.Player);
                 tmpunit.SetOtherData();
-                tmpList.Add((Unit_Type)i, tmpunit);
+                tmpList.Add(i.ToString(), tmpunit);
             }
             UnitPropertyDataDic.Add(tmpList);
         }
 
-        //각 골드별 유닛 데이터 설정
-        List<UnitData> g1 = new List<UnitData>();
+        foreach (EnemyUnit_Type i in System.Enum.GetValues(typeof(EnemyUnit_Type)))
+        {
+            UnitData tmpunit = new UnitData();
+            DataReader.instance.SetData(ref tmpunit, (i.ToString() + "_" + 1), Unit_SideType.Enemy);
+            tmpunit.SetOtherData();
+            EnemyUnitPropertyDataDic.Add(i.ToString(), tmpunit);
+        }
+
+            //각 골드별 유닛 데이터 설정
+            List<UnitData> g1 = new List<UnitData>();
         List<UnitData> g2 = new List<UnitData>();
         List<UnitData> g3 = new List<UnitData>();
         List<UnitData> g4 = new List<UnitData>();
-
+        
 
         foreach (var pdata in UnitPropertyDataDic[0])
         {
@@ -161,8 +177,6 @@ public class DataBaseManager : MonoBehaviour
         unitTypeListbyGold.Add(4, g4);
 
         SetRandomPercentage();
-
-
     }
 
     /// <summary>
@@ -194,9 +208,10 @@ public class UnitData
 {
     public string id;
     public string name;
-    public Unit_Type unitType;
+    public string unitType;
     public Tribe_Type tribe;
     public Attribute_Type attribute;
+    public Unit_SideType sideType;
     public int ratingValue;
     public int cost;
     public int originalCost;
@@ -206,15 +221,19 @@ public class UnitData
     public Sprite tribeSprite;
     public Sprite attributeSprite;
     public Vector3 camPos;
+
     //RenderTexture 카메라 포지션을 변경하여 보여주기 위함
 
     public UnitAbilityData abilityData;
     
     public void SetOtherData()
     {
-        unitType = (Unit_Type)System.Enum.Parse(typeof(Unit_Type), tribe.ToString() + "_" + attribute.ToString());
+        unitType = tribe.ToString() + "_" + attribute.ToString();
         //sprite 설정
-        tribeSprite = DataBaseManager.instance.TribeSpriteDic[tribe.ToString()];
+        if(sideType.Equals(Unit_SideType.Player))
+            tribeSprite = DataBaseManager.instance.TribeSpriteDic[tribe.ToString()];
+        else
+            tribeSprite = DataBaseManager.instance.TribeSpriteDic["Enemy"];
         attributeSprite = DataBaseManager.instance.AttributeSpriteDic[attribute.ToString()];
         camPos = new Vector3(camposx, camposy, 0);
         name = attribute.ToString() + tribe.ToString();
@@ -222,7 +241,6 @@ public class UnitData
         abilityData = new UnitAbilityData(tribe, attribute, originalCost, ratingValue);
     }
 }
-
 
 
 
