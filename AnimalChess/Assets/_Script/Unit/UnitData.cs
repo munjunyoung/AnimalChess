@@ -25,7 +25,8 @@ public class UnitAbilityData
         switch(tribe)
         {
             case Tribe_Type.Cat:
-                attackCooltime -= 0.5f;
+                attackCooltime -= 1f;
+                attackDamage += 50;
                 break;
             case Tribe_Type.Bear:
                 maxHP += 100;

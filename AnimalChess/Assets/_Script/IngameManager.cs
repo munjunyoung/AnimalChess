@@ -163,7 +163,7 @@ public class IngameManager : MonoBehaviour
             foreach (var unit in  prevRoundEnemyUnitList)
             {
                 unit.unitblockSc.GetCurrentBlockInWaiting().SetUnitaddList(null);
-                unit.gameObject.SetActive(false);
+                unit.unitblockSc.gameObject.SetActive(false);
             }
         }
 

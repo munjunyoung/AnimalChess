@@ -271,7 +271,7 @@ public class DeadAction : ActionNode
     public override bool Invoke()
     {
         _controller.DeadAction();
-        return true;
+        return false;
     }
 }
 #endregion
@@ -302,7 +302,7 @@ public class StartVictoryAnimation : ActionNode
     public override bool Invoke()
     {
         _controller.StartVictoryAnimation();
-        return true;
+        return false;
     }
 }
 

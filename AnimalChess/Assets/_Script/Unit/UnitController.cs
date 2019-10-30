@@ -139,11 +139,12 @@ public class UnitController : MonoBehaviour
         hpmpSliderData = null;
         isVictory = false;
 
+        targetList.Clear();
         //애니매이션 설정 
         anim.SetTrigger("ReStart");
         animState = Anim_State.Idle;
         anim.SetFloat("animState", (int)animState);
-
+        
         //Rotation설정
         transform.eulerAngles = new Vector3(0, 180, 0);
 
@@ -171,7 +172,6 @@ public class UnitController : MonoBehaviour
     /// <returns></returns>
     public virtual bool SetTargetBlock()
     {
-       
         float mindistance = 100;
         //적이 모두 죽었는지 체크
         isDieAllEnemy = true;
@@ -280,7 +280,7 @@ public class UnitController : MonoBehaviour
         Quaternion targetRot = Quaternion.LookRotation(dir);
         
         //초기화
-        while (unitblockSc.transform.position != nextpos)
+        while (unitblockSc.transform.position != nextpos||isAlive)
         {
             count += Time.deltaTime;
             if (dir != Vector3.zero)
@@ -343,7 +343,7 @@ public class UnitController : MonoBehaviour
 
         float count = 0;
         //angle값이 0 이면 rotation값 일치
-        while (Quaternion.Angle(unitblockSc.transform.rotation, targetRot) != 0)
+        while (Quaternion.Angle(unitblockSc.transform.rotation, targetRot) != 0||isAlive)
         {
             count += Time.deltaTime;
             unitblockSc.transform.rotation = Quaternion.Lerp(currentrot, targetRot, count * rotateSpeed);
@@ -384,15 +384,6 @@ public class UnitController : MonoBehaviour
         StartCoroutine(SetAttackCoolTime());
         //StartCoroutine(AttackHitProcess());
         
-    }
-
-    IEnumerator AttackHitProcess()
-    {
-        yield return new WaitForSeconds(0.05f);
-        AttackHit();
-        yield return new WaitForSeconds(0.5f);
-        isAttacking = false;
-
     }
     /// <summary>
     /// NOTE : 근접 공격, 원거리 공격 분류 해야함
@@ -445,6 +436,9 @@ public class UnitController : MonoBehaviour
     {
         hpmpSliderData.panel.SetActive(false);
         anim.SetTrigger("isDie");
+
+        unitblockSc.GetCurrentBlockInBattle().SetUnitInBattle(null);
+        unitblockSc.unitBTAI.StopBT();
         //죽음 
     }
     #endregion
@@ -578,6 +572,8 @@ public class UnitController : MonoBehaviour
     public virtual void StartVictoryAnimation()
     {
         anim.SetTrigger("IsVictory");
+        unitblockSc.GetCurrentBlockInBattle().SetUnitInBattle(null);
+        unitblockSc.unitBTAI.StopBT();
     }
 
     public void SetVictory()
