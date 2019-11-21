@@ -145,7 +145,7 @@ public class DataBaseManager : MonoBehaviour
         }
 
             //각 골드별 유닛 데이터 설정
-            List<UnitData> g1 = new List<UnitData>();
+        List<UnitData> g1 = new List<UnitData>();
         List<UnitData> g2 = new List<UnitData>();
         List<UnitData> g3 = new List<UnitData>();
         List<UnitData> g4 = new List<UnitData>();
@@ -237,6 +237,7 @@ public class UnitData
         attributeSprite = DataBaseManager.instance.AttributeSpriteDic[attribute.ToString()];
         camPos = new Vector3(camposx, camposy, 0);
         name = attribute.ToString() + tribe.ToString();
+        originalCost = cost;
 
         abilityData = new UnitAbilityData(tribe, attribute, originalCost, ratingValue);
     }

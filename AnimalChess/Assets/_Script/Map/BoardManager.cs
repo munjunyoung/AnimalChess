@@ -7,8 +7,6 @@ public class BoardManager : MonoBehaviour
     public static BoardManager instance = null;
     //Board
     private const int battleboardHeightIndex = 5;
-    private const float yPos = 0.5f;
-    private const float yWaitblockPos = 1f;
     //Block
     private Transform groundParentTransform;
     public BlockOnBoard[,] allGroundBlocks = new BlockOnBoard[(int)MAP_INFO.Width, (int)MAP_INFO.Height];
@@ -21,12 +19,15 @@ public class BoardManager : MonoBehaviour
     private List<BlockOnBoard> BattleBlockOnUnitList = new List<BlockOnBoard>();
     private List<BlockOnBoard> waitBlockOnUnitList = new List<BlockOnBoard>();
 
+
     private List<PlayerUnitController> currentPlayerUnitList = new List<PlayerUnitController>();
     //Monster
     [HideInInspector]
     public Dictionary<int, List<EnemyUnitController>> allEnemyUnitList = new Dictionary<int, List<EnemyUnitController>>();
     [HideInInspector]
     public List<EnemyUnitController> currentEnemyUnitList = new List<EnemyUnitController>();
+
+    SynergySystem synergyManager = new SynergySystem();
     
     // Start is called before the first frame update
     private void Awake()
@@ -106,13 +107,14 @@ public class BoardManager : MonoBehaviour
         
         if (_block.IsWaitingBlock)
         {
+            _block.GetUnitNormal().unitController.ResetUnitDataToWatingBoard();
             waitBlockOnUnitList.Add(_block);
         }
         else
         {
             BattleBlockOnUnitList.Add(_block);
             IngameManager.instance.playerData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
-            
+            synergyManager.AddSynergy(_block.GetUnitNormal());
         }
         allBlockOnUnitList.Add(_block);
         //unitListOnBattleBoard.Add(_unit);
@@ -133,6 +135,7 @@ public class BoardManager : MonoBehaviour
         {
             BattleBlockOnUnitList.Remove(_block);
             IngameManager.instance.playerData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
+            synergyManager.RemoveSynergy(_block.GetUnitNormal());
         }
         allBlockOnUnitList.Remove(_block);
         //unitListOnBattleBoard.Remove(_unit);
@@ -372,9 +375,9 @@ public class BoardManager : MonoBehaviour
         List<EnemyUnitController> round1 = new List<EnemyUnitController>();
         //round1
         CreateEnemyUnit(EnemyUnit_Type.Chick_Water.ToString(), allGroundBlocks[4, 7], 1);
-        //round2
-        CreateEnemyUnit(EnemyUnit_Type.Chick_Water.ToString(), allGroundBlocks[4, 7], 2);
-        CreateEnemyUnit(EnemyUnit_Type.Chick_Water.ToString(), allGroundBlocks[2, 7], 2);
+        ////round2
+        //CreateEnemyUnit(EnemyUnit_Type.Chick_Water.ToString(), allGroundBlocks[4, 7], 2);
+        //CreateEnemyUnit(EnemyUnit_Type.Chick_Water.ToString(), allGroundBlocks[2, 7], 2);
         CreateEnemyUnit(EnemyUnit_Type.Chick_Water.ToString(), allGroundBlocks[6, 7], 2);
     }
 

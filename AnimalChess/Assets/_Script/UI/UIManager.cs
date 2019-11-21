@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
     [Header("Shop")]
     public RectTransform ShopPanel;
     private readonly Vector2 ShopHidePos = new Vector2(0, 700);
-    private readonly Vector2 ShopShowPos = new Vector2(0, 30);
+    private readonly Vector2 ShopShowPos = new Vector2(0, 70);
     private Vector2 ShopTargetPos = Vector2.zero;
     private Vector2 currentShopPos = Vector2.zero;
     private bool isRunningShopCoroutine = false;
@@ -55,6 +55,11 @@ public class UIManager : MonoBehaviour
     
     public List<HpMpSlider> playerUnitSliderList;
     public List<HpMpSlider> enemyUnitSliderList;
+    
+    [SerializeField]
+    private Text catTribeText, rabbitTribeText, bearTribeText;
+    [SerializeField]
+    private Text fireAttributeText, waterAttributeText, windAttributeText, groundAttributeText;  
 
 
     private void Awake()
@@ -118,12 +123,12 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region  Profile
-    public void ShowUnitProfile(UnitData _pdata)
+    public void ShowUnitProfile(UnitController unit)
     {
-        rtCam.localPosition = _pdata.camPos;
-        unitID.text = _pdata.name;
+        rtCam.localPosition = unit.unitPdata.camPos;
+        unitID.text = unit.unitPdata.name;
 
-        switch (_pdata.originalCost)
+        switch (unit.unitPdata.originalCost)
         {
             case 1:
                 unitID.color = Color.white;
@@ -145,13 +150,13 @@ public class UIManager : MonoBehaviour
                 break;
         }
 
-        tribeImage.sprite = _pdata.tribeSprite;
-        attributeImage.sprite = _pdata.attributeSprite;
+        tribeImage.sprite = unit.unitPdata.tribeSprite;
+        attributeImage.sprite = unit.unitPdata.attributeSprite;
         profileTargetPos = profileShowPos;
         currentProfilePos = profilePanel.anchoredPosition;
-        SetRatingImage(_pdata.ratingValue);
-        profileHpText.text = _pdata.abilityData.maxHP.ToString();
-        profileMpText.text = _pdata.abilityData.maxMP.ToString();
+        SetRatingImage(unit.unitPdata.ratingValue);
+        profileHpText.text = unit.abilityDataInBattle.totalMaxHp.ToString();
+        profileMpText.text = unit.unitPdata.abilityData.maxMP.ToString();
 
         if (!isRunningProfileCoroutine)
             StartCoroutine(SetProfilePos());
@@ -285,6 +290,48 @@ public class UIManager : MonoBehaviour
         foreach (var slider in playerUnitSliderList)
             slider.panel.SetActive(false);
     }
+    #endregion
+
+    #region Synergy
+    //Tribe
+    public void SetCatSynergyText(int number)
+    {
+        var maxnumber = number < 2 ? 2 : 4;
+        catTribeText.text = number.ToString() + "/" + maxnumber;
+    }
+    public void SetRabbitSynergyText(int number)
+    {
+        var maxnumber = number < 2 ? 2 : 4;
+        rabbitTribeText.text = number.ToString() + "/" + maxnumber;
+    }
+    public void SetBearSynergyText(int number)
+    {
+        var maxnumber = number < 2 ? 2 : 4;
+        bearTribeText.text = number.ToString() + "/" + maxnumber;
+    }
+
+    //Attribute
+    public void SetFireSynergyText(int number)
+    {
+        int maxnumber = 3;
+        fireAttributeText.text = number.ToString() + "/" + maxnumber;
+    }
+    public void SetWaterSynergyText(int number)
+    {
+        int maxnumber = 3;
+        waterAttributeText.text = number.ToString() + "/" + maxnumber;
+    }
+    public void SetWindSynergyText(int number)
+    {
+        int maxnumber = 3;
+        windAttributeText.text = number.ToString() + "/" + maxnumber;
+    }
+    public void SetGroundSynergyText(int number)
+    {
+        int maxnumber = 3;
+        groundAttributeText.text = number.ToString() + "/" + maxnumber;
+    }
+
     #endregion
 }
 

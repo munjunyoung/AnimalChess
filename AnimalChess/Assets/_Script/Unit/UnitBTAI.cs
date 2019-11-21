@@ -66,9 +66,10 @@ public class UnitBTAI : UnitBTBase
         aiRoot.AddChild(selector);
         //Tree 생성
         selector.AddChild(seqMove);
-        selector.AddChild(seqDead);
-        selector.AddChild(seqAnim);
         selector.AddChild(seqAttack);
+
+        selector.AddChild(seqAnim);
+        selector.AddChild(seqDead);
         selector.AddChild(seqVictory);
 
         seqMove.AddChild(setTargetblock);

@@ -44,6 +44,7 @@ public class TouchUnitSystem : MonoBehaviour
     /// <summary>
     /// NOTE : Click Get Object;
     /// </summary>
+    /// 
     /// <returns></returns>
     private void TouchDownObject()
     {
@@ -67,7 +68,7 @@ public class TouchUnitSystem : MonoBehaviour
             target.unitController.rb.useGravity = false;
             IsPickUp = true;
             hightlightedEffect.SetActive(true);
-            UIManager.instance.ShowUnitProfile(target.unitController.unitPdata);
+            UIManager.instance.ShowUnitProfile(target.unitController);
             return;
         }
     }

@@ -12,7 +12,7 @@ public class UnitController : MonoBehaviour
     [HideInInspector]
     public      UnitData unitPdata;
     //abilityData In Battle
-    protected   UnitAbilityData abilityDataInBattle;
+    public      UnitAbilityData abilityDataInBattle;
     //reference TouchSystem
     [HideInInspector] 
     public      Rigidbody rb;
@@ -29,8 +29,8 @@ public class UnitController : MonoBehaviour
         {
             prevHp = _currentHp;
             _currentHp = value;
-            if (_currentHp > abilityDataInBattle.maxHP)
-                _currentHp = abilityDataInBattle.maxHP;
+            if (_currentHp > abilityDataInBattle.totalMaxHp)
+                _currentHp = abilityDataInBattle.totalMaxHp;
             if (_currentHp < 0)
             {
                 
@@ -98,7 +98,7 @@ public class UnitController : MonoBehaviour
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
     }
-
+    
     /// <summary>
     /// NOTE : 슬라이더 데이터 설정
     /// </summary>
@@ -113,9 +113,9 @@ public class UnitController : MonoBehaviour
         //슬라이더 초기화
         hpmpSliderData = sliderdata;
         //HP
-        hpmpSliderData.hpSlider.maxValue = abilityDataInBattle.maxHP;
-        SetHpSlideValue(abilityDataInBattle.maxHP);
-        CurrentHp = abilityDataInBattle.maxHP;
+        hpmpSliderData.hpSlider.maxValue = abilityDataInBattle.totalMaxHp;
+        SetHpSlideValue(abilityDataInBattle.totalMaxHp);
+        CurrentHp = abilityDataInBattle.totalMaxHp;
         //MP
         hpmpSliderData.mpSlider.maxValue = abilityDataInBattle.maxMP;
         SetMpSliderValue(0);
@@ -125,6 +125,8 @@ public class UnitController : MonoBehaviour
         hpmpSliderData.panel.SetActive(true);
         //AI 실행
         StartCoroutine(WaitingStartAI(waitingTime));
+        //공속
+        anim.SetFloat("attackSpeed",abilityDataInBattle.totalAttackSpeedRate);
     }
 
     /// <summary>
@@ -138,6 +140,7 @@ public class UnitController : MonoBehaviour
         isAlive = true;
         hpmpSliderData = null;
         isVictory = false;
+        isAttacking = false;
 
         targetList.Clear();
         //애니매이션 설정 
@@ -146,12 +149,20 @@ public class UnitController : MonoBehaviour
         anim.SetFloat("animState", (int)animState);
         
         //Rotation설정
-        transform.eulerAngles = new Vector3(0, 180, 0);
+        unitblockSc.transform.eulerAngles = new Vector3(0, 180, 0);
 
         //위치 설정
         unitblockSc.GetCurrentBlockInWaiting().SetUnitNotList(unitblockSc);
     }
-
+    
+    /// <summary>
+    /// NOTE : 배틀보드 위에서 시너지를 적용받다가 대기석으로 돌아갔을때 데이터를 다시 되돌리기` 위함
+    /// </summary>
+    public void ResetUnitDataToWatingBoard()
+    {
+        abilityDataInBattle = unitPdata.abilityData;
+    }
+    
     /// <summary>
     /// NOTE : 파라미터 값 이후로 AI실행
     /// </summary>
@@ -261,6 +272,12 @@ public class UnitController : MonoBehaviour
         StartCoroutine(MoveNextBlock(unitblockSc.GetCurrentBlockInBattle(), path[nextBlockIndexCount]));
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="currentBlock"></param>
+    /// <param name="nextblock"></param>
+    /// <returns></returns>
     IEnumerator MoveNextBlock(BlockOnBoard currentBlock, BlockOnBoard nextblock)
     {
         //갈 block 자신의 위치로 변경 이전길 null로 초기화
@@ -280,11 +297,10 @@ public class UnitController : MonoBehaviour
         Quaternion targetRot = Quaternion.LookRotation(dir);
         
         //초기화
-        while (unitblockSc.transform.position != nextpos||isAlive)
+        while (unitblockSc.transform.position != nextpos&&isAlive)
         {
             count += Time.deltaTime;
-            if (dir != Vector3.zero)
-                unitblockSc.transform.rotation = Quaternion.Lerp(currentRot, targetRot, count * rotateSpeed);
+            unitblockSc.transform.rotation = Quaternion.Lerp(currentRot, targetRot, count * rotateSpeed);
             unitblockSc.transform.position = Vector3.Lerp(startpos, nextpos, moveSpeed * count);
 
             SetPosSliderBar(unitblockSc.transform.position);
@@ -343,7 +359,7 @@ public class UnitController : MonoBehaviour
 
         float count = 0;
         //angle값이 0 이면 rotation값 일치
-        while (Quaternion.Angle(unitblockSc.transform.rotation, targetRot) != 0||isAlive)
+        while (Quaternion.Angle(unitblockSc.transform.rotation, targetRot) != 0)
         {
             count += Time.deltaTime;
             unitblockSc.transform.rotation = Quaternion.Lerp(currentrot, targetRot, count * rotateSpeed);
@@ -390,11 +406,14 @@ public class UnitController : MonoBehaviour
     /// </summary>
     public virtual void AttackHit()
     {
-        
         var target = currentTargetBlock.unitInBattle;
         if (target != null)
         {
-            target.unitController.TakeDamage(unitPdata.abilityData.attackDamage);
+            //방어력을 제외한 데미지 값
+            int resultdamage = (int)(abilityDataInBattle.attackDamage * abilityDataInBattle.physicaldefenseRate);
+            //Drain
+            CurrentHp += resultdamage * unitPdata.abilityData.drainHp;
+            target.unitController.TakeDamagePhysics(resultdamage);
             //원거리 공격 애매한상태
             //..이펙트
         }   
@@ -415,7 +434,7 @@ public class UnitController : MonoBehaviour
     IEnumerator SetAttackCoolTime()
     {
         isAttackCooltimeWaiting = true;
-        yield return new WaitForSecondsRealtime(abilityDataInBattle.attackCooltime);
+        yield return new WaitForSecondsRealtime(abilityDataInBattle.attackCooltime * (1f - (abilityDataInBattle.attackSpeedRateSynergy * 0.01f)));
         isAttackCooltimeWaiting = false;
     }
     #endregion
@@ -439,8 +458,11 @@ public class UnitController : MonoBehaviour
 
         unitblockSc.GetCurrentBlockInBattle().SetUnitInBattle(null);
         unitblockSc.unitBTAI.StopBT();
+        
         //죽음 
     }
+
+    
     #endregion
 
     #region Animation
@@ -553,16 +575,22 @@ public class UnitController : MonoBehaviour
         isRunningMpSliderLerp = false;
     }
     #endregion
-
-
-
-    public void TakeDamage(int damage)
+    
+    /// <summary>
+    /// NOTE : 물리데미지
+    /// </summary>
+    /// <param name="damage"></param>
+    public void TakeDamagePhysics(int damage)
     {
+        //회피 랜덤설정 
+        if (Random.Range(0, 100) < abilityDataInBattle.avoidanceRate)
+            return;
+
+
         CurrentHp -= damage;
         CurrentMp += damage * 0.2f;
         //이펙트 생성
     }
-
 
     public virtual bool CheckVictroy()
     {
@@ -580,8 +608,6 @@ public class UnitController : MonoBehaviour
     {
         isVictory = true;
     }
-    
-
 }
 
 

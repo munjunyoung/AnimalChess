@@ -9,7 +9,7 @@ public class IngameManager : MonoBehaviour
     
     private TouchUnitSystem unitTouchSystem;
 
-    private readonly int waitingTime = 10;
+    private readonly int waitingTime = 100;
     private readonly int roundFinishGold = 1;
     private readonly int roundFinishEXP = 1;
 
@@ -67,6 +67,8 @@ public class IngameManager : MonoBehaviour
     /// <param name="_count"></param>
     private void StartWaitState(int _count, bool _iswin)
     {
+        //Round종료 체크 유닛리스트 카운트로 처리 
+
         IsBattleState = false;//골드 정산
         //라운드 설정 변경 (졌으면 유지, 이겼으면 다음라운드 진행)
         if (_iswin)
@@ -83,6 +85,8 @@ public class IngameManager : MonoBehaviour
             winsNumber = 0;
         }
 
+        //슬라이더 PANEL OFF
+        UIManager.instance.SetOffSliderList();
         //해당 라운드 유닛 생성
         //SetMonster[RoundNumber]; 
         //경험치
@@ -111,7 +115,7 @@ public class IngameManager : MonoBehaviour
         
         //라운드 당 골드  (라운드 당  2,3,4,5)
         if (CurrentRoundNum < 4)
-            plusgold += CurrentRoundNum + 1;
+            plusgold += CurrentRoundNum;
         else
             plusgold += 5;
 
@@ -129,11 +133,13 @@ public class IngameManager : MonoBehaviour
 
         // 현재 골드에 따른 추가 골드
         // 10골드 간격에 따라 +1
-        plusgold += playerData.Gold > 10 ? 1 : 0;
-        plusgold += playerData.Gold > 20 ? 1 : 0;
-        plusgold += playerData.Gold > 30 ? 1 : 0;
-        plusgold += playerData.Gold > 40 ? 1 : 0;
-        plusgold += playerData.Gold > 50 ? 1 : 0;
+        plusgold += playerData.Gold >= 10 ? 1 : 0;
+        plusgold += playerData.Gold >= 20 ? 1 : 0;
+        plusgold += playerData.Gold >= 30 ? 1 : 0;
+        plusgold += playerData.Gold >= 40 ? 1 : 0;
+        plusgold += playerData.Gold >= 50 ? 1 : 0;
+
+        playerData.Gold += plusgold;
         
     }
 
@@ -237,7 +243,7 @@ public class IngameManager : MonoBehaviour
     {
         var enemyunitlist = BoardManager.instance.currentEnemyUnitList;
 
-        for(int i = 0;i <enemyunitlist.Count; i++)
+        for(int i = 0;i<enemyunitlist.Count; i++)
         {
             enemyunitlist[i].StartUnitInBattle(UIManager.instance.enemyUnitSliderList[i], 1.5f);
         }
@@ -359,11 +365,10 @@ public class IngameManager : MonoBehaviour
                     enemyUnit.SetVictory();
             }
         }
-        //슬라이더 PANEL OFF
-        UIManager.instance.SetOffSliderList();
+       
 
         if (!isRunningBattleEnd)
-            StartCoroutine(EndBattleProcess(iswin, 2f));
+            StartCoroutine(EndBattleProcess(iswin, 3f));
     }
 
     protected bool isRunningBattleEnd = false;
