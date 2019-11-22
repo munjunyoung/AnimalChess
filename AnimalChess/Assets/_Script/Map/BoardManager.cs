@@ -104,21 +104,23 @@ public class BoardManager : MonoBehaviour
     /// <param name="_block"></param>
     public void AddBlockOnList(BlockOnBoard _block)
     {
-        
+        //대기보드로 이동할 경우 
         if (_block.IsWaitingBlock)
         {
+            //시너지를 받거나 했던 데이터들 리셋
             _block.GetUnitNormal().unitController.ResetUnitDataToWatingBoard();
             waitBlockOnUnitList.Add(_block);
         }
+        //전투보드로 이동할 경우
         else
         {
             BattleBlockOnUnitList.Add(_block);
+            //unitNumber 초기화
             IngameManager.instance.playerData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
+            //시너지 상태 추가
             synergyManager.AddSynergy(_block.GetUnitNormal());
         }
         allBlockOnUnitList.Add(_block);
-        //unitListOnBattleBoard.Add(_unit);
-        //UIManager.instance.SetUnitNumberText(unitListOnBattleBoard.Count, IngameManager.instance.pData.Level);
     }
 
     /// <summary>
@@ -234,7 +236,6 @@ public class BoardManager : MonoBehaviour
                 return true;
             }
         }
-
         return false;
     }
 
@@ -327,7 +328,10 @@ public class BoardManager : MonoBehaviour
     {
         var pdata = DataBaseManager.instance.UnitPropertyDataDic[_ratingvalue - 1][_unitType];
         var unit = Instantiate(DataBaseManager.instance.unitObDic[pdata.id], Vector3.zero, Quaternion.identity, unitOBParentTransform.transform);
-        unit.GetComponentInChildren<UnitController>().unitPdata = pdata;
+        var unitcontroller = unit.GetComponentInChildren<PlayerUnitController>();
+        unitcontroller.unitPdata = pdata;
+        unitcontroller.SetAbilityDataInBattle(pdata.abilityData);
+        unitcontroller.SetEffectObject();
         unit.transform.eulerAngles = new Vector3(0, 180, 0);
         _blockOnUnit.SetUnitaddList(unit);
         CheckComposeUnitNormal(unit.unitController.unitPdata);

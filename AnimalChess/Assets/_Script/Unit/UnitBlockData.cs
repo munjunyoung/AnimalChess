@@ -16,6 +16,11 @@ public class UnitBlockData : MonoBehaviour
         unitBTAI = GetComponentInChildren<UnitBTAI>();
         unitBTAI.Init();
     }
+
+    private void Start()
+    {
+        
+    }
     //private ownBlock 
     public void SetCurrentBlockInWaiting(BlockOnBoard _currentBlock)
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 public class UnitAbilityData
 {
     public int totalMaxHp;
@@ -19,7 +19,7 @@ public class UnitAbilityData
 
     public int maxMP;
 
-    public int attackDamage;
+    public int totalAttackDamage;
     public int normalAttackDamage;
     private float _plusattackDamageRate;
     public float plusAttackDamageRate
@@ -28,22 +28,22 @@ public class UnitAbilityData
         set
         {
             _plusattackDamageRate = value;
-            attackDamage = (int)(normalAttackDamage * (1 + (_plusattackDamageRate * 0.01f)));
+            totalAttackDamage = (int)(normalAttackDamage * (1 + (_plusattackDamageRate * 0.01f)));
         }
     }
 
     public int attackRange;
 
-    public int skillAttackDamage;
+    public int totalSkillAttackDamage;
     public int normalSkillAttackDamage;
-    public float _plusSkillAttackRate;
+    private float _plusSkillAttackRate;
     public float plusSkillAttackRate
     {
         get { return _plusSkillAttackRate; }
         set
         {
             _plusSkillAttackRate = value;
-            skillAttackDamage = (int)(normalSkillAttackDamage * (1 + (_plusSkillAttackRate * 0.01f)));
+            totalSkillAttackDamage = (int)(normalSkillAttackDamage * (1 + (_plusSkillAttackRate * 0.01f)));
         }
     }
 
@@ -56,9 +56,9 @@ public class UnitAbilityData
     {
         get { return 1 + attackSpeedRateData + attackSpeedRateSynergy; }
     }
-    //시너지에서 처리 
+    //시너지에서 추가 
     public float attackSpeedRateSynergy;
-    //데이터에서 처리
+    //생성자에서 추가
     private float attackSpeedRateData;
     
 
@@ -80,6 +80,37 @@ public class UnitAbilityData
     //생흡
     public float drainHp;
 
+
+    public UnitAbilityData DeepCopy()
+    {
+        UnitAbilityData data = new UnitAbilityData();
+        data.normalMaxHP = normalMaxHP;
+        data.plusHpRate = plusHpRate;
+
+        data.maxMP = maxMP;
+        
+        data.normalAttackDamage = normalAttackDamage;
+        data.plusAttackDamageRate = plusAttackDamageRate;
+
+        data.attackRange = attackRange;
+
+        data.normalSkillAttackDamage = normalSkillAttackDamage;
+        data.plusSkillAttackRate = plusSkillAttackRate;
+
+        data.attackSpeedRateSynergy = attackSpeedRateSynergy;
+        data.attackSpeedRateData = attackSpeedRateData;
+
+        data.physicaldefenseRate = physicaldefenseRate;
+        data.physicaldefenseRate = PhysicalDefense;
+
+        data.avoidanceRate = avoidanceRate;
+        data.drainHp = drainHp;
+        
+        return data;
+    }
+
+    public UnitAbilityData(){ }
+
     public UnitAbilityData(Tribe_Type tribe, Attribute_Type attribute, int gold, int ratingValue)
     {
         normalMaxHP = 300;
@@ -97,7 +128,7 @@ public class UnitAbilityData
                 break;
             case Tribe_Type.Bear:
                 normalMaxHP += 100;
-                attackSpeedRateData -= 20;
+                attackSpeedRateData -= 0.2f;
                 break;
             case Tribe_Type.Rabbit:
                 attackRange += 3;
@@ -137,4 +168,5 @@ public class UnitAbilityData
         avoidanceRate = 0;
         drainHp = 0;
     }
+
 }

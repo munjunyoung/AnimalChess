@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 //Die 는 Trigget로 처리
 public enum Anim_State { Idle = 0, Walk, Attack, Skill }
 public class UnitController : MonoBehaviour
@@ -12,7 +13,7 @@ public class UnitController : MonoBehaviour
     [HideInInspector]
     public      UnitData unitPdata;
     //abilityData In Battle
-    public      UnitAbilityData abilityDataInBattle;
+    public UnitAbilityData abilityDataInBattle;
     //reference TouchSystem
     [HideInInspector] 
     public      Rigidbody rb;
@@ -72,7 +73,7 @@ public class UnitController : MonoBehaviour
     protected float moveSpeed = 1f;
     //Rotate
     private float rotateSpeed = 5f;
-
+    
     [HideInInspector]
     public    bool isAlive = true;
     protected bool isFindPath = false;
@@ -92,13 +93,14 @@ public class UnitController : MonoBehaviour
     protected bool isRunningMpSliderLerp = false;
 
     #region Set
-    public void Init()
+    public virtual void Init()
     {
         unitblockSc = GetComponentInParent<UnitBlockData>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        
     }
-    
+
     /// <summary>
     /// NOTE : 슬라이더 데이터 설정
     /// </summary>
@@ -106,7 +108,7 @@ public class UnitController : MonoBehaviour
     {
         //ability Data 초기화
         //능력치 리셋 
-        abilityDataInBattle = unitPdata.abilityData;
+        SetAbilityDataInBattle(unitPdata.abilityData);
         //시너지 효과 추가 능력치 함수 필요
         //..
 
@@ -132,7 +134,7 @@ public class UnitController : MonoBehaviour
     /// <summary>
     /// NOTE : 전투가 끝난후 모든 데이터 리셋
     /// </summary>
-    public void ResetUnitData()
+    public void ResetUnitDataInWaiting()
     {
         //능력치 리셋 
         abilityDataInBattle = unitPdata.abilityData;
@@ -154,13 +156,18 @@ public class UnitController : MonoBehaviour
         //위치 설정
         unitblockSc.GetCurrentBlockInWaiting().SetUnitNotList(unitblockSc);
     }
-    
+
+    public void SetAbilityDataInBattle(UnitAbilityData readAbilityData)
+    {
+        abilityDataInBattle = readAbilityData.DeepCopy();
+    }
+
     /// <summary>
     /// NOTE : 배틀보드 위에서 시너지를 적용받다가 대기석으로 돌아갔을때 데이터를 다시 되돌리기` 위함
     /// </summary>
-    public void ResetUnitDataToWatingBoard()
-    {
-        abilityDataInBattle = unitPdata.abilityData;
+    public virtual void ResetUnitDataToWatingBoard()
+    { 
+        SetAbilityDataInBattle(unitPdata.abilityData);
     }
     
     /// <summary>
@@ -410,7 +417,7 @@ public class UnitController : MonoBehaviour
         if (target != null)
         {
             //방어력을 제외한 데미지 값
-            int resultdamage = (int)(abilityDataInBattle.attackDamage * abilityDataInBattle.physicaldefenseRate);
+            int resultdamage = (int)(abilityDataInBattle.totalAttackDamage * abilityDataInBattle.physicaldefenseRate);
             //Drain
             CurrentHp += resultdamage * unitPdata.abilityData.drainHp;
             target.unitController.TakeDamagePhysics(resultdamage);
@@ -608,6 +615,9 @@ public class UnitController : MonoBehaviour
     {
         isVictory = true;
     }
+
+    public virtual void SetTribeEffect(int level) { }
+    public virtual void SetAttributeEffect(int level) { }
 }
 
 

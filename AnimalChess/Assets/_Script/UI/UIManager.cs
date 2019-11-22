@@ -36,9 +36,9 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Transform rtCam;
     [SerializeField]
-    private Text unitID, profileHpText, profileMpText;
+    private Text unitID, profileHpText, profileMpText, atkText, defText, atkSpeedText;
     [SerializeField]
-    private Image tribeImage, attributeImage, item1, item2, itme3;
+    private Image tribeImage, attributeImage, item;
     [SerializeField]
     private GameObject[] ratingImages;
     private readonly Vector2 profileHidePos = new Vector2(250, -5);
@@ -156,7 +156,10 @@ public class UIManager : MonoBehaviour
         currentProfilePos = profilePanel.anchoredPosition;
         SetRatingImage(unit.unitPdata.ratingValue);
         profileHpText.text = unit.abilityDataInBattle.totalMaxHp.ToString();
-        profileMpText.text = unit.unitPdata.abilityData.maxMP.ToString();
+        profileMpText.text = unit.abilityDataInBattle.maxMP.ToString();
+        atkText.text = unit.abilityDataInBattle.totalAttackDamage.ToString();
+        defText.text = unit.abilityDataInBattle.PhysicalDefense.ToString();
+        atkSpeedText.text = unit.abilityDataInBattle.totalAttackSpeedRate.ToString();
 
         if (!isRunningProfileCoroutine)
             StartCoroutine(SetProfilePos());
@@ -296,16 +299,31 @@ public class UIManager : MonoBehaviour
     //Tribe
     public void SetCatSynergyText(int number)
     {
+        if (number == 0)
+        {
+            catTribeText.text = "0";
+            return;
+        }
         var maxnumber = number < 2 ? 2 : 4;
         catTribeText.text = number.ToString() + "/" + maxnumber;
     }
     public void SetRabbitSynergyText(int number)
     {
+        if (number == 0)
+        {
+            rabbitTribeText.text = "0";
+            return;
+        }
         var maxnumber = number < 2 ? 2 : 4;
         rabbitTribeText.text = number.ToString() + "/" + maxnumber;
     }
     public void SetBearSynergyText(int number)
     {
+        if (number == 0)
+        {
+            bearTribeText.text = "0";
+            return;
+        }
         var maxnumber = number < 2 ? 2 : 4;
         bearTribeText.text = number.ToString() + "/" + maxnumber;
     }
@@ -313,21 +331,41 @@ public class UIManager : MonoBehaviour
     //Attribute
     public void SetFireSynergyText(int number)
     {
+        if (number == 0)
+        {
+            fireAttributeText.text = "0";
+            return;
+        }
         int maxnumber = 3;
         fireAttributeText.text = number.ToString() + "/" + maxnumber;
     }
     public void SetWaterSynergyText(int number)
     {
+        if (number == 0)
+        {
+            waterAttributeText.text = "0";
+            return;
+        }
         int maxnumber = 3;
         waterAttributeText.text = number.ToString() + "/" + maxnumber;
     }
     public void SetWindSynergyText(int number)
     {
+        if (number == 0)
+        {
+            windAttributeText.text = "0";
+            return;
+        }
         int maxnumber = 3;
         windAttributeText.text = number.ToString() + "/" + maxnumber;
     }
     public void SetGroundSynergyText(int number)
     {
+        if (number == 0)
+        {
+            groundAttributeText.text = "0";
+            return;
+        }
         int maxnumber = 3;
         groundAttributeText.text = number.ToString() + "/" + maxnumber;
     }

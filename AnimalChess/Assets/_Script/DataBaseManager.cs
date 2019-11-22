@@ -36,6 +36,9 @@ public class DataBaseManager : MonoBehaviour
     private readonly string groundPrefabPath = "Map/IngameGround";
     private readonly string tribeSpritePath = "UI/Tribe";
     private readonly string attributeSpritePath = "UI/Attribute";
+    private readonly string tribeEffectPath = "Effect/Synergy/Tribe";
+    private readonly string attributeEffectPath = "Effect/Synergy/Attribute";
+
     private readonly string unitObPath = "Unit/";
 
     //Map
@@ -44,9 +47,11 @@ public class DataBaseManager : MonoBehaviour
     //Shop UI
     public Dictionary<string, Sprite> TribeSpriteDic = new Dictionary<string, Sprite>();
     public Dictionary<string, Sprite> AttributeSpriteDic = new Dictionary<string, Sprite>();
+    //SynergyEffect
+    public Dictionary<string, GameObject> tribeEffecTDic = new Dictionary<string, GameObject>();
+    public Dictionary<string, GameObject> attributeEffectDic = new Dictionary<string, GameObject>();
 
-    //ShopUnit  
-    //0 -> 1성 리스트 1 -> 2성 리스트 3 -> 3성리스트 -> 100
+    //ShopUnit 
     public List<Dictionary<string, UnitData>> UnitPropertyDataDic = new List<Dictionary<string, UnitData>>();
     public Dictionary<string, UnitData> EnemyUnitPropertyDataDic = new Dictionary<string, UnitData>();
     public Dictionary<int, List<UnitData>> unitTypeListbyGold = new Dictionary<int, List<UnitData>>();
@@ -69,6 +74,8 @@ public class DataBaseManager : MonoBehaviour
         //ShoUI Data
         SetLoadDataOnDictionary(TribeSpriteDic, tribeSpritePath);
         SetLoadDataOnDictionary(AttributeSpriteDic, attributeSpritePath);
+        SetLoadDataOnDictionary(tribeEffecTDic, tribeEffectPath);
+        SetLoadDataOnDictionary(attributeEffectDic, attributeEffectPath);
         //Unit
         SetUnitShopData();
         //UnitOB;
@@ -240,6 +247,19 @@ public class UnitData
         originalCost = cost;
 
         abilityData = new UnitAbilityData(tribe, attribute, originalCost, ratingValue);
+    }
+    
+    /// <summary>
+    /// NOTE : Effect데이터 가져오기
+    /// </summary>
+    /// <param name="tribeparentob"></param>
+    /// <param name="attributeparentob"></param>
+    public void SetEffect(Transform tribeparentob, Transform attributeparentob)
+    {
+        var tribeob = GameObject.Instantiate(DataBaseManager.instance.tribeEffecTDic[tribe.ToString() + "SynergyEffect"]);
+        tribeob.transform.SetParent(tribeparentob);
+        var attributeob = GameObject.Instantiate(DataBaseManager.instance.attributeEffectDic[attribute.ToString() + "SynergyEffect"]);
+        attributeob.transform.SetParent(attributeparentob);
     }
 }
 

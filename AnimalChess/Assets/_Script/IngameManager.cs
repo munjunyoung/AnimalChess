@@ -153,7 +153,7 @@ public class IngameManager : MonoBehaviour
             return;
         foreach (var blockOnList in blockListOnUnit)
         {
-            blockOnList.GetUnitNormal().unitController.ResetUnitData();
+            blockOnList.GetUnitNormal().unitController.ResetUnitDataInWaiting();
         }
     }
 
@@ -175,7 +175,7 @@ public class IngameManager : MonoBehaviour
 
         var enemyunitlist = BoardManager.instance.SetCurrentEnemyUnit(currentround);
         foreach (var tmpunit in enemyunitlist)
-            tmpunit.ResetUnitData();
+            tmpunit.ResetUnitDataInWaiting();
 
     }
 
