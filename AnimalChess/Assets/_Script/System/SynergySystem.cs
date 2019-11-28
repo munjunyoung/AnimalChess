@@ -113,7 +113,7 @@ public class SynergySystem
     /// NOTE : 하나로 통일  -> 원래는 각각 속성에 하나씩 추가해도 가능할것 같다
     /// </summary>
     /// <param name="unitblocklist"></param>
-    private void SetSynergy(List<BlockOnBoard> unitblocklist)
+    public void SetSynergy(List<BlockOnBoard> unitblocklist)
     {
         catSynergy = catNumber / 2;
         rabbitSynergy = rabbitNumber / 2;
@@ -127,76 +127,39 @@ public class SynergySystem
         foreach(var block in unitblocklist)
         {
             var tmpunit = block.GetUnitNormal();
-            
-            switch(tmpunit.unitController.unitPdata.tribe)
+            switch (tmpunit.unitController.unitPdata.tribe)
             {
                 case Tribe_Type.Cat:
-                    //회피율
-                    if (catSynergy == 0)
-                        tmpunit.unitController.abilityDataInBattle.avoidanceRate = 0;
-                    else if (catSynergy == 1)
-                        tmpunit.unitController.abilityDataInBattle.avoidanceRate = 20;
-                    else if(catSynergy ==2)
-                        tmpunit.unitController.abilityDataInBattle.avoidanceRate = 50;
-                    tmpunit.unitController.SetTribeEffect(catSynergy);
+                    tmpunit.unitController.TribeSynergyLevel = catSynergy;
                     break;
-                    //스킬공격데미지 
+                //스킬공격데미지 
                 case Tribe_Type.Rabbit:
-                    if (rabbitSynergy == 0)
-                        tmpunit.unitController.abilityDataInBattle.normalSkillAttackDamage = 0;
-                    else if (rabbitSynergy == 1)
-                        tmpunit.unitController.abilityDataInBattle.normalSkillAttackDamage = 30;
-                    else if (rabbitSynergy == 2)
-                        tmpunit.unitController.abilityDataInBattle.normalSkillAttackDamage = 100;
-                    tmpunit.unitController.SetTribeEffect(rabbitSynergy);
+                    tmpunit.unitController.TribeSynergyLevel = rabbitSynergy;
                     break;
-                    
+
                 //물리방어력
                 case Tribe_Type.Bear:
-                    if (bearSynergy == 0)
-                        tmpunit.unitController.abilityDataInBattle.PhysicalDefense = 0;
-                    else if (bearSynergy == 1)
-                        tmpunit.unitController.abilityDataInBattle.PhysicalDefense = 15;
-                    else if (bearSynergy == 2)
-                        tmpunit.unitController.abilityDataInBattle.PhysicalDefense = 40;
-                    tmpunit.unitController.SetTribeEffect(bearSynergy);
+                    tmpunit.unitController.TribeSynergyLevel = bearSynergy;
                     break;
             }
 
-            switch(tmpunit.unitController.unitPdata.attribute)
+            switch (tmpunit.unitController.unitPdata.attribute)
             {
                 //공격력 % 완
                 case Attribute_Type.Fire:
-                    if (fireSynergy == 0)
-                        tmpunit.unitController.abilityDataInBattle.plusAttackDamageRate = 0;
-                    else if (fireSynergy == 1)
-                        tmpunit.unitController.abilityDataInBattle.plusAttackDamageRate = 30;
-                    tmpunit.unitController.SetAttributeEffect(fireSynergy);
+                    tmpunit.unitController.AttributeSynergyLevel = fireSynergy;
                     break;
-                    //생명력 흡수
+                //생명력 흡수
                 case Attribute_Type.Water:
-                    if (waterSynergy == 0)
-                        tmpunit.unitController.abilityDataInBattle.drainHp = 0;
-                    else if (waterSynergy == 1)
-                        tmpunit.unitController.abilityDataInBattle.drainHp = 0.3f;
-                    tmpunit.unitController.SetAttributeEffect(waterSynergy);
+                    tmpunit.unitController.AttributeSynergyLevel= waterSynergy;
                     break;
-                    //공속
+                //공속
                 case Attribute_Type.Wind:
-                    if (windSynergy == 0)
-                        tmpunit.unitController.abilityDataInBattle.attackSpeedRateSynergy = 0;
-                    else if (windSynergy == 1)
-                        tmpunit.unitController.abilityDataInBattle.attackSpeedRateSynergy = 0.3f;
-                    tmpunit.unitController.SetAttributeEffect(windSynergy);
-
+                    tmpunit.unitController.AttributeSynergyLevel= windSynergy;
                     break;
-                    //체력
+                //체력
                 case Attribute_Type.Ground:
-                    if (groundSynergy == 0)
-                        tmpunit.unitController.abilityDataInBattle.plusHpRate = 0;
-                    else if (groundSynergy == 1)
-                        tmpunit.unitController.abilityDataInBattle.plusHpRate = 0.5f;
-                    tmpunit.unitController.SetAttributeEffect(groundSynergy);
+                    tmpunit.unitController.AttributeSynergyLevel = groundSynergy;
                     break;
             }
         }
@@ -255,8 +218,10 @@ public class SynergySystem
         uSynergyDataList.Remove(tmpdata);
         //같은 종류의 내용이 이미 존재할경우 리스트에 추가하고 숫자는 변경하지 않음 return
         if (uSynergyDataList.Contains(tmpdata))
-            return;
+        {
 
+            return;
+        }
         switch (unitblock.unitController.unitPdata.tribe)
         {
             case Tribe_Type.Cat:
@@ -303,3 +268,4 @@ public class SynergySystem
         }
     }
 }
+

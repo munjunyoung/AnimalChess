@@ -3617,7 +3617,7 @@ GameObject:
   - component: {fileID: 7495652174525761312}
   - component: {fileID: 244301360924483209}
   - component: {fileID: 5309602747048499884}
-  - component: {fileID: 2957465189833305551}
+  - component: {fileID: 5265442563992301874}
   m_Layer: 9
   m_Name: Bear_Ground_1
   m_TagString: Untagged
@@ -3705,7 +3705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d23f97ce3a619c49a213aef344a407c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2957465189833305551
+--- !u!114 &5265442563992301874
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3714,19 +3714,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5754732845399311946}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcf8d192769ae5343a03f36498103824, type: 3}
+  m_Script: {fileID: 11500000, guid: 5aa53a7072e3fdc4ba44ad69f30cb574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitblockSc: {fileID: 0}
-  rb: {fileID: 0}
-  animState: 0
-  hpmpSliderData:
-    panel: {fileID: 0}
-    hpSlider: {fileID: 0}
-    mpSlider: {fileID: 0}
-    hpText: {fileID: 0}
-    mpText: {fileID: 0}
-  isAlive: 1
 --- !u!1 &5754732845400814273
 GameObject:
   m_ObjectHideFlags: 0

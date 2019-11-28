@@ -9,7 +9,7 @@ public class IngameManager : MonoBehaviour
     
     private TouchUnitSystem unitTouchSystem;
 
-    private readonly int waitingTime = 100;
+    private readonly int waitingTime = 10;
     private readonly int roundFinishGold = 1;
     private readonly int roundFinishEXP = 1;
 
@@ -56,8 +56,10 @@ public class IngameManager : MonoBehaviour
     
     private void GameStart()
     {
+        BoardManager.instance.BoardStart();
         CurrentRoundNum = 1;
         StartWaitState(waitingTime, false);
+       
     }
 
     #region Round Waiting
@@ -155,6 +157,8 @@ public class IngameManager : MonoBehaviour
         {
             blockOnList.GetUnitNormal().unitController.ResetUnitDataInWaiting();
         }
+        //시너지도 다시적용
+        BoardManager.instance.synergyManager.SetSynergy(blockListOnUnit);
     }
 
 

@@ -6,9 +6,10 @@ public enum Ground_TYPE { DesertBlock1, DesertBlock2, WaitingBlock }
 ////Unit
 
 public enum Tribe_Type
-{//Player
+{
+    //Player
     Cat, Bear, Rabbit,
-  //Enemy
+    //Enemy
     Chick
 }
 public enum Attribute_Type { Fire, Water, Wind, Ground }
@@ -38,6 +39,7 @@ public class DataBaseManager : MonoBehaviour
     private readonly string attributeSpritePath = "UI/Attribute";
     private readonly string tribeEffectPath = "Effect/Synergy/Tribe";
     private readonly string attributeEffectPath = "Effect/Synergy/Attribute";
+    private readonly string hitEffectPath = "Effect/Hit";
 
     private readonly string unitObPath = "Unit/";
 
@@ -50,6 +52,8 @@ public class DataBaseManager : MonoBehaviour
     //SynergyEffect
     public Dictionary<string, GameObject> tribeEffecTDic = new Dictionary<string, GameObject>();
     public Dictionary<string, GameObject> attributeEffectDic = new Dictionary<string, GameObject>();
+    //HitEffect
+    public Dictionary<string, GameObject> hitEffectDic = new Dictionary<string, GameObject>();
 
     //ShopUnit 
     public List<Dictionary<string, UnitData>> UnitPropertyDataDic = new List<Dictionary<string, UnitData>>();
@@ -74,8 +78,10 @@ public class DataBaseManager : MonoBehaviour
         //ShoUI Data
         SetLoadDataOnDictionary(TribeSpriteDic, tribeSpritePath);
         SetLoadDataOnDictionary(AttributeSpriteDic, attributeSpritePath);
+        //Effect
         SetLoadDataOnDictionary(tribeEffecTDic, tribeEffectPath);
         SetLoadDataOnDictionary(attributeEffectDic, attributeEffectPath);
+        SetLoadDataOnDictionary(hitEffectDic, hitEffectPath);
         //Unit
         SetUnitShopData();
         //UnitOB;
@@ -250,7 +256,7 @@ public class UnitData
     }
     
     /// <summary>
-    /// NOTE : Effect데이터 가져오기
+    /// NOTE : 종족, 속성별 Effect prefab 생성
     /// </summary>
     /// <param name="tribeparentob"></param>
     /// <param name="attributeparentob"></param>

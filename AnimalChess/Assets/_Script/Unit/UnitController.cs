@@ -13,7 +13,7 @@ public class UnitController : MonoBehaviour
     [HideInInspector]
     public      UnitData unitPdata;
     //abilityData In Battle
-    public UnitAbilityData abilityDataInBattle;
+    public      UnitAbilityData abilityDataInBattle;
     //reference TouchSystem
     [HideInInspector] 
     public      Rigidbody rb;
@@ -73,7 +73,32 @@ public class UnitController : MonoBehaviour
     protected float moveSpeed = 1f;
     //Rotate
     private float rotateSpeed = 5f;
-    
+    //Synergy
+    private int _tribeSynergyLevel = 0;
+    private int _attributeSynergyLevel = 0;
+    public int TribeSynergyLevel
+    {
+        get { return _tribeSynergyLevel; }
+        set
+        {
+            _tribeSynergyLevel = value;
+            tribeSynergy.SetSynergy(_tribeSynergyLevel);
+        }
+    }
+    public int AttributeSynergyLevel
+    {
+        get { return _attributeSynergyLevel; }
+        set
+        {
+            _attributeSynergyLevel = value;
+            attributeSynergy.SetSynergy(_attributeSynergyLevel);
+        }
+    }
+    protected Synergy tribeSynergy;
+    protected Synergy attributeSynergy;
+    //Attack
+    public List<GameObject> hitEffectList = new List<GameObject>();
+    public int effectCount = 0;
     [HideInInspector]
     public    bool isAlive = true;
     protected bool isFindPath = false;
@@ -91,27 +116,20 @@ public class UnitController : MonoBehaviour
 
     protected bool IsRunningHpSliderLerp = false;
     protected bool isRunningMpSliderLerp = false;
-
+    
     #region Set
     public virtual void Init()
     {
         unitblockSc = GetComponentInParent<UnitBlockData>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
-        
     }
-
+    
     /// <summary>
     /// NOTE : 슬라이더 데이터 설정
     /// </summary>
     public virtual void StartUnitInBattle(HpMpSlider sliderdata, float waitingTime)
     {
-        //ability Data 초기화
-        //능력치 리셋 
-        SetAbilityDataInBattle(unitPdata.abilityData);
-        //시너지 효과 추가 능력치 함수 필요
-        //..
-
         //슬라이더 초기화
         hpmpSliderData = sliderdata;
         //HP
@@ -137,7 +155,7 @@ public class UnitController : MonoBehaviour
     public void ResetUnitDataInWaiting()
     {
         //능력치 리셋 
-        abilityDataInBattle = unitPdata.abilityData;
+        SetAbilityDataInBattle(unitPdata.abilityData);
         // true로
         isAlive = true;
         hpmpSliderData = null;
@@ -157,19 +175,21 @@ public class UnitController : MonoBehaviour
         unitblockSc.GetCurrentBlockInWaiting().SetUnitNotList(unitblockSc);
     }
 
+   
+
+    /// <summary>
+    /// NOTE : 배틀보드 위에서 시너지를 적용받다가 대기석으로 돌아갔을때 데이터를 다시 되돌리기` 위함
+    /// </summary>
+    public virtual void SetUnitAbilityDataToNormalData()
+    { 
+        SetAbilityDataInBattle(unitPdata.abilityData);
+    }
+
     public void SetAbilityDataInBattle(UnitAbilityData readAbilityData)
     {
         abilityDataInBattle = readAbilityData.DeepCopy();
     }
 
-    /// <summary>
-    /// NOTE : 배틀보드 위에서 시너지를 적용받다가 대기석으로 돌아갔을때 데이터를 다시 되돌리기` 위함
-    /// </summary>
-    public virtual void ResetUnitDataToWatingBoard()
-    { 
-        SetAbilityDataInBattle(unitPdata.abilityData);
-    }
-    
     /// <summary>
     /// NOTE : 파라미터 값 이후로 AI실행
     /// </summary>
@@ -382,6 +402,8 @@ public class UnitController : MonoBehaviour
     public virtual bool CheckAttackCondition()
     {
         //상대방의 상태가 moving중인 경우 return
+        if (currentTargetBlock.unitInBattle == null)
+            return false;
         if (currentTargetBlock.unitInBattle.unitController.isMoving)
             return false;
         if (isAttackCooltimeWaiting)
@@ -423,6 +445,16 @@ public class UnitController : MonoBehaviour
             target.unitController.TakeDamagePhysics(resultdamage);
             //원거리 공격 애매한상태
             //..이펙트
+            //타겟의 위치로부터 유닛이 타겟을 바라보는 반대방향으로 거리 1만큼
+            Vector3 hitpos = target.transform.position;
+            hitpos.y = 0.5f;
+            //유닛이 타겟을 바라보는 방향
+            var dir = -transform.forward;
+            dir = dir.normalized;
+            hitpos = hitpos + dir;
+            effectCount = effectCount == 0 ? 1 : 0;
+            hitEffectList[effectCount].transform.position = hitpos;
+            hitEffectList[effectCount].SetActive(true);
         }   
     }
     
@@ -491,7 +523,7 @@ public class UnitController : MonoBehaviour
 
     #endregion
 
-    #region ETC
+    #region Slider
     /// <summary>
     /// NOTE : 슬라이더 포지션 변경
     /// </summary>
@@ -499,7 +531,7 @@ public class UnitController : MonoBehaviour
     private void SetPosSliderBar(Vector3 pos)
     {
         pos.y = +2;
-        if(hpmpSliderData!=null)
+        if (hpmpSliderData != null)
             hpmpSliderData.panel.transform.position = Camera.main.WorldToScreenPoint(pos);
     }
     /// <summary>
@@ -521,7 +553,7 @@ public class UnitController : MonoBehaviour
         hpmpSliderData.hpSlider.value = hp;
         hpmpSliderData.hpText.text = ((int)hp).ToString();
     }
-    
+
     /// <summary>
     /// NOTE : HP SLIDER VALUE lerp
     /// </summary>
@@ -529,12 +561,12 @@ public class UnitController : MonoBehaviour
     private IEnumerator HpSliderProcess()
     {
         IsRunningHpSliderLerp = true;
-        var tmpprevhp = prevHp; 
+        var tmpprevhp = prevHp;
         float count = 0;
         while (hpmpSliderData.hpSlider.value != CurrentHp)
         {
             count += Time.fixedDeltaTime;
-            var hpvalue= Mathf.Lerp(tmpprevhp, CurrentHp, count * sliderLerpSpeed);
+            var hpvalue = Mathf.Lerp(tmpprevhp, CurrentHp, count * sliderLerpSpeed);
             SetHpSlideValue(hpvalue);
             yield return new WaitForFixedUpdate();
         }
@@ -571,7 +603,7 @@ public class UnitController : MonoBehaviour
         isRunningMpSliderLerp = true;
         var tmpprevmp = prevMp;
         float count = 0;
-        while(hpmpSliderData.mpSlider.value != CurrentMp)
+        while (hpmpSliderData.mpSlider.value != CurrentMp)
         {
             count += Time.fixedDeltaTime;
 
@@ -582,7 +614,9 @@ public class UnitController : MonoBehaviour
         isRunningMpSliderLerp = false;
     }
     #endregion
-    
+
+    #region ETC
+
     /// <summary>
     /// NOTE : 물리데미지
     /// </summary>
@@ -616,37 +650,17 @@ public class UnitController : MonoBehaviour
         isVictory = true;
     }
 
-    public virtual void SetTribeEffect(int level) { }
-    public virtual void SetAttributeEffect(int level) { }
+    #endregion
+
+    public virtual void SetEffectData()
+    {
+        var hitob = GameObject.Instantiate(DataBaseManager.instance.hitEffectDic["NormalHitEffect"], this.transform);
+        var hitob2 = GameObject.Instantiate(DataBaseManager.instance.hitEffectDic["NormalHitEffect"], this.transform);
+        hitob.transform.localPosition = Vector3.zero;
+        hitob2.transform.localPosition = Vector3.zero;
+        hitob.gameObject.SetActive(false);
+        hitob2.gameObject.SetActive(false);
+        hitEffectList.Add(hitob);
+        hitEffectList.Add(hitob2);
+    }
 }
-
-
-////목적지가 없을때
-//if (currentTargetBlock == null
-//  || currentTargetBlock.GetUnitInBattle() == null
-//  || !currentTargetBlock.GetUnitInBattle().unitController.isAlive)
-//{
-//    //몬스터 리스트 
-//    var mlist = BoardManager.instance.currentMonsterList;
-
-//    float mindistance = 100;
-//    //적이 모두 죽었는지 체크
-//    isDieAllEnemy = true;
-//    //가장 가까운 거리에 있는 적 검색
-//    for (int i = 0; i < mlist.Count; i++)
-//    {
-//        //살아있는지 확인
-//        if (mlist[i].isAlive)
-//        {
-//            var currentdis = Vector2Int.Distance(unitblockSc.GetCurrentBlockInBattle().groundArrayIndex, mlist[i].unitblockSc.GetCurrentBlockInBattle().groundArrayIndex);
-//            if (mindistance > currentdis)
-//            {
-//                mindistance = currentdis;
-//                currentTargetBlock = mlist[i].unitblockSc.GetCurrentBlockInBattle();
-//                isDieAllEnemy = false;
-//            }
-//        }
-//    }
-//}
-//if (currentTargetBlock == null)
-//    return false;

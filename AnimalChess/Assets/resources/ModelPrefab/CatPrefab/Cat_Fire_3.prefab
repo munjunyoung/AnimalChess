@@ -3872,7 +3872,7 @@ GameObject:
   - component: {fileID: 7250516949147007585}
   - component: {fileID: 1128363221128388043}
   - component: {fileID: 2108806845129637462}
-  - component: {fileID: 5181359830505269659}
+  - component: {fileID: 6124165071172774552}
   m_Layer: 9
   m_Name: Cat_Fire_3
   m_TagString: Untagged
@@ -3958,7 +3958,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d23f97ce3a619c49a213aef344a407c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5181359830505269659
+--- !u!114 &6124165071172774552
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3967,7 +3967,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2416075561592760398}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcf8d192769ae5343a03f36498103824, type: 3}
+  m_Script: {fileID: 11500000, guid: a09dd3f5c808910489dc78e4dcb6aa92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   unitblockSc: {fileID: 0}

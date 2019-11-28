@@ -5,15 +5,16 @@ using UnityEngine;
 public class PlayerUnitController : UnitController
 {
     //Effect
-    private GameObject tribeEffect;
-    private GameObject attributeEffect;
+    protected GameObject tribeEffect;
+    protected GameObject attributeEffect;
 
-
-    public override void ResetUnitDataToWatingBoard()
+  
+    #region SetData
+    public override void SetUnitAbilityDataToNormalData()
     {
-        base.ResetUnitDataToWatingBoard();
-        SetTribeEffect(0);
-        SetAttributeEffect(0);
+        base.SetUnitAbilityDataToNormalData();
+        TribeSynergyLevel = 0;
+        AttributeSynergyLevel = 0;
     }
     // Start is called before the first frame update
     public override void Init()
@@ -35,6 +36,8 @@ public class PlayerUnitController : UnitController
         }
         
     }
+    #endregion
+
 
     /// <summary>
     /// NOTE : 플레이어 유닛이 모두 죽었는지 체크
@@ -48,26 +51,24 @@ public class PlayerUnitController : UnitController
 
     //플레이어 유닛에만 적용
     #region  SynergyEffect
-    public void SetEffectObject()
+    /// <summary>
+    /// NOTE : 캐릭터 생성시 실행
+    /// </summary>
+    public override void SetEffectData()
     {
+        base.SetEffectData();
         unitPdata.SetEffect(tribeEffect.transform, attributeEffect.transform);
+        SetSynergyParam();
     }
-    #endregion
 
-    public override void SetTribeEffect(int level)
+    /// <summary>
+    /// 시너지 클래스 클래스 변수 초기화
+    /// </summary>
+    public virtual void SetSynergyParam()
     {
-        if (level == 0)
-            tribeEffect.SetActive(false);
-        else
-            tribeEffect.SetActive(true);
+        tribeSynergy.SetParam(this, tribeEffect);
+        attributeSynergy.SetParam(this, attributeEffect);
     }
     
-
-    public override void SetAttributeEffect(int level)
-    {
-        if (level == 0)
-            attributeEffect.SetActive(false);
-        else
-            attributeEffect.SetActive(true);
-    }
+    #endregion
 }

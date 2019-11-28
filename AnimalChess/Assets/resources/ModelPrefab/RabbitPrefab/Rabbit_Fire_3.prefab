@@ -1654,7 +1654,7 @@ GameObject:
   - component: {fileID: 7027857612125323468}
   - component: {fileID: 5865476166620292570}
   - component: {fileID: 6466987195801638642}
-  - component: {fileID: 9067423083365090039}
+  - component: {fileID: 3285479985486601715}
   m_Layer: 9
   m_Name: Rabbit_Fire_3
   m_TagString: Untagged
@@ -1740,7 +1740,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d23f97ce3a619c49a213aef344a407c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &9067423083365090039
+--- !u!114 &3285479985486601715
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1749,7 +1749,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8237661800452730063}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcf8d192769ae5343a03f36498103824, type: 3}
+  m_Script: {fileID: 11500000, guid: b6c075429a1763b40bc2e0f2afacb0d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   unitblockSc: {fileID: 0}

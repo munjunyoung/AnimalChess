@@ -27,21 +27,23 @@ public class BoardManager : MonoBehaviour
     [HideInInspector]
     public List<EnemyUnitController> currentEnemyUnitList = new List<EnemyUnitController>();
 
-    SynergySystem synergyManager = new SynergySystem();
+    public SynergySystem synergyManager = new SynergySystem();
     
     // Start is called before the first frame update
     private void Awake()
     {
         if (instance == null)
             instance = this;
-    }
-
-    private void Start()
-    {
         groundParentTransform = GameObject.Find("1PlayGround").transform;
         unitOBParentTransform = GameObject.Find("Units").transform;
         EnemyUnitOBParentTransform = GameObject.Find("EnemyUnits").transform;
+    }
+
+    public void BoardStart()
+    {
+        //체스 생성
         DrawChessBoard();
+        //몬스터 생성
         CreateMonsterUnitList();
     }
 
@@ -108,8 +110,10 @@ public class BoardManager : MonoBehaviour
         if (_block.IsWaitingBlock)
         {
             //시너지를 받거나 했던 데이터들 리셋
-            _block.GetUnitNormal().unitController.ResetUnitDataToWatingBoard();
+           
             waitBlockOnUnitList.Add(_block);
+            //시너지 효과 삭제
+            
         }
         //전투보드로 이동할 경우
         else
@@ -129,6 +133,7 @@ public class BoardManager : MonoBehaviour
     /// <param name="_block"></param>
     public void RemoveBlockOnList(BlockOnBoard _block)
     {
+       
         if (_block.IsWaitingBlock)
         {
             waitBlockOnUnitList.Remove(_block);
@@ -137,6 +142,7 @@ public class BoardManager : MonoBehaviour
         {
             BattleBlockOnUnitList.Remove(_block);
             IngameManager.instance.playerData.CurrentFieldUnitNumber = BattleBlockOnUnitList.Count;
+            _block.GetUnitNormal().unitController.SetUnitAbilityDataToNormalData();
             synergyManager.RemoveSynergy(_block.GetUnitNormal());
         }
         allBlockOnUnitList.Remove(_block);
@@ -249,7 +255,7 @@ public class BoardManager : MonoBehaviour
             return false;
 
         List<BlockOnBoard> checkBlockList = new List<BlockOnBoard>();
-
+        
         //전투중일 경우에는 대기 블록에서만처리 , 전투중이 아닐경우에는 모든 block에서 처리
         checkBlockList = IngameManager.instance.IsBattleState ? waitBlockOnUnitList : allBlockOnUnitList;
 
@@ -322,7 +328,7 @@ public class BoardManager : MonoBehaviour
     }
 
     /// <summary>
-    /// NOTE : 유닛 구매 // block을 포함한 이유는 만들어질때마다 유닛합성 체크를 해야하고 그러기 위해선 블럭을 여기 에서 설정해야함
+    /// NOTE : 유닛 구매 // block을 포함한 이유는 만들어질때마다 유닛합성 체크를 해야하기 위해 블럭을 이함수 에서 설정
     /// </summary>
     private void CreateUnit(string _unitType, int _ratingvalue, BlockOnBoard _blockOnUnit)
     {
@@ -331,7 +337,7 @@ public class BoardManager : MonoBehaviour
         var unitcontroller = unit.GetComponentInChildren<PlayerUnitController>();
         unitcontroller.unitPdata = pdata;
         unitcontroller.SetAbilityDataInBattle(pdata.abilityData);
-        unitcontroller.SetEffectObject();
+        unitcontroller.SetEffectData();
         unit.transform.eulerAngles = new Vector3(0, 180, 0);
         _blockOnUnit.SetUnitaddList(unit);
         CheckComposeUnitNormal(unit.unitController.unitPdata);
@@ -373,7 +379,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// NOTE : 모든 적 유닛 리스트 생성 
     /// </summary>
-    private void CreateMonsterUnitList()
+    public void CreateMonsterUnitList()
     {
 
         List<EnemyUnitController> round1 = new List<EnemyUnitController>();
@@ -403,7 +409,8 @@ public class BoardManager : MonoBehaviour
         //시작할 블럭 설정
         unit.unitblockSc.SetCurrentBlockInWaiting(startBlock);
         //해당 리스트가 존재하지 않으면 
-
+        unit.ResetUnitDataInWaiting();
+        unit.SetEffectData();
         if (!allEnemyUnitList.ContainsKey(round-1))
             allEnemyUnitList.Add(round - 1,new List<EnemyUnitController>());
         allEnemyUnitList[round - 1].Add(unit);

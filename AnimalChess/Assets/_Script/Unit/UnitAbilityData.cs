@@ -63,7 +63,7 @@ public class UnitAbilityData
     
 
 
-    public float physicaldefenseRate = 1;
+    public float physicaldefenseRate;
     private int _physicaldefense;
     public int PhysicalDefense
     {
@@ -100,8 +100,8 @@ public class UnitAbilityData
         data.attackSpeedRateSynergy = attackSpeedRateSynergy;
         data.attackSpeedRateData = attackSpeedRateData;
 
-        data.physicaldefenseRate = physicaldefenseRate;
         data.physicaldefenseRate = PhysicalDefense;
+        data.physicaldefenseRate = physicaldefenseRate;
 
         data.avoidanceRate = avoidanceRate;
         data.drainHp = drainHp;

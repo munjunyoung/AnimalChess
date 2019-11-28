@@ -1071,7 +1071,7 @@ GameObject:
   - component: {fileID: 2583189940826685800}
   - component: {fileID: 5123080829724839790}
   - component: {fileID: 8494562505156276278}
-  - component: {fileID: 7160771365938678725}
+  - component: {fileID: 389744703606268612}
   m_Layer: 9
   m_Name: Bear_Fire_1
   m_TagString: Untagged
@@ -1157,7 +1157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d23f97ce3a619c49a213aef344a407c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7160771365938678725
+--- !u!114 &389744703606268612
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1166,7 +1166,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1101622160247991641}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcf8d192769ae5343a03f36498103824, type: 3}
+  m_Script: {fileID: 11500000, guid: 5394911a41fbe874289ff851bf3ec996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   unitblockSc: {fileID: 0}
