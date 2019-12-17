@@ -67,7 +67,7 @@ public class Sequence : CompositeActionNode
     }
 }
 
-#region chaseAttack
+#region Chase
 public class SetTargetBlock : ActionNode
 {
     public UnitController Controller
@@ -134,7 +134,22 @@ public class StartMoveToNextBlock : ActionNode
     }
 }
 #endregion
+
 #region Attack
+
+public class CheckAttacking : ActionNode
+{
+    public UnitController Controller
+    {
+        set { _controller = value; }
+    }
+    private UnitController _controller;
+
+    public override bool Invoke()
+    {
+        return _controller.CheckAttacking();
+    }
+}
 /// <summary>
 /// NOTE : 지정한 거리에 타겟 존재 확인
 /// </summary>
@@ -148,9 +163,7 @@ public class CheckAttackRangeCondition : ActionNode
 
     public override bool Invoke()
     {
-        if (_controller.CheckAttackRangeCondition())
-            return true;
-        return false;
+        return _controller.CheckAttackRangeCondition();
     }
 }
 
@@ -206,6 +219,19 @@ public class StartAttack : ActionNode
 #endregion
 
 #region skill
+public class CheckCastingSkillCondition : ActionNode
+{
+    public UnitController Controller
+    {
+        set { _controller = value; }
+    }
+    private UnitController _controller;
+
+    public override bool Invoke()
+    {
+        return _controller.CheckCastingSkillCondition();
+    }
+}
 /// <summary>
 /// NOTE : 스킬 사용이 가능한지 체크
 /// </summary>
@@ -226,7 +252,7 @@ public class CheckSkillCondition : ActionNode
 /// <summary>
 /// NOTE : 스킬 ACTION 
 /// </summary>
-public class SkillAction : ActionNode
+public class StartSkill : ActionNode
 {
     public UnitController Controller
     {
@@ -323,4 +349,21 @@ public class SetAnimation : ActionNode
         return false;
     }
 }
+#endregion
+
+#region DeBuffState
+public class CheckStunning : ActionNode
+{
+    public UnitController Controller
+    {
+        set { _controller = value; }
+    }
+    private UnitController _controller;
+
+    public override bool Invoke()
+    {
+        return !_controller.CheckDebuffState();
+    }
+}
+
 #endregion

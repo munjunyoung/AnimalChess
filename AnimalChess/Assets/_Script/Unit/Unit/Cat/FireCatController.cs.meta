@@ -3,7 +3,11 @@ guid: a09dd3f5c808910489dc78e4dcb6aa92
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - unitblockSc: {instanceID: 0}
+  - rb: {instanceID: 0}
+  - skillProjectTile: {instanceID: 0}
+  - skillEffect: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

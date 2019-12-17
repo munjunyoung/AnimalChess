@@ -9,7 +9,7 @@ public class IngameManager : MonoBehaviour
     
     private TouchUnitSystem unitTouchSystem;
 
-    private readonly int waitingTime = 10;
+    private readonly int waitingTime = 3;
     private readonly int roundFinishGold = 1;
     private readonly int roundFinishEXP = 1;
 
@@ -35,8 +35,9 @@ public class IngameManager : MonoBehaviour
             UIManager.instance.SetRoundNumberText(_CurrentRoundNum);
         }
     }
-    
+    [HideInInspector]
     public int winsNumber = 0;
+    [HideInInspector]
     public int defeatsNumber = 0;
     
     private void Awake()
@@ -350,7 +351,16 @@ public class IngameManager : MonoBehaviour
     /// <param name="iswin"></param>
     public void EndBattle(bool iswin)
     {
-        
+        if (!isRunningBattleEnd)
+            StartCoroutine(EndBattleProcess(iswin, 2f));
+    }
+
+    protected bool isRunningBattleEnd = false;
+
+    IEnumerator EndBattleProcess(bool iswin, float time)
+    {
+        yield return new WaitForSeconds(1f);
+
         if (iswin)
         {
             foreach (var blockOnUnit in BoardManager.instance.GetBattleBlockOnUnit())
@@ -366,19 +376,13 @@ public class IngameManager : MonoBehaviour
             {
                 //살아있는 유닛들 Victory 애니매이션 실행
                 if (enemyUnit.isAlive)
+                {
                     enemyUnit.SetVictory();
+                    enemyUnit.AttackPlayerHP();
+                    //TakeDamage(enemyUnit);
+                }
             }
         }
-       
-
-        if (!isRunningBattleEnd)
-            StartCoroutine(EndBattleProcess(iswin, 3f));
-    }
-
-    protected bool isRunningBattleEnd = false;
-
-    IEnumerator EndBattleProcess(bool iswin, float time)
-    {
         //Round 승리 패배 이미지 띄우기
         isRunningBattleEnd = true;
         yield return new WaitForSeconds(time);
@@ -389,18 +393,11 @@ public class IngameManager : MonoBehaviour
     /// <summary>
     /// NOTE : 전투가 끝나고 패배했을 경우 남아있는 몬스터마다의 데미지 만큼 체력 감소 
     /// </summary>
-    private void TakeDamage()
+    public void TakeDamage(int enemycost)
     {
-        var mList = BoardManager.instance.currentEnemyUnitList;
+        //몬스터가 존재하고 있을경우 데미지 감소 처리
+        playerData.HpValue -= enemycost;
 
-        if (mList.Count == 0)
-            return;
-        foreach (var m in mList)
-        {
-            //몬스터가 존재하고 있을경우 데미지 감소 처리
-            if (m.gameObject.activeSelf)
-                playerData.HpValue -= m.unitPdata.cost;
-        }
         //체력 이펙트 발생 및 몬스터 유닛에서 애니매이션 처리
     }
 
@@ -421,7 +418,7 @@ public class PlayerData
                 _hpValue = 100;
             if (_hpValue < 0)
                 _hpValue = 0;
-            UIManager.instance.SetHpText(_hpValue);
+            UIManager.instance.SetPlayerHpText(_hpValue);
         }
     }
 

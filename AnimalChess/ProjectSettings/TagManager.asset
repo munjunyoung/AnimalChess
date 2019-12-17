@@ -4,8 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Unit
   - BoardTile
+  - FxTemporaire
+  - PlayerUnit
+  - EnemyUnit
   layers:
   - Default
   - TransparentFX
@@ -42,4 +44,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Effect
+    uniqueID: 742644223
     locked: 0

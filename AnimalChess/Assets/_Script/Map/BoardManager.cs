@@ -337,7 +337,7 @@ public class BoardManager : MonoBehaviour
         var unitcontroller = unit.GetComponentInChildren<PlayerUnitController>();
         unitcontroller.unitPdata = pdata;
         unitcontroller.SetAbilityDataInBattle(pdata.abilityData);
-        unitcontroller.SetEffectData();
+        unitcontroller.SetObjectData();
         unit.transform.eulerAngles = new Vector3(0, 180, 0);
         _blockOnUnit.SetUnitaddList(unit);
         CheckComposeUnitNormal(unit.unitController.unitPdata);
@@ -410,7 +410,7 @@ public class BoardManager : MonoBehaviour
         unit.unitblockSc.SetCurrentBlockInWaiting(startBlock);
         //해당 리스트가 존재하지 않으면 
         unit.ResetUnitDataInWaiting();
-        unit.SetEffectData();
+        unit.SetObjectData();
         if (!allEnemyUnitList.ContainsKey(round-1))
             allEnemyUnitList.Add(round - 1,new List<EnemyUnitController>());
         allEnemyUnitList[round - 1].Add(unit);

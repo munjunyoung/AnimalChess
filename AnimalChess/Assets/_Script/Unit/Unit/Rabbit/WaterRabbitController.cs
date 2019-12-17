@@ -4,9 +4,19 @@ using UnityEngine;
 
 public class WaterRabbitController : PlayerUnitController
 {
-    public override void SkillAction()
+    List<BlockOnBoard> playerUnits;
+   
+    public override void SkillActionInAnim()
     {
-        base.SkillAction();
+        base.SkillActionInAnim();
+        playerUnits = BoardManager.instance.GetBattleBlockOnUnit();
+        foreach(var pu in playerUnits)
+        {
+            var unit = pu.GetUnitNormal();
+            if(unit.unitController.isAlive)
+                unit.unitController.StartMPHealing(30 * unitPdata.ratingValue);
+        }
+
     }
 
 

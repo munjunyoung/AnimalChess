@@ -4,9 +4,19 @@ using UnityEngine;
 
 public class WindRabbitController : PlayerUnitController
 {
-    public override void SkillAction()
+    WindRabbitSkill windSkillSc;
+    public override void SetObjectData()
     {
-        base.SkillAction();
+        base.SetObjectData();
+        windSkillSc = skillEffect.GetComponent<WindRabbitSkill>();
+        windSkillSc.SetData(this);
+    }
+
+    public override void SkillActionInAnim()
+    {
+        base.SkillActionInAnim();
+        windSkillSc.target = currentTargetBlock.unitInBattle;
+        skillEffect.SetActive(true);
     }
 
 

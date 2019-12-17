@@ -8436,7 +8436,7 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.41666666
-    functionName: AttackHit
+    functionName: AttackFire
     data: 
     objectReferenceParameter: {fileID: 11500000, guid: c221abe556b05c2498c520ee7159f2c5,
       type: 3}

@@ -13,20 +13,28 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Image reRollButtonImage, BuyExpButtonImage;
 
+    [Header("TopProfile"), SerializeField]
+    private GameObject PlayerHpPanel;
+    bool isRunningShakePanel = false;
+    float count = 0;
     [SerializeField]
-    private Text levelText, hpText, unitNumberText, goldText, expText, waitCountText, roundNumberText, gameStateText;
-
+    private Text levelText, playerHPText, unitNumberText, goldText, expText, waitCountText, roundNumberText, gameStateText;
+    //TAKE Damage Playerhp
+    public Vector3 hpTextPosition;
     private Color impossibleColor = new Color(1, 0, 0, 0.5f);
     private Color waitStateColor = new Color(0.6f, 0.9f, 0.6f, 1f);
     private Color battleStateColor = new Color(0.8f, 0, 0, 1);
 
     [Header("Shop")]
     public RectTransform ShopPanel;
+    [SerializeField]
+    private Toggle lockToggle;
     private readonly Vector2 ShopHidePos = new Vector2(0, 700);
     private readonly Vector2 ShopShowPos = new Vector2(0, 70);
     private Vector2 ShopTargetPos = Vector2.zero;
     private Vector2 currentShopPos = Vector2.zero;
     private bool isRunningShopCoroutine = false;
+    private bool isLockShop = false;
     private bool isViewShop = false;
 
     [Header("ProfilePanel")]
@@ -67,15 +75,48 @@ public class UIManager : MonoBehaviour
         if (instance == null)
             instance = this;
         SetSliderList();
+
+        var pos = playerHPText.transform.position + new Vector3(0, 0, 10);
+        hpTextPosition = Camera.main.ScreenToWorldPoint(pos);
     }
 
 
     
     #region SetTextUI
 
-    public void SetHpText(int hp)
+    public void SetPlayerHpText(int hp)
     {
-        hpText.text = hp.ToString();
+        playerHPText.text = hp.ToString();
+        if (hp != 100)
+            TakeDamagePlayerHP();
+    }
+
+    public void TakeDamagePlayerHP()
+    {
+        count = 0;
+        if (!isRunningShakePanel)
+            StartCoroutine(ShakePlayerHpPanelProcess(2f, 1f, PlayerHpPanel.transform.localPosition));
+    }
+
+    /// <summary>
+    /// NOTE : 이펙트로 적에게 공격당하는 흔들림
+    /// </summary>
+    /// <param name="_shakeAmount"></param>
+    /// <param name="_duration"></param>
+    /// <param name="originalPos"></param>
+    /// <returns></returns>
+    IEnumerator ShakePlayerHpPanelProcess(float _shakeAmount, float _duration, Vector3 originalPos)
+    {
+        isRunningShakePanel = true;
+        while (count <= _duration)
+        {
+            count += Time.deltaTime;
+            PlayerHpPanel.transform.localPosition = (Vector3)Random.insideUnitCircle * _shakeAmount + originalPos;
+            yield return null;
+        }
+        isRunningShakePanel = false;
+        transform.localPosition = originalPos;
+
     }
 
     public void SetExpText(int _exp, int _requireExp)
@@ -231,6 +272,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void RerollButtonClick()
     {
+        if (isLockShop)
+            return;
         if (IngameManager.instance.playerData.Gold < 2)
             return;
         SetShopPanelCharacter(IngameManager.instance.playerData.Level, IngameManager.instance.playerData.Gold);
@@ -248,6 +291,11 @@ public class UIManager : MonoBehaviour
         IngameManager.instance.playerData.Gold -= 5;
     }
 
+    public void SetLockShop()
+    {
+        isLockShop = !lockToggle.isOn;
+    }
+
     /// <summary>
     /// NOTE : 상점 유닛들 데이터 초기화
     /// </summary>
@@ -255,6 +303,8 @@ public class UIManager : MonoBehaviour
     /// <param name="gold"></param>
     public void SetShopPanelCharacter(int level, int gold)
     {
+        if (isLockShop)
+            return;
         foreach (var upanel in unitPanelList)
             upanel.SetData(level, gold);
     }

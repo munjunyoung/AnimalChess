@@ -8,7 +8,7 @@ public class PlayerUnitController : UnitController
     protected GameObject tribeEffect;
     protected GameObject attributeEffect;
 
-  
+    
     #region SetData
     public override void SetUnitAbilityDataToNormalData()
     {
@@ -54,9 +54,9 @@ public class PlayerUnitController : UnitController
     /// <summary>
     /// NOTE : 캐릭터 생성시 실행
     /// </summary>
-    public override void SetEffectData()
+    public override void SetObjectData()
     {
-        base.SetEffectData();
+        base.SetObjectData();
         unitPdata.SetEffect(tribeEffect.transform, attributeEffect.transform);
         SetSynergyParam();
     }

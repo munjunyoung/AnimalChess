@@ -4,26 +4,27 @@ using UnityEngine;
 using UnityEngine.UI;
 
 //Die 는 Trigget로 처리
-public enum Anim_State { Idle = 0, Walk, Attack, Skill }
+public enum Anim_State { Idle = 0, Walk, Attack, Skill, Stun }
 public class UnitController : MonoBehaviour
 {
     //UnitData
     [HideInInspector]
-    public      UnitBlockData unitblockSc;
+    public UnitBlockData unitblockSc;
     [HideInInspector]
-    public      UnitData unitPdata;
+    public UnitData unitPdata;
     //abilityData In Battle
-    public      UnitAbilityData abilityDataInBattle;
+    public UnitAbilityData abilityDataInBattle;
     //reference TouchSystem
     [HideInInspector] 
-    public      Rigidbody rb;
-    protected   Animator anim;
-    public      Anim_State animState = Anim_State.Idle;
+    public    Rigidbody rb;
+    protected Animator anim;
+    private   SkinnedMeshRenderer meshR;
+    private   Anim_State animState = Anim_State.Idle;
 
     //HP
-    private     float _currentHp = 0;
-    private     float _currentMp = 0;
-    protected   float CurrentHp
+    private float _currentHp = 0;
+    private float _currentMp = 0;
+    protected float CurrentHp
     {
         get { return _currentHp; }
         set
@@ -32,7 +33,7 @@ public class UnitController : MonoBehaviour
             _currentHp = value;
             if (_currentHp > abilityDataInBattle.totalMaxHp)
                 _currentHp = abilityDataInBattle.totalMaxHp;
-            if (_currentHp < 0)
+            if (_currentHp <= 0)
             {
                 
                 _currentHp = 0;
@@ -41,7 +42,7 @@ public class UnitController : MonoBehaviour
             StartHpSliderProcess();
         }
     }
-    protected   float CurrentMp
+    protected float CurrentMp
     {
         get { return _currentMp; }
         set
@@ -56,27 +57,27 @@ public class UnitController : MonoBehaviour
         }
     }
     //slider Lerp
-    public HpMpSlider hpmpSliderData = null;
-    protected   float prevHp;
-    protected   float prevMp;
-    protected   float sliderLerpSpeed = 5f;
+    public  HpMpSlider hpmpSliderData = null;
+    private float prevHp;
+    private float prevMp;
+    private float sliderLerpSpeed = 5f;
 
     //EnemyUnit
     protected List<UnitController> targetList = new List<UnitController>();
     //Move
-    protected UnitPathFinding pathfind = new UnitPathFinding();
-    protected List<BlockOnBoard> path = new List<BlockOnBoard>();
-    protected BlockOnBoard prevTargetBlock;
+    private   UnitPathFinding pathfind = new UnitPathFinding();
+    private   List<BlockOnBoard> path = new List<BlockOnBoard>();
+    private   BlockOnBoard prevTargetBlock;
     protected BlockOnBoard currentTargetBlock;
-    protected int nextBlockIndexCount = 0;
-    protected float currentDistance = 0;
-    protected float moveSpeed = 1f;
+    private   int nextBlockIndexCount = 0;
+    private   float currentDistance = 0;
+    private   float moveSpeed = 1f;
     //Rotate
     private float rotateSpeed = 5f;
     //Synergy
     private int _tribeSynergyLevel = 0;
     private int _attributeSynergyLevel = 0;
-    public int TribeSynergyLevel
+    public  int TribeSynergyLevel
     {
         get { return _tribeSynergyLevel; }
         set
@@ -85,7 +86,7 @@ public class UnitController : MonoBehaviour
             tribeSynergy.SetSynergy(_tribeSynergyLevel);
         }
     }
-    public int AttributeSynergyLevel
+    public  int AttributeSynergyLevel
     {
         get { return _attributeSynergyLevel; }
         set
@@ -97,25 +98,60 @@ public class UnitController : MonoBehaviour
     protected Synergy tribeSynergy;
     protected Synergy attributeSynergy;
     //Attack
-    public List<GameObject> hitEffectList = new List<GameObject>();
-    public int effectCount = 0;
+    private  Transform attackProjectileParent;
+    private  NormalAttackProjectileSc[] attackProjectileArray;
+    private  int projectileCount = 0;
+    //Skill
+    protected Transform skillParent;
+    protected GameObject skillEffect;
+    //Debuff
+    // KnockBack
+    private BlockOnBoard knockBackBlock = null;
+    /// Stun
+    private Transform debuffEffectParent;
+    private GameObject stunEffect;
+    private float stunEndTime = 0;
+    private float stunCount = 0;
+    /// Slow
+    private GameObject waterSlowEffect;
+    private Color originalColor;
+    private Color waterSlowColor = new Color(0.6f, 0.8f, 1f);
+    private float waterSlowEndTime = 0;
+    private float waterSlowCount = 0;
+    /// Provoked
+    private GameObject provokedEffect;
+    float provokedEndTime = 0;
+    float provokedCount = 0;
+    //Freezing
+    private GameObject freezingEffect;
+    float freezingEndTime = 0;
+    float freezingCount = 0;
+    private Color freezingColor = new Color(0f, 0f, 1f);
+    //Bool
     [HideInInspector]
-    public    bool isAlive = true;
-    protected bool isFindPath = false;
-    protected bool isMoving = false;
-    protected bool isChangedTaget = true;
-    protected bool isCloseTarget = false;
-    protected bool isDieAllEnemy = false;
-    protected bool isRotating = false;
-    protected bool isLookatTarget = false;
-    protected bool isStartAttack = false;
-    protected bool isAttackCooltimeWaiting = false;
-    protected bool isStartSkill = false;
-    protected bool isAttacking = false;
-    protected bool isVictory = false;
+    public  bool isAlive = true;
+    private bool isFindPath = false;
+    private bool isMoving = false;
+    private bool isChangedTaget = true;
+    private bool isCloseTarget = false;
+    private bool isDieAllEnemy = false;
+    private bool isRotating = false;
+    private bool isLookatTarget = false;
+    private bool isStartAttack = false;
+    private bool isAttackCooltimeWaiting = false;
+    private bool isAttacking = false;
+    private bool isStartSkill = false;
+    private bool isCastingSkill = false;
+    protected bool isRunningSkill = false;
+    private bool isVictory = false;
+    private bool isStun = false;
+    private bool isWaterSlow = false;
+    private bool isProvoked = false;
+    private bool isKnockBack = false;
+    private bool isFreezing = false;
 
-    protected bool IsRunningHpSliderLerp = false;
-    protected bool isRunningMpSliderLerp = false;
+    private bool IsRunningHpSliderLerp = false;
+    private bool isRunningMpSliderLerp = false;
     
     #region Set
     public virtual void Init()
@@ -123,8 +159,9 @@ public class UnitController : MonoBehaviour
         unitblockSc = GetComponentInParent<UnitBlockData>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        meshR = GetComponentInChildren<SkinnedMeshRenderer>();
     }
-    
+
     /// <summary>
     /// NOTE : 슬라이더 데이터 설정
     /// </summary>
@@ -161,8 +198,17 @@ public class UnitController : MonoBehaviour
         hpmpSliderData = null;
         isVictory = false;
         isAttacking = false;
+        isStun = false;
+        isCastingSkill = false;
+        isKnockBack = false;
+        isStartSkill = false;
+        isFreezing = false;
+
+        waterSlowEndTime = 0;
+        stunEndTime = 0;
 
         targetList.Clear();
+        path.Clear();
         //애니매이션 설정 
         anim.SetTrigger("ReStart");
         animState = Anim_State.Idle;
@@ -200,6 +246,45 @@ public class UnitController : MonoBehaviour
         yield return new WaitForSecondsRealtime(time);
         unitblockSc.unitBTAI.StartBT();
     }
+
+    /// <summary>
+    /// NOTE : 발사체 초기화
+    /// </summary>
+    public virtual void SetObjectData()
+    {
+        string parentname = "AttackProjectileParent";
+
+        if (unitPdata.tribe == Tribe_Type.Rabbit)
+            parentname = "FireballProjectileParent";
+
+        attackProjectileParent = transform.Find(parentname);
+        attackProjectileArray = attackProjectileParent.GetComponentsInChildren<NormalAttackProjectileSc>(true);
+
+        var count = 0;
+        while (count != 3)
+        {
+            var hitob = GameObject.Instantiate(DataBaseManager.instance.hitEffectDic["NormalHitEffect"], this.transform);
+
+            hitob.transform.localPosition = Vector3.zero;
+            hitob.gameObject.SetActive(false);
+            attackProjectileArray[count].hiteffect = hitob;
+            attackProjectileArray[count].unit = this;
+            count++;
+        }
+
+        //디버프 이펙트
+        debuffEffectParent = unitblockSc.transform.Find("DebuffEffect").transform;
+        stunEffect = debuffEffectParent.Find("Stun").gameObject;
+        provokedEffect = debuffEffectParent.Find("Provoked").gameObject;
+        waterSlowEffect = debuffEffectParent.Find("WaterSlow").gameObject;
+        mpHealingEffect = debuffEffectParent.Find("MpHealing").gameObject;
+        freezingEffect = debuffEffectParent.Find("Freezing").gameObject;
+        //Color
+        originalColor = meshR.material.color;
+
+        skillParent = unitblockSc.transform.Find("Skill").transform;
+        skillEffect = skillParent.transform.Find("SkillEffect").gameObject;
+    }
     #endregion
 
     #region  Move
@@ -213,6 +298,19 @@ public class UnitController : MonoBehaviour
         float mindistance = 100;
         //적이 모두 죽었는지 체크
         isDieAllEnemy = true;
+
+        //도발 당했을 경우 거리에 상관없이 타겟은 고정되도록 함 타겟이 죽었을 경우 해제
+        if (isProvoked)
+        {
+            //해당 캐릭터가 죽을 경우 보드는 NULL로 변경되기 때문에 (죽음과 같은 처리)
+            if (currentTargetBlock.unitInBattle==null)
+            {
+                isProvoked = false;
+                return false;
+            }
+            return true;
+        }
+
         //가장 가까운 거리에 있는 적 검색
         for (int i = 0; i < targetList.Count; i++)
         {
@@ -256,7 +354,7 @@ public class UnitController : MonoBehaviour
             if (isFindPath = pathfind.FindPath(unitblockSc.GetCurrentBlockInBattle(), currentTargetBlock, BoardManager.instance.allGroundBlocks, ref path))
                 nextBlockIndexCount = path.Count - 2;
 
-        } 
+        }
         //길이 없을 경우
         else if (path.Count == 0)
         {
@@ -299,6 +397,7 @@ public class UnitController : MonoBehaviour
         StartCoroutine(MoveNextBlock(unitblockSc.GetCurrentBlockInBattle(), path[nextBlockIndexCount]));
     }
 
+    //MoveNextBlock(unitblockSc.GetCurrentBlockInBattle(), path[nextBlockIndexCount]);
     /// <summary>
     /// 
     /// </summary>
@@ -324,7 +423,7 @@ public class UnitController : MonoBehaviour
         Quaternion targetRot = Quaternion.LookRotation(dir);
         
         //초기화
-        while (unitblockSc.transform.position != nextpos&&isAlive)
+        while (unitblockSc.transform.position != nextpos&&isAlive&&!isKnockBack)
         {
             count += Time.deltaTime;
             unitblockSc.transform.rotation = Quaternion.Lerp(currentRot, targetRot, count * rotateSpeed);
@@ -339,29 +438,36 @@ public class UnitController : MonoBehaviour
     #endregion
 
     #region Attack
-    //공격
+    /// <summary>
+    /// NOTE : 현재 공격상태면 진행하지 않음 CheckAttackRange와 lookatTarget을 skill에서도 사용해야 하므로 설정
+    /// </summary>
+    /// <returns></returns>
+    public virtual bool CheckAttacking()
+    {
+        return !isAttacking;
+    }
+    
+    /// <summary>
+    /// NOTE : 현재 사거리가 맞지 않으면 진행하지 않음
+    /// </summary>
+    /// <returns></returns>
     public virtual bool CheckAttackRangeCondition()
     {
         return isCloseTarget;
     }
-
     /// <summary>
     /// NOTE : 타겟을 바라보는 rotation
     /// </summary>
     /// <returns></returns>
     public virtual bool LookAtTarget()
     {
-        //공격중일때 회전 되지 않도록
-        if (isAttacking)
-            return false;
-
         if (!isRotating)
         {
             //block position y 값은 0으로 초기화 
             var targetpos = currentTargetBlock.transform.position;
             targetpos.y = 0;
             //방향벡터
-            Vector3 dirVector = targetpos - unitblockSc.transform.position;
+            var dirVector = targetpos - unitblockSc.transform.position;
             dirVector = dirVector.normalized;
             //방향벡터를 통한 rotation값
             Quaternion targetRot = Quaternion.LookRotation(dirVector);
@@ -379,7 +485,7 @@ public class UnitController : MonoBehaviour
     /// 
     /// </summary>
     /// <returns></returns>
-    IEnumerator StartRotate(Quaternion targetRot)
+    public IEnumerator StartRotate(Quaternion targetRot)
     {
         isRotating = true;
         Quaternion currentrot = unitblockSc.transform.rotation;
@@ -396,15 +502,12 @@ public class UnitController : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// NOTE : 공격 가능한상태인지 확인
     /// </summary>
     /// <returns></returns>
     public virtual bool CheckAttackCondition()
     {
-        //상대방의 상태가 moving중인 경우 return
         if (currentTargetBlock.unitInBattle == null)
-            return false;
-        if (currentTargetBlock.unitInBattle.unitController.isMoving)
             return false;
         if (isAttackCooltimeWaiting)
             return false;
@@ -412,7 +515,7 @@ public class UnitController : MonoBehaviour
     }
 
     /// <summary>
-    /// NOTE : 
+    /// NOTE : AttackAnimation 상태 체크
     /// </summary>
     public virtual void AttackAction()
     {
@@ -420,50 +523,47 @@ public class UnitController : MonoBehaviour
     }
 
     /// <summary>
-    /// Animation event
+    /// NOTE : Attack Animation event function 공격 애니매이션이 시작할때 실행
     /// </summary>
     public virtual void StartAttackInAttackAnim()
     {
         isStartAttack = false;
         isAttacking = true;
         StartCoroutine(SetAttackCoolTime());
-        //StartCoroutine(AttackHitProcess());
         
     }
+
     /// <summary>
-    /// NOTE : 근접 공격, 원거리 공격 분류 해야함
+    /// NOTE : Attack Animation event Function 공격이 피격 할 쯤 실행
     /// </summary>
-    public virtual void AttackHit()
+    public virtual void AttackFire()
     {
         var target = currentTargetBlock.unitInBattle;
         if (target != null)
         {
-            //방어력을 제외한 데미지 값
-            int resultdamage = (int)(abilityDataInBattle.totalAttackDamage * abilityDataInBattle.physicaldefenseRate);
-            //Drain
-            CurrentHp += resultdamage * unitPdata.abilityData.drainHp;
-            target.unitController.TakeDamagePhysics(resultdamage);
-            //원거리 공격 애매한상태
-            //..이펙트
-            //타겟의 위치로부터 유닛이 타겟을 바라보는 반대방향으로 거리 1만큼
-            Vector3 hitpos = target.transform.position;
-            hitpos.y = 0.5f;
-            //유닛이 타겟을 바라보는 방향
-            var dir = -transform.forward;
-            dir = dir.normalized;
-            hitpos = hitpos + dir;
-            effectCount = effectCount == 0 ? 1 : 0;
-            hitEffectList[effectCount].transform.position = hitpos;
-            hitEffectList[effectCount].SetActive(true);
-        }   
+            attackProjectileArray[projectileCount].target = target;
+            attackProjectileArray[projectileCount].gameObject.SetActive(true);
+            attackProjectileArray[projectileCount].SetData(abilityDataInBattle.totalAttackDamage);
+            projectileCount++;
+            projectileCount = projectileCount % 3;
+        }
     }
-    
+
     /// <summary>
-    /// NOTE : 공격 애니매이션 이벤트 함수
+    /// NOTE :  Attack Animation event function 공격 애니매이션이 끝날때 실행
     /// </summary>
     public virtual void EndAttackInAttackAnim()
     {
         isAttacking = false;
+    }
+    
+    /// <summary>
+    /// NOTE : TakeDamage에서 최종 공격력에 따라 사용
+    /// </summary>
+    /// <param name="damage"></param>
+    public virtual void DrainHp(int damage)
+    {
+        CurrentHp += damage * unitPdata.abilityData.drainHp;
     }
     
     /// <summary>
@@ -473,23 +573,83 @@ public class UnitController : MonoBehaviour
     IEnumerator SetAttackCoolTime()
     {
         isAttackCooltimeWaiting = true;
-        yield return new WaitForSecondsRealtime(abilityDataInBattle.attackCooltime * (1f - (abilityDataInBattle.attackSpeedRateSynergy * 0.01f)));
+        yield return new WaitForSecondsRealtime(abilityDataInBattle.attackCooltime * (1f - (abilityDataInBattle.attackSpeedValueSynergy * 0.01f)));
         isAttackCooltimeWaiting = false;
     }
     #endregion
 
     #region Skill
-    //스킬
-    public virtual bool CheckSkillCondition() { return true; }
-    public virtual void SkillAction() { }
+
+    /// <summary>
+    /// NOTE : 스킬애니매이션이 종료되었는지 체크, 및 스킬사용중 이동하지 않도록
+    /// </summary>
+    /// <returns></returns>
+    public virtual bool CheckCastingSkillCondition()
+    {
+        return !isCastingSkill;
+    }
+    /// <summary>
+    /// NOTE : 스킬을 사용할수 있는지 상태 체크
+    /// </summary>
+    /// <returns></returns>
+    public virtual bool CheckSkillCondition()
+    {
+        
+        //지속시간이 있는 스킬의 경우에 체크 즉발식의 경우에는 모두 false로 변경되지 않음
+        if (isRunningSkill)
+            return false;
+
+
+        return CurrentMp == abilityDataInBattle.maxMP ? true : false;
+    }
+    
+    public virtual void SkillAction()
+    {
+        isStartSkill = true;
+    }
+
+    /// <summary>
+    /// NOTE : skill animation Event function , 스킬애니매이션이 시작부분 이벤트
+    /// </summary>
+    public virtual void StartSkillInAnim()
+    {
+        CurrentMp = 0;
+        isStartSkill = false;
+        isCastingSkill = true;
+        //CoolTime?
+    }
+
+    /// <summary>
+    /// NOTE : skill animation Event function . 스킬애니매이션 중간부분 이벤트 
+    /// </summary>
+    public virtual void SkillActionInAnim()
+    {
+       
+    }
+
+    /// <summary>
+    /// NOTE : skill animation Event function . 스킬애니매이션 끝부분 이벤트 
+    /// </summary>
+    public virtual void EndSkillInAnim()
+    {
+        isCastingSkill = false;
+    }
+    
     #endregion
 
     #region  Dead
-    //죽음
+    /// <summary>
+    /// NOTE : 죽음
+    /// </summary>
+    /// <returns></returns>
     public virtual bool IsDie() {
 
         return !isAlive;
     }
+
+    /// <summary>
+    /// NOTE : 애니매이션 변경 및 SLIDER 종료,
+    /// </summary>
     public virtual void DeadAction()
     {
         hpmpSliderData.panel.SetActive(false);
@@ -497,28 +657,56 @@ public class UnitController : MonoBehaviour
 
         unitblockSc.GetCurrentBlockInBattle().SetUnitInBattle(null);
         unitblockSc.unitBTAI.StopBT();
-        
         //죽음 
     }
 
-    
+
+    #endregion
+
+    #region Victory
+    /// <summary>
+    /// NOTE : isVictory 변경
+    /// </summary>
+    public void SetVictory()
+    {
+        isVictory = true;
+    }
+    /// <summary>
+    /// NOTE : Victory 체크 
+    /// </summary>
+    /// <returns></returns>
+    public virtual bool CheckVictroy()
+    {
+        return isVictory;
+    }
+
+    /// <summary>
+    /// NOTE : 애니매이션 실행 및 BATTILE UNIT NULL 처리, AI 종료
+    /// </summary>
+    public virtual void StartVictoryAnimation()
+    {
+        anim.SetTrigger("IsVictory");
+        unitblockSc.GetCurrentBlockInBattle().SetUnitInBattle(null);
+        unitblockSc.unitBTAI.StopBT();
+    }
+
     #endregion
 
     #region Animation
     public virtual void SetAnimation()
     {
-
-        animState = Anim_State.Idle;
-        if (isMoving)
-            animState = Anim_State.Walk;
-        if (isStartAttack)
-            animState = Anim_State.Attack;
-        if (isStartSkill)
+        if (isStun)
+            animState = Anim_State.Stun;
+        else if (isStartSkill)
             animState = Anim_State.Skill;
+        else if (isStartAttack)
+            animState = Anim_State.Attack;
+        else if (isMoving)
+            animState = Anim_State.Walk;
+        else
+            animState = Anim_State.Idle;
         
-
         anim.SetFloat("animState", (int)animState);
-
     }
 
     #endregion
@@ -528,7 +716,7 @@ public class UnitController : MonoBehaviour
     /// NOTE : 슬라이더 포지션 변경
     /// </summary>
     /// <param name="pos"></param>
-    private void SetPosSliderBar(Vector3 pos)
+    protected void SetPosSliderBar(Vector3 pos)
     {
         pos.y = +2;
         if (hpmpSliderData != null)
@@ -615,52 +803,275 @@ public class UnitController : MonoBehaviour
     }
     #endregion
 
+    #region Debuff
+    
+    /// <summary>
+    /// NOTE : 타겟으로 받은 넉백
+    /// </summary>
+    /// <param name="target"></param>
+    public void StartKnockBack(Vector3 targetposition)
+    {
+        isKnockBack = true;
+        var startpos = unitblockSc.transform.position;
+        var targetpos = targetposition;
+        var offsetvaluepos = startpos - targetpos;
+        var knockbackpos = startpos + offsetvaluepos;
+        
+        int x = (int)(knockbackpos.x * 0.5f);
+        int z = (int)(knockbackpos.z * 0.5f);
+
+        x = x < 0 ? 0 : x;
+        x = x > 9 ? 9 : x;
+        z = z < 1 ? 1 : z;
+        z = z > 9 ? 9 : z;
+        
+        knockBackBlock = BoardManager.instance.allGroundBlocks[x, z];
+        if (knockBackBlock.GetUnitInBattle() == null)
+            StartCoroutine(KnockBackProcess(unitblockSc.GetCurrentBlockInBattle(), knockBackBlock));
+        //이동이 불가한 지역이면 위치는이동하지 않고 스턴만 처리 (전투지역이 아닌경우, 넉백위치에 유닛이 있을경우)
+        isKnockBack = false;
+        StartStun(2F);
+    }
+
+    IEnumerator KnockBackProcess(BlockOnBoard currentBlock, BlockOnBoard nextblock)
+    {
+        isKnockBack = true;
+        nextblock.SetUnitInBattle(unitblockSc);
+        currentBlock.SetUnitInBattle(null);
+        float count = 0;
+        //lerp포지션
+        Vector3 startpos = unitblockSc.transform.position;
+        Vector3 nextpos = nextblock.transform.position;
+        nextpos.y = 0;
+
+        //초기화
+        while (unitblockSc.transform.position != nextpos)
+        {
+            count += Time.deltaTime;
+            unitblockSc.transform.position = Vector3.Lerp(startpos, nextpos, 10f * count);
+
+            SetPosSliderBar(unitblockSc.transform.position);
+            yield return new WaitForFixedUpdate();
+        }
+        isKnockBack = false;
+    }
+
+    /// <summary>
+    /// NOTE : 도발당함
+    /// </summary>
+    public void StartProvoked(float time, UnitController target)
+    {
+        provokedCount = 0;
+        provokedEndTime = time;
+        currentTargetBlock = target.unitblockSc.GetCurrentBlockInBattle();
+        if (!isProvoked)
+            StartCoroutine(BeProvokedProcess());
+    }   
+    /// <summary>
+    /// NOTE : 스턴 프로세스 
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator BeProvokedProcess()
+    {
+        //애니매이션 상태설정
+        isProvoked = true;
+        provokedEffect.gameObject.SetActive(true);
+        //스턴 이펙트 생성
+        //스턴 애니매이션 설정
+        while (provokedCount < provokedEndTime && isAlive && !isVictory)
+        {
+            provokedCount++;
+            yield return new WaitForSeconds(1f);
+        }
+        isProvoked = false;
+        provokedEffect.gameObject.SetActive(false);
+        provokedEndTime = 0;
+    }
+
+    public void StartKnockBack(Transform target)
+    {
+        
+    }
+
+    /// <summary>
+    /// NOTE : 스턴 
+    /// </summary>
+    public void StartStun(float time)
+    {
+        stunCount = 0;
+        stunEndTime = time;
+        if (!isStun)
+        {
+            StartCoroutine(StunProcess());
+        }
+    }
+
+    /// <summary>
+    /// NOTE : 스턴 프로세스 
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator StunProcess()
+    {
+        //공격, 스킬 중 취소되었을 경우 Moving의 경우 coroutine으로 실행하기 때문에 스턴이 걸려도 한칸을 이동하는건 진행한다
+        isAttacking = false;
+        isCastingSkill = false;
+
+        //애니매이션 상태설정
+        isStun = true;
+        stunEffect.gameObject.SetActive(true);
+
+        //스턴 이펙트 생성
+        //스턴 애니매이션 설정
+        while (stunCount < stunEndTime && isAlive && !isVictory)
+        {
+            stunCount++;
+            yield return new WaitForSeconds(1f);
+        }
+        isStun = false;
+        stunEffect.gameObject.SetActive(false);
+        stunEndTime = 0;
+    }
+
+    /// <summary>
+    /// NOTE : 스턴, 넉백등 상태이상 일 경우 공격등 처리하지 않도록 하기 위함
+    /// </summary>
+    /// <returns></returns>
+    public virtual bool CheckDebuffState()
+    {
+        return isStun || isKnockBack;
+    }
+
+    /// <summary>
+    /// NOTE : 빙결상태 슬로우보다 애니매이션속도 0.1로 감소 (SLOW는 0.5)
+    /// </summary>
+    /// <param name="time"></param>
+    public void StartFreezing(float time)
+    {
+        freezingCount = 0;
+        freezingEndTime = time;
+        if (!isFreezing)
+            StartCoroutine(FreezingProcess());
+        
+    }
+
+    IEnumerator FreezingProcess()
+    {
+        isFreezing = true;
+        anim.speed = 0.1f;
+        moveSpeed = 0.1f;
+        freezingEffect.gameObject.SetActive(true);
+        meshR.material.color = freezingColor;
+        while (freezingCount < freezingEndTime && isAlive && !isVictory)
+        {
+            freezingCount++;
+            yield return new WaitForSeconds(1f);
+        }
+        freezingEndTime = 0;
+        anim.speed = 1f;
+        moveSpeed = 1f;
+        freezingEffect.gameObject.SetActive(false);
+        meshR.material.color = originalColor;
+        isFreezing = false;
+    }
+
+    /// <summary>
+    /// NOTE : 
+    /// </summary>
+    /// <param name="time"></param>
+    public void StartWaterSlow(float time)
+    {
+        waterSlowCount = 0;
+        waterSlowEndTime = time;
+        if (!isWaterSlow)
+            StartCoroutine(WaterSlowProcess());
+    }
+
+    /// <summary>
+    /// NOTE : 애니매이션 속도 감소 , MOVESPEED감소
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator WaterSlowProcess()
+    {
+        isWaterSlow = true;
+        waterSlowEffect.gameObject.SetActive(true);
+        meshR.material.color = waterSlowColor;
+        while (waterSlowCount < waterSlowEndTime && isAlive && !isVictory)
+        {
+            waterSlowCount++;
+            if (!isFreezing)
+            {
+                anim.speed = 0.5f;
+                moveSpeed = 0.5f;
+            }
+            yield return new WaitForSeconds(1f);
+        }
+        waterSlowEndTime = 0;
+        anim.speed = 1f;
+        moveSpeed = 1f;
+        waterSlowEffect.gameObject.SetActive(false);
+        meshR.material.color = originalColor;
+        isWaterSlow = false;
+    }
+
+    #endregion
+
+    #region Buff
+    private GameObject mpHealingEffect;
+    /// <summary>
+    /// NOTE : WaterRabbit의 힐링 이펙트
+    /// </summary>
+    /// <param name="amount"></param>
+    public void StartMPHealing(int amount)
+    {
+        CurrentMp += amount;
+        //다시 실행
+        mpHealingEffect.SetActive(false);
+        mpHealingEffect.SetActive(true);
+    }
+
+    #endregion
+
     #region ETC
 
     /// <summary>
     /// NOTE : 물리데미지
     /// </summary>
     /// <param name="damage"></param>
-    public void TakeDamagePhysics(int damage)
+    public void TakeDamagePhysics(int damage, UnitController attackedUnit)
     {
         //회피 랜덤설정 
         if (Random.Range(0, 100) < abilityDataInBattle.avoidanceRate)
             return;
-
-
-        CurrentHp -= damage;
-        CurrentMp += damage * 0.2f;
+        //방어력을 제외한 데미지 값
+        int resultdamage = (int)(damage * abilityDataInBattle.physicaldefenseRate);
+        attackedUnit.DrainHp(resultdamage);
+        attackedUnit.CurrentMp += resultdamage * 0.2f;
+        CurrentHp -= resultdamage;
+        CurrentMp += resultdamage * 0.2f;
         //이펙트 생성
     }
 
-    public virtual bool CheckVictroy()
+    /// <summary>
+    /// NOTE : 스킬은 공격유닛 mp회복 x, 회피 x, 방어력 무시, 추후 마저 감소가 있을경우 파라미터유닛 추가 해당 유닛의 마저 감소양을 통해서 처리
+    /// </summary>
+    /// <param name="damage"></param>
+    public void TakeDamageSkill(int damage)
     {
-        return isVictory;
+        //방어력을 제외한 데미지 값
+        int resultdamage = (int)(damage);
+        CurrentHp -= resultdamage;
+        CurrentMp += resultdamage * 0.2f;
+        //이펙트 생성
     }
 
-    public virtual void StartVictoryAnimation()
+    /// <summary>
+    /// NOTE : 설정한 MP값만큼 감소
+    /// </summary>
+    /// <param name="mpAmount"></param>
+    public void TakeDamageMp(int mpAmount)
     {
-        anim.SetTrigger("IsVictory");
-        unitblockSc.GetCurrentBlockInBattle().SetUnitInBattle(null);
-        unitblockSc.unitBTAI.StopBT();
+        CurrentMp -= mpAmount;
     }
-
-    public void SetVictory()
-    {
-        isVictory = true;
-    }
-
     #endregion
-
-    public virtual void SetEffectData()
-    {
-        var hitob = GameObject.Instantiate(DataBaseManager.instance.hitEffectDic["NormalHitEffect"], this.transform);
-        var hitob2 = GameObject.Instantiate(DataBaseManager.instance.hitEffectDic["NormalHitEffect"], this.transform);
-        hitob.transform.localPosition = Vector3.zero;
-        hitob2.transform.localPosition = Vector3.zero;
-        hitob.gameObject.SetActive(false);
-        hitob2.gameObject.SetActive(false);
-        hitEffectList.Add(hitob);
-        hitEffectList.Add(hitob2);
-    }
+    
 }

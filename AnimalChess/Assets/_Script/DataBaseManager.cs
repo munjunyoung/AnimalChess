@@ -85,9 +85,9 @@ public class DataBaseManager : MonoBehaviour
         //Unit
         SetUnitShopData();
         //UnitOB;
-        SetLoadDataOnDictionary(unitObDic, unitObPath + Tribe_Type.Cat.ToString());
-        SetLoadDataOnDictionary(unitObDic, unitObPath + Tribe_Type.Bear.ToString());
-        SetLoadDataOnDictionary(unitObDic, unitObPath + Tribe_Type.Rabbit.ToString());
+        SetLoadDataOnDictionary(unitObDic, unitObPath + "PlayerUnit/" + Tribe_Type.Cat.ToString());
+        SetLoadDataOnDictionary(unitObDic, unitObPath + "PlayerUnit/" + Tribe_Type.Bear.ToString());
+        SetLoadDataOnDictionary(unitObDic, unitObPath + "PlayerUnit/" + Tribe_Type.Rabbit.ToString());
         SetLoadDataOnDictionary(unitObDic, unitObPath + "EnemyUnit/" + Tribe_Type.Chick.ToString());
 
     }

@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class WindBearController : PlayerUnitController
 {
-    public override void SkillAction()
+    //KnockBack
+    public override void SkillActionInAnim()
     {
-        base.SkillAction();
+        base.SkillActionInAnim();
+        var target = currentTargetBlock.unitInBattle;
+        if (target == null)
+            return;
+        target.unitController.TakeDamagePhysics(abilityDataInBattle.normalSkillAttackDamage, this);
+        target.unitController.StartKnockBack(unitblockSc.transform.position);
+        skillEffect.SetActive(true);
     }
-
-
+    
     public override void SetSynergyParam()
     {
         tribeSynergy = new BearSynergy();

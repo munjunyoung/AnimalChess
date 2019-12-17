@@ -46,11 +46,11 @@ public class RabbitSynergy : Synergy
     public override void SetSynergy(int level)
     {
         if (level == 0)
-            unit.abilityDataInBattle.normalSkillAttackDamage = 0;
+            unit.abilityDataInBattle.plusSkillAttackRate = 0;
         else if (level == 1)
-            unit.abilityDataInBattle.normalSkillAttackDamage = 30;
+            unit.abilityDataInBattle.plusSkillAttackRate = 0.3f;
         else if (level == 2)
-            unit.abilityDataInBattle.normalSkillAttackDamage = 100;
+            unit.abilityDataInBattle.plusSkillAttackRate = 1;
 
         base.SetSynergy(level);
     }
@@ -62,9 +62,9 @@ public class BearSynergy : Synergy
         if (level == 0)
             unit.abilityDataInBattle.PhysicalDefense = 0;
         else if (level == 1)
-            unit.abilityDataInBattle.PhysicalDefense = 15;
+            unit.abilityDataInBattle.PhysicalDefense = 0.15f;
         else if (level == 2)
-            unit.abilityDataInBattle.PhysicalDefense = 40;
+            unit.abilityDataInBattle.PhysicalDefense = 0.4f;
 
         base.SetSynergy(level);
     }
@@ -77,7 +77,7 @@ public class FireSynergy : Synergy
         if (level == 0)
             unit.abilityDataInBattle.plusAttackDamageRate = 0;
         else if (level == 1)
-            unit.abilityDataInBattle.plusAttackDamageRate = 30;
+            unit.abilityDataInBattle.plusAttackDamageRate = 0.3f;
 
         base.SetSynergy(level);
     }
@@ -100,9 +100,9 @@ public class WindSynergy : Synergy
     public override void SetSynergy(int level)
     {
         if (level == 0)
-            unit.abilityDataInBattle.attackSpeedRateSynergy = 0;
+            unit.abilityDataInBattle.attackSpeedValueSynergy = 0;
         else if (level == 1)
-            unit.abilityDataInBattle.attackSpeedRateSynergy = 0.3f;
+            unit.abilityDataInBattle.attackSpeedValueSynergy = 0.3f;
 
         base.SetSynergy(level);
     }

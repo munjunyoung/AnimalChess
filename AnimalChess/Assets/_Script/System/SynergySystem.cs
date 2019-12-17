@@ -136,7 +136,6 @@ public class SynergySystem
                 case Tribe_Type.Rabbit:
                     tmpunit.unitController.TribeSynergyLevel = rabbitSynergy;
                     break;
-
                 //물리방어력
                 case Tribe_Type.Bear:
                     tmpunit.unitController.TribeSynergyLevel = bearSynergy;
@@ -145,7 +144,7 @@ public class SynergySystem
 
             switch (tmpunit.unitController.unitPdata.attribute)
             {
-                //공격력 % 완
+                //공격력 % 
                 case Attribute_Type.Fire:
                     tmpunit.unitController.AttributeSynergyLevel = fireSynergy;
                     break;

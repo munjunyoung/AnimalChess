@@ -28,7 +28,7 @@ public class UnitAbilityData
         set
         {
             _plusattackDamageRate = value;
-            totalAttackDamage = (int)(normalAttackDamage * (1 + (_plusattackDamageRate * 0.01f)));
+            totalAttackDamage = (int)(normalAttackDamage * (1 + _plusattackDamageRate));
         }
     }
 
@@ -43,7 +43,7 @@ public class UnitAbilityData
         set
         {
             _plusSkillAttackRate = value;
-            totalSkillAttackDamage = (int)(normalSkillAttackDamage * (1 + (_plusSkillAttackRate * 0.01f)));
+            totalSkillAttackDamage = (int)(normalSkillAttackDamage * (1 + _plusSkillAttackRate));
         }
     }
 
@@ -54,24 +54,23 @@ public class UnitAbilityData
     }
     public float totalAttackSpeedRate
     {
-        get { return 1 + attackSpeedRateData + attackSpeedRateSynergy; }
+        get { return 1 + attackSpeedValueNormal + attackSpeedValueSynergy; }
     }
     //시너지에서 추가 
-    public float attackSpeedRateSynergy;
+    public float attackSpeedValueSynergy;
     //생성자에서 추가
-    private float attackSpeedRateData;
+    public float attackSpeedValueNormal;
     
-
-
+    //방어력
     public float physicaldefenseRate;
-    private int _physicaldefense;
-    public int PhysicalDefense
+    private float _physicaldefense;
+    public float PhysicalDefense
     {
         get { return _physicaldefense; }
         set
         {
             _physicaldefense = value;
-            physicaldefenseRate = 1 - (_physicaldefense * 0.01f);
+            physicaldefenseRate = 1 - _physicaldefense;
         }
     }
 
@@ -79,6 +78,8 @@ public class UnitAbilityData
     public int avoidanceRate;
     //생흡
     public float drainHp;
+
+    public float criticalRate;
 
 
     public UnitAbilityData DeepCopy()
@@ -97,8 +98,8 @@ public class UnitAbilityData
         data.normalSkillAttackDamage = normalSkillAttackDamage;
         data.plusSkillAttackRate = plusSkillAttackRate;
 
-        data.attackSpeedRateSynergy = attackSpeedRateSynergy;
-        data.attackSpeedRateData = attackSpeedRateData;
+        data.attackSpeedValueSynergy = attackSpeedValueSynergy;
+        data.attackSpeedValueNormal = attackSpeedValueNormal;
 
         data.physicaldefenseRate = PhysicalDefense;
         data.physicaldefenseRate = physicaldefenseRate;
@@ -118,21 +119,26 @@ public class UnitAbilityData
         normalAttackDamage = 50;
         attackRange = 1;
         normalSkillAttackDamage = 100;
+        attackSpeedValueNormal = 0;
 
 
         switch (tribe)
         {
             case Tribe_Type.Cat:
-                attackSpeedRateData += 0.1f;
+                attackSpeedValueNormal += 0.1f;
                 normalAttackDamage += 50;
                 break;
             case Tribe_Type.Bear:
                 normalMaxHP += 100;
-                attackSpeedRateData -= 0.2f;
+                attackSpeedValueNormal -= 0.2f;
                 break;
             case Tribe_Type.Rabbit:
                 attackRange += 3;
                 normalSkillAttackDamage += 50;
+                break;
+
+            default:
+                normalMaxHP = 3000;
                 break;
         }
 
@@ -149,7 +155,7 @@ public class UnitAbilityData
                 normalMaxHP += 50;
                 break;
             case Attribute_Type.Wind:
-                attackSpeedRateData += 0.1f;
+                attackSpeedValueNormal += 0.1f;
                 break;
         }
 
@@ -163,7 +169,7 @@ public class UnitAbilityData
 
         plusHpRate = 0;
         PhysicalDefense = 0;
-        attackSpeedRateSynergy = 0;
+        attackSpeedValueSynergy = 0;
         plusAttackDamageRate = 0;
         avoidanceRate = 0;
         drainHp = 0;
