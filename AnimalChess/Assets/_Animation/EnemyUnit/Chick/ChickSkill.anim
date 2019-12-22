@@ -4551,7 +4551,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.875
+  - time: 0.9583333
     functionName: EndSkillInAnim
     data: 
     objectReferenceParameter: {fileID: 11500000, guid: 076e6706b3a90e24d9c895b87e213c8c,

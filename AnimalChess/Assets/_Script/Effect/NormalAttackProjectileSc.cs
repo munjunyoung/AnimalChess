@@ -56,7 +56,7 @@ public class NormalAttackProjectileSc : MonoBehaviour
         if (collision.gameObject.Equals(target.unitController.gameObject))
         {
             //AttackDamage
-            target.unitController.TakeDamageSkill(attackDamage);
+            target.unitController.TakeDamagePhysics(attackDamage, unit);
             //Effect
             hiteffect.transform.position = this.transform.position;
             hiteffect.SetActive(true);

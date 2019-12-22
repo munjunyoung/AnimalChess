@@ -24,6 +24,10 @@ public class DataReader
 
     private Dictionary<string, Dictionary<string, string>> UnitCSVDataDic = new Dictionary<string, Dictionary<string, string>>();
     private Dictionary<string, Dictionary<string, string>> EnemyUnitCSVDataDic = new Dictionary<string, Dictionary<string, string>>();
+
+    private Dictionary<string, Dictionary<string, string>> UnitAbilityData = new Dictionary<string, Dictionary<string, string>>();
+    private Dictionary<string, Dictionary<string, string>> EnemyUnitAbilityData = new Dictionary<string, Dictionary<string, string>>();
+
     private DataReader()
     {
         UnitCSVDataDic = Read(DataPath + "UnitData");
